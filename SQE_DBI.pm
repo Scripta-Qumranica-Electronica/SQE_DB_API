@@ -18,6 +18,8 @@ use SQE_database_queries;
 use SQE_DBI_queries;
 use parent 'DBI';
 
+use Ref::Util;
+
 
 
 
@@ -87,7 +89,7 @@ sub get_login_sqe {
     use parent -norequire, 'DBI::db';
 
     use constant {
-        GET_ALL_SIGNS_IN_FRAGMENT => << 'HEREDOC',
+        GET_ALL_SIGNS_IN_FRAGMENT => << 'MYSQL',
 		SELECT
 			position_in_stream.next_sign_id,
 			position_in_stream.sign_id,
@@ -97,25 +99,29 @@ sub get_login_sqe {
 			sign_char.width,
 			sign_char.might_be_wider,
 			sign_char_reading_data.readability,
-			sign_char_reading_data.is_retraced,
-			sign_char_reading_data.is_reconstructed,
-			sign_char_reading_data.correction,
-			sign_char.is_variant
+            sign_char_reading_data.is_retraced,
+            sign_char_reading_data.is_reconstructed,
+            sign_char_reading_data.correction,
+			sign_char.is_variant,
+            sign_char_reading_data.sign_char_reading_data_id,
+            sign_char.sign_char_id
 				FROM col_to_line
 						JOIN line_to_sign USING (line_id)
 	JOIN position_in_stream USING (sign_id)
 	JOIN position_in_stream_owner USING (position_in_stream_id)
 	JOIN sign_char USING (sign_id)
+   JOIN sign_char_owner USING (sign_char_id)
 	JOIN sign_type USING(sign_type_id)
-	JOIN sign_char_reading_data USING (sign_char_id)
-	JOIN sign_char_reading_data_owner USING (sign_char_reading_data_id)
+	LEFT JOIN sign_char_reading_data USING (sign_char_id)
+	LEFT JOIN sign_char_reading_data_owner USING (sign_char_reading_data_id)
 	WHERE col_id =?
+	AND sign_char_owner.scroll_version_id = _scrollversion_
 	AND position_in_stream_owner.scroll_version_id= _scrollversion_
-	AND sign_char_reading_data_owner.scroll_version_id = _scrollversion_
+	AND (sign_char_reading_data_owner.scroll_version_id is null OR sign_char_reading_data_owner.scroll_version_id = _scrollversion_)
 
-HEREDOC
+MYSQL
 
-        GET_ALL_SIGNS_IN_LINE => << 'HEREDOC',
+        GET_ALL_SIGNS_IN_LINE => << 'MYSQL',
 		SELECT
 			position_in_stream.next_sign_id,
 			position_in_stream.sign_id,
@@ -124,30 +130,34 @@ HEREDOC
 			sign_type.type,
 			sign_char.width,
 			sign_char.might_be_wider,
-			sign_char_reading_data.readability,
-			sign_char_reading_data.is_retraced,
-			sign_char_reading_data.is_reconstructed,
-			sign_char_reading_data.correction,
-			sign_char.is_variant
+            sign_char_reading_data.readability,
+            sign_char_reading_data.is_retraced,
+            sign_char_reading_data.is_reconstructed,
+            sign_char_reading_data.correction,
+			sign_char.is_variant,
+            sign_char_reading_data.sign_char_reading_data_id,
+            sign_char.sign_char_id
 				FROM line_to_sign
 	JOIN position_in_stream USING (sign_id)
 	JOIN position_in_stream_owner USING (position_in_stream_id)
 	JOIN sign_char USING (sign_id)
+    JOIN sign_char_owner USING (sign_char_id)
 	JOIN sign_type USING(sign_type_id)
-	JOIN sign_char_reading_data USING (sign_char_id)
-	JOIN sign_char_reading_data_owner USING (sign_char_reading_data_id)
+    LEFT JOIN sign_char_reading_data USING (sign_char_id)
+    LEFT JOIN sign_char_reading_data_owner USING (sign_char_reading_data_id)
 	WHERE line_id =?
+	AND sign_char_owner.scroll_version_id = _scrollversion_
 	AND position_in_stream_owner.scroll_version_id= _scrollversion_
-	AND sign_char_reading_data_owner.scroll_version_id = _scrollversion_
+    AND (sign_char_reading_data_owner.scroll_version_id is null OR sign_char_reading_data_owner.scroll_version_id = _scrollversion_)
 
-HEREDOC
+MYSQL
 
-        NEW_MAIN_ACTION => << 'HEREDOC',
+        NEW_MAIN_ACTION => << 'MYSQL',
 INSERT INTO main_action
 (scroll_version_id) VALUES (_scrollversion_)
-HEREDOC
+MYSQL
 
-        ADD_USER => << 'HEREDOC',
+        ADD_USER => << 'MYSQL',
         INSERT IGNORE INTO _table__owner
         (_table__id, scroll_version_id)
         SELECT
@@ -158,9 +168,9 @@ HEREDOC
         _join_
         WHERE _where_
          AND _table__owner.scroll_version_id = _oldscrollversion_
-HEREDOC
+MYSQL
 
-        REMOVE_USER => << 'HEREDOC',
+        REMOVE_USER => << 'MYSQL',
         DELETE _table__owner
         FROM _table__owner
         JOIN _table_ USING (_table__id)
@@ -168,9 +178,9 @@ HEREDOC
         WHERE _where_
          AND _table__owner.scroll_version_id = _scrollversion_
   
-HEREDOC
+MYSQL
 
-        LOG_CHANGE_USER => << 'HEREDOC',
+        LOG_CHANGE_USER => << 'MYSQL',
         INSERT INTO single_action
         (main_action_id, action, `table`, id_in_table)
             SELECT _mainid_, '_actionart_', '_table_', _table__id
@@ -179,7 +189,7 @@ HEREDOC
         _join_
         WHERE _where_
          AND _table__owner.scroll_version_id = _scrollversion_
-HEREDOC
+MYSQL
 
         SIGN_CHAR_JOIN     => 'JOIN sign_char USING (sign_char_id)',
         LINE_TO_SIGN_JOIN  => 'JOIN line_to_sign USING (sign_id)',
@@ -187,16 +197,16 @@ HEREDOC
         SCROLL_TO_COL_JOIN => 'JOIN scroll_to_col USING (col_id)',
 
 
-        NEW_SCROLL_VERSION => << 'HEREDOC',
+        NEW_SCROLL_VERSION => << 'MYSQL',
         INSERT INTO scroll_version
         (user_id, scroll_id, version) values (?,?,?)
-HEREDOC
+MYSQL
 
-        NEXT_VERSION => << 'HEREDOC',
+        NEXT_VERSION => << 'MYSQL',
         SELECT IFNULL(MAX(version)+1,0)
             FROM scroll_version
             WHERE user_id=? AND scroll_id=?
-HEREDOC
+MYSQL
 
 
     };
@@ -341,9 +351,11 @@ HEREDOC
         # Let's set the new id to the old id in case, there won't be a new record
         my $insert_id=$id;
 
-
         foreach my $key (keys %values) {
-            if (Scalar::Util::reftype($values{$key}) eq 'ARRAY') {
+            # With Scalar::Util::reftype I (Bronson) got the error "Use of uninitialized value in string".
+            # Since it is deprecated, I switched to Ref::Util, and everything works now.
+            # if (Scalar::Util::reftype($values{$key}) eq 'ARRAY') {
+            if (Ref::Util::is_arrayref($values{$key})) {
                 my $command = shift @{$values{$key}};
                 if ($command=~ /[^A-Za-z0-9_]/) {
                     return (undef, SQE_Error::FORBIDDEN_FUNCTION);
@@ -418,6 +430,14 @@ HEREDOC
             return (undef, SQE_Error->RECORD_NOT_FOUND);
         }
         $sth->finish;
+        if ($table eq 'sign_char') {
+            my $data_ids_sth = $self->prepare_sqe(SQE_DBI_queries::GET_SIGN_CHAR_READING_DATA_IDS);
+            $data_ids_sth->execute($id);
+            foreach my $data_id ($data_ids_sth->fetchrow_array) {
+                $self->change_value('sign_char_reading_data',$data_id, 'sign_char_id', $insert_id);
+            }
+
+        }
         return $insert_id
     }
 
@@ -440,7 +460,7 @@ HEREDOC
         my $self = shift;
         return (undef, SQE_Error::QWB_RECORD) if $self->scrollversion==1;
         $self->start_logged_action;
-        my ($new_id, $error_ref)= $self->_add_value(@_);
+        my ($new_id, $error_ref)= $self->_add_value( @_);
         $self->stop_logged_action;
         return ($new_id, $error_ref);
 
@@ -535,7 +555,7 @@ HEREDOC
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN ],
             $where,  $old_scrollversion );
 
-        $self->_run_add_user_query( 'real_area',
+        $self->_run_add_user_query( 'real_char_area',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN ],
             $where,  $old_scrollversion );
 
@@ -595,7 +615,7 @@ HEREDOC
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where, $old_userversion);
 
-        $self->_run_add_user_query( 'real_area',
+        $self->_run_add_user_query( 'real_char_area',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where, $old_userversion );
 
@@ -622,7 +642,9 @@ HEREDOC
         $self->_run_add_user_query( 'scroll_data', [],
             "scroll_data.scroll_id=$scroll_id", $old_userversion );
 
-
+        # Added by Bronson for copying artefact data
+        $self->_run_add_user_query( 'artefact', [],
+            "artefact.scroll_id=$scroll_id", $old_userversion );
 
     }
 
@@ -653,7 +675,7 @@ HEREDOC
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where );
 
-        $self->_run_remove_user_query( 'real_area',
+        $self->_run_remove_user_query( 'real_char_area',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where );
 
@@ -709,7 +731,7 @@ HEREDOC
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where );
 
-        $self->_run_remove_user_query( 'real_area',
+        $self->_run_remove_user_query( 'real_char_area',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where );
 
@@ -964,11 +986,11 @@ HEREDOC
     use parent -norequire, 'DBI::st';
 
     use constant {
-        NEW_SINGLE_ACTION => << 'HEREDOC',
+        NEW_SINGLE_ACTION => << 'MYSQL',
         INSERT INTO single_action
         (main_action_id, action, `table`, id_in_table)
         VALUES (?, '_action_art_', '_table_', ?)
-HEREDOC
+MYSQL
 
     };
 

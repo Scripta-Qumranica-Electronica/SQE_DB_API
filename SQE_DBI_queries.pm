@@ -18,6 +18,14 @@ HEREDOC
     AND scroll_version_id = _scrollversion_
 HEREDOC
 
+    GET_SIGN_CHAR_READING_DATA_IDS => << 'MYSQL',
+  SELECT sign_char_reading_data_id
+      FROM sign_char_reading_data
+      JOIN sign_char_reading_data_owner USING (sign_char_reading_data_id)
+      WHERE sign_char_id=?
+          AND scroll_version_id= _scrollversion_
+    
+MYSQL
 
 };
 

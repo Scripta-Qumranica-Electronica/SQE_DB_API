@@ -96,7 +96,7 @@ sub format_sign {
       : '>';
     ${ $self->{out_text} } .= ( $array_ref->[2] ? $array_ref->[2] : ' ' );
     ${ $self->{out_text} } .= '֯'
-      if $array_ref->[7] eq 'INCOMPLETE_AND_NOT_CLEAR';
+      if ($array_ref->[7] && $array_ref->[7] eq 'INCOMPLETE_AND_NOT_CLEAR');
     ${ $self->{out_text} } .= '</span>';
 
 }

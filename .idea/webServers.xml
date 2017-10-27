@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="5d929535-6f52-429f-a926-fabe68b4ee91" name="SQE_Server" url="http://134.76.19.179">
+        <fileTransfer host="134.76.19.179" port="22" privateKey="$USER_HOME$/.ssh/sqe_id_rsa" rootFolder="/home/perl_libs" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="86ded1ca-1f95-4210-8773-f6b83b4388de" name="TEST_UBUNTU" url="http://192.168.134.20">
+        <fileTransfer host="192.168.134.20" port="22" rootFolder="/home/perl_libs" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

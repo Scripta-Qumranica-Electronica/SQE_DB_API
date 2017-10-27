@@ -9,6 +9,7 @@ use parent 'CGI';
 
 our $sqe_sessions;
 
+
 sub new {
     my ( $class, %args ) = @_;
     # $sqe->sessions should be initialised only once
@@ -18,12 +19,12 @@ sub new {
     my $self = $class->SUPER::new(%args);
     bless $self, 'SQE_CGI';
 
-    $self->start_output;
+    #$self->start_json_output;
 
     # We don't want get-parameter
         if ($self->url_param) {
-            $self->sent_error(SQE_Error::NO_GET_REQUESTS);
-            return (undef, SQE_Error::NO_GET_REQUESTS);
+         #   $self->sent_json_error(SQE_Error::NO_GET_REQUESTS);
+            return ($self, SQE_Error::NO_GET_REQUESTS);
 
         }
 
@@ -44,8 +45,8 @@ sub new {
 
             # A Databasehandler could not be created
             if ( !defined $dbh ) {
-                $self->sent_error($error_ref);
-                return ( undef, $error_ref );
+              #  $self->sent_json_error($error_ref);
+                return ( $self, $error_ref );
             }
 
             # Otherwise, get the data for the Sessionid
@@ -68,8 +69,8 @@ sub new {
             # No entry found
             else {
                 $dbh->disconnect;
-                $self->sent_error(SQE_Error::WRONG_SESSION_ID);
-                return ( undef, SQE_Error::WRONG_SESSION_ID );
+             #   $self->sent_json_error(SQE_Error::WRONG_SESSION_ID);
+                return ( $self, SQE_Error::WRONG_SESSION_ID );
             }
         }
     }
@@ -79,17 +80,18 @@ sub new {
     else {
 
         # Try to get a databasehandler via credentials
+        my $user_name = $self->param('USER_NAME');
+        my $password = $self->param('PASSWORD');
+        my $scrollversion = $self->param('SCROLLVERSION');
         ( $dbh, my $error_ref ) = SQE_DBI->get_login_sqe(
-            $self->param('USER_NAME'),
-            $self->param('PASSWORD'),
-            $self->param('SCROLLVERSION')
+            $user_name, $password, $scrollversion
         );
 
         # If no handler could be created
         if ( !defined $dbh ) {
-            $self->sent_error($error_ref);
-            $self->finish_output;
-            return ( undef, $error_ref );
+         #   $self->sent_json_error($error_ref);
+         #   $self->finish_json_output;
+            return ( $self, $error_ref );
         }
 
         # We got a handler - let's start a new session
@@ -107,7 +109,7 @@ sub new {
         }
     }
     $self->{DBH} = $dbh;
-    $self->print( '"SESSION_ID":"' . $self->{SQE_SESSION_ID} . '",' );
+   # $self->print( '"SESSION_ID":"' . $self->{SQE_SESSION_ID} . '",' );
     return ($self);
 }
 
@@ -119,6 +121,8 @@ sub DESTROY {
     }
 }
 
+
+#@returns SQE_db
 sub dbh {
     return shift->{DBH};
 }
@@ -127,23 +131,28 @@ sub session_id {
     return shift->{SQE_SESSION_ID};
 }
 
-sub sent_error {
+sub sent_json_error {
     my ( $self, $error_ref ) = @_;
     $self->print( '"TYPE":"ERROR","ERROR_CODE":'
           . $error_ref->[0]
           . ',"ERROR_TEXT":"'
           . $error_ref->[1]
           . '"' );
-    $self->finish_output;
 }
 
-sub start_output {
+sub start_json_output {
     my $self = shift;
     $self->header('application/json;charset=UTF-8');
     $self->print('{');
 }
 
-sub finish_output {
+sub print_session_id {
+    my $self = shift;
+    $self->print('"SESSION_ID":"'. $self->session_id . '",');
+
+}
+
+sub finish_json_output {
     shift->print('}');
 }
 

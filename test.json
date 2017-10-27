@@ -1,0 +1,5849 @@
+{
+  "SESSION_ID": "4EF82F56-B8C8-11E7-97FA-921D17200E58",
+  "TYPE": "TEXT",
+  "FORMAT": "JSON",
+  "VALUE": {
+    "SCROLL": "1QM",
+    "FRAGMENTS": [
+      {
+        "FRAGMENT": "1",
+        "LINES": [
+          {
+            "LINE": "1",
+            "SIGNS": [
+              {
+                "SIGN_ID": 32765,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32766,
+                "SIGN": "מ",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 32767,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 32768,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000
+              },
+              {
+                "SIGN_ID": 32769,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32770,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 32771,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 32772,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32773,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 32774,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 32775,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 32776,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32777,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 32778,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 32779,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 32780,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32781,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 32782,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32783,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 32784,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 32785,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32786,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32787,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 32788,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32789,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32790,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 32791,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32792,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32793,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 32794,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32795,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32796,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 32797,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32798,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 32799,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32800,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32801,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 32802,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 32803,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32804,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32805,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32806,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 32807,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32808,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 32809,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32810,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32811,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32812,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 32813,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32814,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32815,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 32816,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32817,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 32818,
+                "SIGN": "ך"
+              },
+              {
+                "SIGN_ID": 32819,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32820,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32821,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 32822,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32823,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32824,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32825,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32826,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32827,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32828,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 32829,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32830,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32831,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32832,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 32833,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 32834,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32835,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 32836,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32837,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 32838,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 32839,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32840,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 32841,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32842,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32843,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 32844,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32845,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 32846,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32847,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32848,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32849,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32850,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 32851,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32852,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32853,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 32854,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 32855,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32856,
+                "SIGN": "ן"
+              }
+            ]
+          },
+          {
+            "LINE": "2",
+            "SIGNS": [
+              {
+                "SIGN_ID": 32859,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32860,
+                "SIGN": "ח",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 32861,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 32862,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 32863,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 32864,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 32865,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 32866,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32867,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 32868,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 32869,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32870,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32871,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32872,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 32873,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 32874,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32875,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 32876,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32877,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32878,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 32879,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 32880,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32881,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32882,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32883,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 32884,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 32885,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32886,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 32887,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32888,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32889,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 32890,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 32891,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 32892,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 32893,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32894,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32895,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 32896,
+                "SIGN": "ז"
+              },
+              {
+                "SIGN_ID": 32897,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 32898,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32899,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 32900,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 32901,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 32902,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32903,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 32904,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32905,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32906,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32907,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 32908,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32909,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 32910,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32911,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32912,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 32913,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32914,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32915,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32916,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32917,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32918,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32919,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32920,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32921,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 32922,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32923,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32924,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32925,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 32926,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32927,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 32928,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 32929,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32930,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32931,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32932,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 32933,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32934,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32935,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32936,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 32937,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32938,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 32939,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32940,
+                "SIGN": "ן"
+              },
+              {
+                "SIGN_ID": 32941,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32942,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 32943,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32944,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32945,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 32946,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32947,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 32948,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 32949,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 32950,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32951,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 32952,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32953,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32954,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32955,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 32956,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 32957,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32958,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32959,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32960,
+                "SIGN": "ם"
+              }
+            ]
+          },
+          {
+            "LINE": "3",
+            "SIGNS": [
+              {
+                "SIGN_ID": 32963,
+                "SIGN": "ב",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 32964,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32965,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 32966,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 32967,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 32968,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 32969,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32970,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 32971,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32972,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32973,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32974,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 32975,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 32976,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32977,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 32978,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32979,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 32980,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 32981,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32982,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32983,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 32984,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32985,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32986,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32987,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 32988,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32989,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 32990,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 32991,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32992,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 32993,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 32994,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 32995,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 32996,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 32997,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 32998,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 32999,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33000,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33001,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33002,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33003,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33004,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33005,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33006,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33007,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33008,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33009,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33010,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33011,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33012,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33013,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33014,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33015,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33016,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33017,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33018,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33019,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33020,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33021,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33022,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33023,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33024,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33025,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33026,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33027,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33028,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33029,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33030,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33031,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33032,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33033,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33034,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33035,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33036,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33037,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33038,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33039,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33040,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33041,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33042,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33043,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33044,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33045,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33046,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33047,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33048,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33049,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33050,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33051,
+                "SIGN": "ם"
+              }
+            ]
+          },
+          {
+            "LINE": "4",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33054,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 33055,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 33056,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33057,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33058,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33059,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33060,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33061,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33062,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33063,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33064,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33065,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33066,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33067,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33068,
+                "SIGN": "צ"
+              },
+              {
+                "SIGN_ID": 33069,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33070,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33071,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33072,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33073,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33074,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33075,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33076,
+                "SIGN": "צ"
+              },
+              {
+                "SIGN_ID": 33077,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33078,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33079,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33080,
+                "SIGN": "צ"
+              },
+              {
+                "SIGN_ID": 33081,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33082,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33083,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33084,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33085,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33086,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33087,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33088,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33089,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33090,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33091,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33092,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33093,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33094,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33095,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33096,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33097,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33098,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33099,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33100,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33101,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33102,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33103,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33104,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33105,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33106,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33107,
+                "SIGN": "צ"
+              },
+              {
+                "SIGN_ID": 33108,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 33109,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33110,
+                "SIGN": "ן"
+              },
+              {
+                "SIGN_ID": 33111,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33112,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33113,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33114,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 33115,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33116,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33117,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33118,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33119,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33120,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33121,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33122,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33123,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33124,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33125,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33126,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33127,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33128,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33129,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33130,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33131,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33132,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33133,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33134,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33135,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33136,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33137,
+                "SIGN": "ן"
+              }
+            ]
+          },
+          {
+            "LINE": "5",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33140,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 33141,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33142,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33143,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33144,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33145,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33146,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33147,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33148,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33149,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33150,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33151,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33152,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33153,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33154,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33155,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33156,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33157,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33158,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33159,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33160,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33161,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33162,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33163,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33164,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33165,
+                "SIGN": "ץ"
+              },
+              {
+                "SIGN_ID": 33166,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33167,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33168,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33169,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33170,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33171,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33172,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33173,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33174,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33175,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33176,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33177,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33178,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33179,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33180,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33181,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33182,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33183,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33184,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33185,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33186,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33187,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33188,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33189,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33190,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33191,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33192,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33193,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33194,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33195,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33196,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33197,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33198,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33199,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33200,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33201,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33202,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33203,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33204,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33205,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33206,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33207,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33208,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33209,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33210,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33211,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33212,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33213,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33214,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33215,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33216,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33217,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33218,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33219,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33220,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33221,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33222,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33223,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33224,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33225,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33226,
+                "SIGN": "ה"
+              }
+            ]
+          },
+          {
+            "LINE": "6",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33229,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33230,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33231,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33232,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33233,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33234,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33235,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33236,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33237,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33238,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 33239,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33240,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33241,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33242,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33243,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 33244,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33245,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33246,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33247,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33248,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33249,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33250,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33251,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33252,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33253,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33254,
+                "SIGN": "ן"
+              },
+              {
+                "SIGN_ID": 33255,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33256,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33257,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33258,
+                "SIGN": "ז"
+              },
+              {
+                "SIGN_ID": 33259,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33260,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33261,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33262,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33263,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33264,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33265,
+                "SIGN": "ס"
+              },
+              {
+                "SIGN_ID": 33266,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33267,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33268,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33269,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33270,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33271,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33272,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33273,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33274,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33275,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33276,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33277,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33278,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33279,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33280,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33281,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33282,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33283,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33284,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33285,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33286,
+                "SIGN": "ע",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33287,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33288,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33289,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33290,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33291,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33292,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33293,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33294,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33295,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33296,
+                "SIGN": "ן"
+              },
+              {
+                "SIGN_ID": 33297,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33298,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33299,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33300,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33301,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33302,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33303,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33304,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33305,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 33306,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33307,
+                "SIGN": "ט"
+              },
+              {
+                "SIGN_ID": 33308,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33309,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33310,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33311,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33312,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33313,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33314,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33315,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33316,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33317,
+                "SIGN": "ה"
+              }
+            ]
+          },
+          {
+            "LINE": "7",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33320,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33321,
+                "SIGN": "ב",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33322,
+                "SIGN": "נ",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33323,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33324,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33325,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33326,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33327,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33328,
+                "SIGN": "ך"
+              },
+              {
+                "SIGN_ID": 33329,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              }
+            ]
+          },
+          {
+            "LINE": "8",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33333,
+                "SIGN": "ו",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33334,
+                "SIGN": "ב",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33335,
+                "SIGN": "נ",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33336,
+                "SIGN": "י",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33337,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33338,
+                "SIGN": "צ",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33339,
+                "SIGN": "ד",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33340,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33341,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33342,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33343,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33344,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33345,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33346,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33347,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33348,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33349,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33350,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33351,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33352,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33353,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33354,
+                "SIGN": "צ"
+              },
+              {
+                "SIGN_ID": 33355,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33356,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33357,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33358,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33359,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33360,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33361,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33362,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33363,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33364,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33365,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33366,
+                "SIGN": "ך"
+              },
+              {
+                "SIGN_ID": 33367,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33368,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33369,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33370,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33371,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33372,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33373,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33374,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33375,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33376,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33377,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33378,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33379,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33380,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33381,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33382,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33383,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33384,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33385,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33386,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33387,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33388,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33389,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33390,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33391,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33392,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33393,
+                "SIGN": "ך"
+              },
+              {
+                "SIGN_ID": 33394,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33395,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33396,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33397,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33398,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33399,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33400,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33401,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33402,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33403,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33404,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33405,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33406,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33407,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33408,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33409,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33410,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33411,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33412,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33413,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33414,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33415,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33416,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33417,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33418,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33419,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33420,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33421,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33422,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33423,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33424,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33425,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33426,
+                "SIGN": "צ"
+              },
+              {
+                "SIGN_ID": 33427,
+                "SIGN": "י"
+              }
+            ]
+          },
+          {
+            "LINE": "9",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33430,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33431,
+                "SIGN": "ע",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33432,
+                "SIGN": "ו",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33433,
+                "SIGN": "ל",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33434,
+                "SIGN": "מ",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33435,
+                "SIGN": "י",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33436,
+                "SIGN": "ם",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33437,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33438,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33439,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33440,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33441,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33442,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33443,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33444,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33445,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33446,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33447,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33448,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33449,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33450,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33451,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33452,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33453,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33454,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33455,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33456,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33457,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33458,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33459,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33460,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33461,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33462,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33463,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33464,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33465,
+                "SIGN": "ך"
+              },
+              {
+                "SIGN_ID": 33466,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33467,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33468,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33469,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33470,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33471,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33472,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33473,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33474,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33475,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33476,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33477,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33478,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33479,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33480,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33481,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33482,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33483,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33484,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33485,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33486,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33487,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33488,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33489,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33490,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33491,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33492,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 33493,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33494,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33495,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33496,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33497,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33498,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33499,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33500,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33501,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33502,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33503,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33504,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33505,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33506,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33507,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33508,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33509,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33510,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33511,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33512,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33513,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33514,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33515,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33516,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33517,
+                "SIGN": "ז"
+              },
+              {
+                "SIGN_ID": 33518,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33519,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33520,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33521,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 33522,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33523,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33524,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33525,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33526,
+                "SIGN": "ל"
+              }
+            ]
+          },
+          {
+            "LINE": "10",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33529,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33530,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33531,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33532,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33533,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33534,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33535,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33536,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33537,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33538,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33539,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33540,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33541,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33542,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33543,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33544,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33545,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33546,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33547,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33548,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33549,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33550,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33551,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33552,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33553,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33554,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33555,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33556,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33557,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33558,
+                "SIGN": "ז"
+              },
+              {
+                "SIGN_ID": 33559,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33560,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33561,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33562,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33563,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33564,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33565,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33566,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33567,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33568,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33569,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33570,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33571,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33572,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33573,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33574,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33575,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33576,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33577,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33578,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33579,
+                "SIGN": "ך"
+              },
+              {
+                "SIGN_ID": 33580,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33581,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33582,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33583,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33584,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33585,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33586,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33587,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33588,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33589,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33590,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33591,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33592,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33593,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33594,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33595,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33596,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33597,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33598,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33599,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33600,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33601,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33602,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33603,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33604,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33605,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33606,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33607,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33608,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33609,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33610,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33611,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33612,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33613,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33614,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33615,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33616,
+                "SIGN": "ת"
+              }
+            ]
+          },
+          {
+            "LINE": "11",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33619,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33620,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33621,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33622,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33623,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33624,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33625,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33626,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33627,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33628,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33629,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33630,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33631,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33632,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33633,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33634,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33635,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33636,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33637,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33638,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33639,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33640,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33641,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33642,
+                "SIGN": "ך"
+              },
+              {
+                "SIGN_ID": 33643,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33644,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33645,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33646,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33647,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33648,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33649,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33650,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33651,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33652,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33653,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33654,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33655,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33656,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33657,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33658,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33659,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33660,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33661,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33662,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33663,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33664,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33665,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33666,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33667,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33668,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33669,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33670,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33671,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33672,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33673,
+                "SIGN": "ן"
+              },
+              {
+                "SIGN_ID": 33674,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33675,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33676,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33677,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33678,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33679,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33680,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33681,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33682,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33683,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33684,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33685,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33686,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33687,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33688,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33689,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33690,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33691,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33692,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33693,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33694,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33695,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33696,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33697,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33698,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33699,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33700,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33701,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33702,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33703,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33704,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33705,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33706,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33707,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33708,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33709,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33710,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33711,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33712,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33713,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33714,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33715,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33716,
+                "SIGN": "ת"
+              }
+            ]
+          },
+          {
+            "LINE": "12",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33719,
+                "SIGN": "צ"
+              },
+              {
+                "SIGN_ID": 33720,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33721,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33722,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33723,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33724,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33725,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33726,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33727,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33728,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33729,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33730,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 33731,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33732,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33733,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33734,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33735,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33736,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33737,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33738,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33739,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33740,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33741,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33742,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33743,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33744,
+                "SIGN": "צ"
+              },
+              {
+                "SIGN_ID": 33745,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33746,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33747,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33748,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33749,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33750,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33751,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33752,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33753,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33754,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33755,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33756,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33757,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33758,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33759,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33760,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33761,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33762,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33763,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33764,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33765,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33766,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33767,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33768,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33769,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33770,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33771,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33772,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33773,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33774,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33775,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33776,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33777,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33778,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33779,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33780,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33781,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 33782,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33783,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33784,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33785,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33786,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33787,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33788,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33789,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33790,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33791,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33792,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33793,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33794,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33795,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33796,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33797,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33798,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33799,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33800,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33801,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33802,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33803,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33804,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33805,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33806,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33807,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33808,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33809,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33810,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33811,
+                "SIGN": "ם"
+              }
+            ]
+          },
+          {
+            "LINE": "13",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33814,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33815,
+                "SIGN": "צ"
+              },
+              {
+                "SIGN_ID": 33816,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 33817,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 33818,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33819,
+                "SIGN": "נ",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33820,
+                "SIGN": "ח",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33821,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33822,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33823,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33824,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33825,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33826,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33827,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33828,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33829,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33830,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33831,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33832,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33833,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33834,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33835,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33836,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33837,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33838,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33839,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33840,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33841,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33842,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33843,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33844,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33845,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33846,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33847,
+                "SIGN": "ז"
+              },
+              {
+                "SIGN_ID": 33848,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 33849,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33850,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33851,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33852,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33853,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33854,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33855,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33856,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33857,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33858,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33859,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33860,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33861,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33862,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33863,
+                "SIGN": "ף"
+              },
+              {
+                "SIGN_ID": 33864,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33865,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33866,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33867,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33868,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33869,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33870,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33871,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33872,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33873,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33874,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33875,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33876,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33877,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33878,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33879,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33880,
+                "SIGN": "ז"
+              },
+              {
+                "SIGN_ID": 33881,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33882,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33883,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33884,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 33885,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33886,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33887,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33888,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33889,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33890,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33891,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33892,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33893,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33894,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33895,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33896,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33897,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33898,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33899,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33900,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33901,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33902,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33903,
+                "SIGN": "ל"
+              }
+            ]
+          },
+          {
+            "LINE": "14",
+            "SIGNS": [
+              {
+                "SIGN_ID": 33906,
+                "SIGN": "א",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33907,
+                "SIGN": "ו",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33908,
+                "SIGN": "ר",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33909,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33910,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 33911,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33912,
+                "SIGN": "ו",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33913,
+                "SIGN": "נ",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33914,
+                "SIGN": "ו",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33915,
+                "SIGN": "פ",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33916,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33917,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33918,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33919,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33920,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33921,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33922,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33923,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 33924,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33925,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33926,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33927,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33928,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33929,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33930,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33931,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33932,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33933,
+                "SIGN": "ס"
+              },
+              {
+                "SIGN_ID": 33934,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33935,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33936,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33937,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33938,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33939,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33940,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33941,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33942,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33943,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33944,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33945,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33946,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33947,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33948,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33949,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33950,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33951,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33952,
+                "SIGN": "צ"
+              },
+              {
+                "SIGN_ID": 33953,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 33954,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33955,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33956,
+                "SIGN": "ב",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33957,
+                "SIGN": "ב",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33958,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33959,
+                "SIGN": "ב",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33960,
+                "SIGN": "נ",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33961,
+                "SIGN": "י",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33962,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33963,
+                "SIGN": "א",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33964,
+                "SIGN": "ו",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33965,
+                "SIGN": "ר",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33966,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 33967,
+                "SIGN": "ו",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33968,
+                "SIGN": "ב",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33969,
+                "SIGN": "ג",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 33970,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33971,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 33972,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33973,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33974,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33975,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 33976,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 33977,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33978,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33979,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33980,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33981,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 33982,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33983,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33984,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 33985,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33986,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33987,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33988,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 33989,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 33990,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 33991,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 33992,
+                "SIGN": "ה"
+              },
+              {
+                "SIGN_ID": 33993,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 33994,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 33995,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 33996,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 33997,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 33998,
+                "SIGN": "ת"
+              }
+            ]
+          },
+          {
+            "LINE": "15",
+            "SIGNS": [
+              {
+                "SIGN_ID": 34001,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34002,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34003,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 34004,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34005,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 34006,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 34007,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 34008,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 34009,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 34010,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34011,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 34012,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 34013,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 34014,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 34015,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 34016,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 34017,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34018,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 34019,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 34020,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 34021,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 34022,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 34023,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34024,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 34025,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 34026,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 34027,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 34028,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34029,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34030,
+                "SIGN": ".",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34031,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34032,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34033,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34034,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              }
+            ]
+          },
+          {
+            "LINE": "16",
+            "SIGNS": [
+              {
+                "SIGN_ID": 34038,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34039,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34040,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 34041,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34042,
+                "SIGN": "ק"
+              },
+              {
+                "SIGN_ID": 34043,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 34044,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 34045,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 34046,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 34047,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 34048,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34049,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 34050,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 34051,
+                "SIGN": "פ"
+              },
+              {
+                "SIGN_ID": 34052,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 34053,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 34054,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34055,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 34056,
+                "SIGN": "ע"
+              },
+              {
+                "SIGN_ID": 34057,
+                "SIGN": "ז"
+              },
+              {
+                "SIGN_ID": 34058,
+                "SIGN": "ר"
+              },
+              {
+                "SIGN_ID": 34059,
+                "SIGN": "ת",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 34060,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34061,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34062,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34063,
+                "SIGN": "א"
+              },
+              {
+                "SIGN_ID": 34064,
+                "SIGN": "מ"
+              },
+              {
+                "SIGN_ID": 34065,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 34066,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34067,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 34068,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 34069,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 34070,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 34071,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34072,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 34073,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 34074,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 34075,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34076,
+                "SIGN": "ח"
+              },
+              {
+                "SIGN_ID": 34077,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 34078,
+                "SIGN": "ש"
+              },
+              {
+                "SIGN_ID": 34079,
+                "SIGN": "ך"
+              },
+              {
+                "SIGN_ID": 34080,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34081,
+                "SIGN": "א",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 34082,
+                "SIGN": "ז",
+                "READABILITY": "INCOMPLETE_AND_NOT_CLEAR"
+              },
+              {
+                "SIGN_ID": 34083,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34084,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000
+              }
+            ]
+          },
+          {
+            "LINE": "17",
+            "SIGNS": [
+              {
+                "SIGN_ID": 34087,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34088,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34089,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 34090,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34091,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 34092,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 34093,
+                "SIGN": "ן"
+              },
+              {
+                "SIGN_ID": 34094,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34095,
+                "SIGN": "ג"
+              },
+              {
+                "SIGN_ID": 34096,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 34097,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 34098,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 34099,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34100,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 34101,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 34102,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 34103,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34104,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34105,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34106,
+                "SIGN": "־"
+              },
+              {
+                "SIGN_ID": 34107,
+                "SIGN": "ם"
+              },
+              {
+                "SIGN_ID": 34108,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34109,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 34110,
+                "SIGN": "ת"
+              },
+              {
+                "SIGN_ID": 34111,
+                "SIGN": "נ"
+              },
+              {
+                "SIGN_ID": 34112,
+                "SIGN": "ו"
+              },
+              {
+                "SIGN_ID": 34113,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34114,
+                "SIGN": "י"
+              },
+              {
+                "SIGN_ID": 34115,
+                "SIGN": "ד"
+              },
+              {
+                "SIGN_ID": 34116,
+                "SIGN": " ",
+                "SIGN_TYPE": "space"
+              },
+              {
+                "SIGN_ID": 34117,
+                "SIGN": "ב"
+              },
+              {
+                "SIGN_ID": 34118,
+                "SIGN": "כ"
+              },
+              {
+                "SIGN_ID": 34119,
+                "SIGN": "ל"
+              },
+              {
+                "SIGN_ID": 34120,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34121,
+                "SIGN": " ",
+                "SIGN_TYPE": "damage",
+                "SIGN_WIDTH": 7.000,
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34122,
+                "SIGN": ".",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34123,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34124,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              }
+            ]
+          },
+          {
+            "LINE": "letzte",
+            "SIGNS": [
+              {
+                "SIGN_ID": 34127,
+                "SIGN": "ו",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34128,
+                "SIGN": "מ",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34129,
+                "SIGN": "ש",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34130,
+                "SIGN": "מ",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34131,
+                "SIGN": "ר",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34132,
+                "SIGN": "ו",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34133,
+                "SIGN": "ת",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34134,
+                "SIGN": " ",
+                "SIGN_TYPE": "space",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34135,
+                "SIGN": "ר",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34136,
+                "SIGN": "א",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34137,
+                "SIGN": "ש",
+                "IS_RECONSTRUCTED": true
+              },
+              {
+                "SIGN_ID": 34138,
+                "SIGN": "י",
+                "IS_RECONSTRUCTED": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
