@@ -3,7 +3,6 @@
 #   SQE_DBI
 ############################################################################################
 
-
 # A child of the normal Perl-DBI package which offers some functions for diret login
 # and to create database-handler of the type SQE_db
 
@@ -19,12 +18,6 @@ use SQE_DBI_queries;
 use parent 'DBI';
 
 use Ref::Util;
-
-
-
-
-
-
 
 # Returns a normal Perl DBI database handler for the SQE database
 sub get_sqe_dbh {
@@ -44,33 +37,34 @@ sub get_sqe_dbh {
     }
 }
 
-
-
-
 # Creates a SQE_db databse handler for the SQE-database using the transmitted credential.
 # Set's the user id as the default user id for all actions and, if given, also the version.
 # The version can be set or altered later by using SQE_db->set_version_id
 sub get_login_sqe {
     my ( $class, $user_name, $password, $version ) = @_;
+
     #Return with error data if either user name or password is missing
-    return (undef, SQE_Error::WRONG_USER_DATA)
+    return ( undef, SQE_Error::WRONG_USER_DATA )
       if not( $user_name && $password );
 
     # Try to get an database handler
     my ( $dbh, $error_ref ) = SQE_DBI->get_sqe_dbh();
 
     # Return with error data if no database handler is available
-    return (undef, $error_ref) if not $dbh;
+    return ( undef, $error_ref ) if not $dbh;
 
     #Transform into a SQE_db handler and try to login
     $dbh = bless $dbh, 'SQE_db';
-    (my $scrollversion, $error_ref)=$dbh->set_user($user_name, $password, $version);
+    ( my $scrollversion, $error_ref ) =
+      $dbh->set_user( $user_name, $password, $version );
 
-    if (!defined $scrollversion) {
-        # The scrollversion does not exist or is not available for the user  - return the error and undef for the handler
+    if ( !defined $scrollversion ) {
+
+# The scrollversion does not exist or is not available for the user  - return the error and undef for the handler
         $dbh->disconnect;
-        return (undef, $error_ref);
-    } else {
+        return ( undef, $error_ref );
+    }
+    else {
         # Otherwise return the handler
         return $dbh;
     }
@@ -79,7 +73,6 @@ sub get_login_sqe {
 ############################################################################################
 #   Databasehandler
 ############################################################################################
-
 
 # A child of a normal DBI databasehandler which provides some functions
 # to include user ids and versions, to log changes and to retrieve data.
@@ -177,7 +170,7 @@ MYSQL
         _join_
         WHERE _where_
          AND _table__owner.scroll_version_id = _scrollversion_
-  
+
 MYSQL
 
         LOG_CHANGE_USER => << 'MYSQL',
@@ -196,7 +189,6 @@ MYSQL
         COL_TO_LINE_JOIN   => 'JOIN col_to_line USING (line_id)',
         SCROLL_TO_COL_JOIN => 'JOIN scroll_to_col USING (col_id)',
 
-
         NEW_SCROLL_VERSION => << 'MYSQL',
         INSERT INTO scroll_version
         (user_id, scroll_id, version) values (?,?,?)
@@ -208,17 +200,16 @@ MYSQL
             WHERE user_id=? AND scroll_id=?
 MYSQL
 
-
     };
 
-    # Internal function to add the current user/version to a table for a whole scroll or part of it
-    # The adding is not logged, thus to rewind it, one must use remove_user manually
-    #
-    # Parameters
-    #   Name of the data table
-    #   Array ref with joins to connect the table data with the scroll or part of it
-    #   Query fragment giving the data (of the part) of scroll
-    #   The scrollversion of the source
+# Internal function to add the current user/version to a table for a whole scroll or part of it
+# The adding is not logged, thus to rewind it, one must use remove_user manually
+#
+# Parameters
+#   Name of the data table
+#   Array ref with joins to connect the table data with the scroll or part of it
+#   Query fragment giving the data (of the part) of scroll
+#   The scrollversion of the source
     sub _run_add_user_query {
         my ( $self, $table, $joins, $where, $old_scrollversion ) = @_;
         my $query = ADD_USER;
@@ -231,13 +222,13 @@ MYSQL
         $self->do($query);
     }
 
-    # Internal function to remove the current user/version to a table for a whole scroll or part of it
-    # The removal is logged
-    #
-    # Parameters
-    #   Name of the data table
-    #   Array ref with joins to connect the table data with the scroll or part of it
-    #   Query fragment giving the data (of the part) of scroll
+# Internal function to remove the current user/version to a table for a whole scroll or part of it
+# The removal is logged
+#
+# Parameters
+#   Name of the data table
+#   Array ref with joins to connect the table data with the scroll or part of it
+#   Query fragment giving the data (of the part) of scroll
     sub _run_remove_user_query {
         my ( $self, $table, $joins, $where ) = @_;
         my $query = LOG_CHANGE_USER;
@@ -256,9 +247,6 @@ MYSQL
         $query =~ s/_scrollversion_/$self->scrollversion/oe;
         $self->do($query);
     }
-
-
-
 
     # Internal function, thats adds an owner/version to a table and logs it
     # Note: this is done as part of a complex action logged as one group
@@ -287,15 +275,15 @@ MYSQL
     # Parameters
     #   scroll id
     sub create_new_scrollversion {
-        my $self=shift;
-        my $scroll_id = shift;
+        my $self             = shift;
+        my $scroll_id        = shift;
         my $next_version_sth = $self->prepare_cached(NEXT_VERSION);
-        $next_version_sth->execute($self->user_id, $scroll_id);
+        $next_version_sth->execute( $self->user_id, $scroll_id );
         my $version = $next_version_sth->fetchrow_arrayref->[0];
         $next_version_sth->finish;
-        my $new_scrollversion_sth= $self->prepare_cached(NEW_SCROLL_VERSION);
-        $new_scrollversion_sth->execute($self->user_id, $scroll_id, $version);
-        $self->_set_scrollversion( $self->{mysql_insertid});
+        my $new_scrollversion_sth = $self->prepare_cached(NEW_SCROLL_VERSION);
+        $new_scrollversion_sth->execute( $self->user_id, $scroll_id, $version );
+        $self->_set_scrollversion( $self->{mysql_insertid} );
         $new_scrollversion_sth->finish;
 
     }
@@ -321,81 +309,84 @@ MYSQL
         return $result;
     }
 
-
-
-    # Internal function which adds a record attributed by the current scrollversion to a table and logs it.
-    # The new record contains the same values as the one referred by $id except those given
-    # as an array of [field-name, value, fieldname, ...] which replace the old values.
-    # The function returns the id of the new record, or the old one if the new values are in fact
-    # identical with the old one.
-    #
-    # Note: if already a different record with the new values exist, the function returns its id and
-    # transform only the owner/version form the old to the new one
-    #
-    # Note: this is done as part of a complex action logged as one group
-    # thus is should only be called after start_logged_action is called before
-    # in a calling function followed later by stop_logged_action
-    #
-    # Parameters
-    #   the name of the table (note: there must exist a related owner table!)
-    #   the id of the source record
-    #   new values as array of field-name1, value1[, field-name2, value2, ...]
-    # if the value need to be calculated by a mysql-function the function and its parameters
-    #
-    # can be given as an arrray ref with the function name as first value followed by the parameters
-    # Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
-    # Note: ad the moment no nested function are allowed
+# Internal function which adds a record attributed by the current scrollversion to a table and logs it.
+# The new record contains the same values as the one referred by $id except those given
+# as an array of [field-name, value, fieldname, ...] which replace the old values.
+# The function returns the id of the new record, or the old one if the new values are in fact
+# identical with the old one.
+#
+# Note: if already a different record with the new values exist, the function returns its id and
+# transform only the owner/version form the old to the new one
+#
+# Note: this is done as part of a complex action logged as one group
+# thus is should only be called after start_logged_action is called before
+# in a calling function followed later by stop_logged_action
+#
+# Parameters
+#   the name of the table (note: there must exist a related owner table!)
+#   the id of the source record
+#   new values as array of field-name1, value1[, field-name2, value2, ...]
+# if the value need to be calculated by a mysql-function the function and its parameters
+#
+# can be given as an arrray ref with the function name as first value followed by the parameters
+# Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
+# Note: ad the moment no nested function are allowed
     sub _add_value {
-        my ($self, $table, $id, %values) = @_;
+        my ( $self, $table, $id, %values ) = @_;
 
-        # Let's set the new id to the old id in case, there won't be a new record
-        my $insert_id=$id;
+       # Let's set the new id to the old id in case, there won't be a new record
+        my $insert_id = $id;
 
-        foreach my $key (keys %values) {
-            # With Scalar::Util::reftype I (Bronson) got the error "Use of uninitialized value in string".
-            # Since it is deprecated, I switched to Ref::Util, and everything works now.
-            # if (Scalar::Util::reftype($values{$key}) eq 'ARRAY') {
-            if (Ref::Util::is_arrayref($values{$key})) {
-                my $command = shift @{$values{$key}};
-                if ($command=~ /[^A-Za-z0-9_]/) {
-                    return (undef, SQE_Error::FORBIDDEN_FUNCTION);
+        foreach my $key ( keys %values ) {
+
+# With Scalar::Util::reftype I (Bronson) got the error "Use of uninitialized value in string".
+# Since it is deprecated, I switched to Ref::Util, and everything works now.
+# if (Scalar::Util::reftype($values{$key}) eq 'ARRAY') {
+            if ( Ref::Util::is_arrayref( $values{$key} ) ) {
+                my $command = shift @{ $values{$key} };
+                if ( $command =~ /[^A-Za-z0-9_]/ ) {
+                    return ( undef, SQE_Error::FORBIDDEN_FUNCTION );
                 }
-                my $question_marks = join( ', ', map { '?' } @{$values{$key}} );
+                my $question_marks =
+                  join( ', ', map { '?' } @{ $values{$key} } );
                 my $value_query = "SELECT $command($question_marks)";
-                my $command_sth=$self->prepare_cached($value_query);
-                if (@{$values{$key}}==0) {
-                    eval{$command_sth->execute};
-                } else {
-                    eval{$command_sth->execute(@{$values{$key}})};
+                my $command_sth = $self->prepare_cached($value_query);
+                if ( @{ $values{$key} } == 0 ) {
+                    eval { $command_sth->execute };
+                }
+                else {
+                    eval { $command_sth->execute( @{ $values{$key} } ) };
                 }
                 if ($@) {
                     $command_sth->finish;
-                    return (undef, SQE_Error::UNRECOGNIZED_FUNCTION) if $@;
+                    return ( undef, SQE_Error::UNRECOGNIZED_FUNCTION ) if $@;
                 }
-                    $values{$key}=$command_sth->fetchrow_arrayref->[0];
+                $values{$key} = $command_sth->fetchrow_arrayref->[0];
                 $command_sth->finish;
             }
         }
 
         # get the old record
-        my $query  = SQE_DBI_queries::GET_ALL_VALUES;
+        my $query = SQE_DBI_queries::GET_ALL_VALUES;
         $query =~ s/_table_/$table/og;
-        my $sth    = $self->prepare_sqe($query);
+        my $sth = $self->prepare_sqe($query);
         $sth->execute($id);
 
         # the record had been found
-        if ( my $data_ref = $sth->fetchrow_hashref ) {
+        if ( my $data_ref = $sth->fetchrow_hashref or $id == 0) {
+
+            $data_ref= {} if !defined $data_ref;
 
             # replace the old values by the given new ones
             foreach my $key ( keys %values ) {
                 $data_ref->{$key} = $values{$key};
             }
 
-            # get all field-names except the id of the record and create a query to test
-            # wether a different record containing the new vaules already exist
+    # get all field-names except the id of the record and create a query to test
+    # wether a different record containing the new vaules already exist
             my @keys =
-                grep { $_ ne '' }
-                    map { $_ if $_ ne "${table}_id" } keys %$data_ref;
+              grep { $_ ne '' }
+              map { $_ if $_ ne "${table}_id" } keys %$data_ref;
             my $fields = join( ' = ? AND ', @keys ) . ' = ?';
             $query = "SELECT ${table}_id from  $table where $fields";
             my $new_sth = $self->prepare_cached($query);
@@ -404,18 +395,21 @@ MYSQL
 
             # if such a different record exist
             if ( @id > 0 && $insert_id != $id[0] ) {
+
                 # Simply add current user/version as a new owner to it
-                $insert_id=$id[0];
+                $insert_id = $id[0];
                 $self->_add_owner( $table, $insert_id );
             }
+
             # if such a record does not exist
             elsif ( @id == 0 ) {
+
                 # create a new record with the values
                 my $question_marks = join( ', ', map { '?' } @keys );
                 $query =
                     "INSERT INTO ${table} ("
-                        . join( ', ', @keys )
-                        . ") VALUES ($question_marks)";
+                  . join( ', ', @keys )
+                  . ") VALUES ($question_marks)";
                 my $add_sth = $self->prepare_cached($query);
                 $add_sth->execute( map { $data_ref->{$_} } @keys );
                 $insert_id = $self->{mysql_insertid};
@@ -425,123 +419,128 @@ MYSQL
                 $self->_add_owner( $table, $insert_id );
             }
             $new_sth->finish;
-        } else {
+        }
+        else {
             $sth->finish;
-            return (undef, SQE_Error->RECORD_NOT_FOUND);
+            return ( undef, SQE_Error->RECORD_NOT_FOUND );
         }
         $sth->finish;
-        if ($table eq 'sign_char') {
-            my $data_ids_sth = $self->prepare_sqe(SQE_DBI_queries::GET_SIGN_CHAR_READING_DATA_IDS);
-            $data_ids_sth->execute($id);
-            foreach my $data_id ($data_ids_sth->fetchrow_array) {
-                $self->change_value('sign_char_reading_data',$data_id, 'sign_char_id', $insert_id);
-            }
-
-        }
-        return $insert_id
+#        if ( $table eq 'sign_char' ) {
+#            my $data_ids_sth = $self
+#              ->prepare_sqe(SQE_DBI_queries::GET_SIGN_CHAR_READING_DATA_IDS);
+#            $data_ids_sth->execute($id);
+#            foreach my $data_id ( $data_ids_sth->fetchrow_array ) {
+#                $self->change_value(
+#                    'sign_char_reading_data', $data_id,
+#                    'sign_char_id',           $insert_id
+#                );
+#            }
+#
+#        }
+        return $insert_id;
     }
 
-    # Adds  a duplicate of record owned by current user/version with the given id with changed values and logs it.
-    # If the new values given are identical with the old ones, the record will be not duplicated
-    # and instead of the new id the old id is returned.
-    #
-    #
-    # Parameters
-    #   Table-name
-    #   id of the record to be duplicated
-    #   new values as array of field-name1, value1[, field-name2, value2, ...]
-    # if the value need to be calculated by a mysql-function the function and its parameters
-    #
-    # can be given as an arrray ref with the function name as first value followed by the parameters
-    # Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
-    # Note: ad the moment no nested function are allowed
-
+# Adds  a duplicate of record owned by current user/version with the given id with changed values and logs it.
+# If the new values given are identical with the old ones, the record will be not duplicated
+# and instead of the new id the old id is returned.
+#
+#
+# Parameters
+#   Table-name
+#   id of the record to be duplicated
+#   new values as array of field-name1, value1[, field-name2, value2, ...]
+# if the value need to be calculated by a mysql-function the function and its parameters
+#
+# can be given as an arrray ref with the function name as first value followed by the parameters
+# Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
+# Note: ad the moment no nested function are allowed
+    #@method
     sub add_value {
         my $self = shift;
-        return (undef, SQE_Error::QWB_RECORD) if $self->scrollversion==1;
+        return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
         $self->start_logged_action;
-        my ($new_id, $error_ref)= $self->_add_value( @_);
+        my ( $new_id, $error_ref ) = $self->_add_value(@_);
         $self->stop_logged_action;
-        return ($new_id, $error_ref);
+        return ( $new_id, $error_ref );
 
     }
 
-    # Changes the record owned by the current user/version with the given id using the given values and logs it.
-    # If the new values given are identical with the old ones, nothing happens and the old id is returned
-    # Otherwise the id of the record with the changed value is returned
-    #
-    #
-    # Parameters
-    #   Table-name
-    #   id of the record to be changed
-    #   new values as array of field-name1, value1[, field-name2, value2, ...]
-    #
-    # if the value need to be calculated by a mysql-function the function and its parameters
-    #
-    # can be given as an arrray ref with the function name as first value followed by the parameters
-    # Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
-    # Note: ad the moment no nested function are allowed
+# Changes the record owned by the current user/version with the given id using the given values and logs it.
+# If the new values given are identical with the old ones, nothing happens and the old id is returned
+# Otherwise the id of the record with the changed value is returned
+#
+#
+# Parameters
+#   Table-name
+#   id of the record to be changed
+#   new values as array of field-name1, value1[, field-name2, value2, ...]
+#
+# if the value need to be calculated by a mysql-function the function and its parameters
+#
+# can be given as an arrray ref with the function name as first value followed by the parameters
+# Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
+# Note: ad the moment no nested function are allowed
 
     sub change_value {
-        my $self   = shift;
-        my $table  = shift;
-        my $id     = shift;
-        return (undef, SQE_Error::QWB_RECORD) if $self->scrollversion==1;
+        my $self  = shift;
+        my $table = shift;
+        my $id    = shift;
+        return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
         $self->start_logged_action;
-        my ($new_id, $error_ref)=$self->_add_value($table, $id, @_);
-        if (defined $new_id) {
-            if ($id != $new_id) {
-                $self->_remove_owner($table, $id);
+        my ( $new_id, $error_ref ) = $self->_add_value( $table, $id, @_ );
+        if ( defined $new_id ) {
+            if ( $id != $new_id ) {
+                $self->_remove_owner( $table, $id );
             }
             $self->stop_logged_action;
             return $new_id;
-        } else {
+        }
+        else {
             $self->stop_logged_action;
-            return (undef, $error_ref);
+            return ( undef, $error_ref );
 
         }
     }
 
-    # Removes a record owned by the current user/version with the given id from user/version and logs it.
-    #
-    #
-    # Parameters
-    #   Table-name
-    #   id of the record to be duplicated
+
+# Removes a record owned by the current user/version with the given id from user/version and logs it.
+#
+#
+# Parameters
+#   Table-name
+#   id of the record to be duplicated
     sub remove_entry {
-        my ($self, $table, $id) = @_;
-        return (undef, SQE_Error::QWB_RECORD) if $self->scrollversion==1;
+        my ( $self, $table, $id ) = @_;
+        return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
         $self->start_logged_action;
-        my $result=$self->_remove_owner($table, $id);
+        my $result = $self->_remove_owner( $table, $id );
         $self->stop_logged_action;
-        if ($result>0) {
+        if ( $result > 0 ) {
             return $result;
-        } else {
-            return (undef, SQE_Error::RECORD_NOT_FOUND);
+        }
+        else {
+            return ( undef, SQE_Error::RECORD_NOT_FOUND );
         }
     }
 
-
-    # Adds the given column/fragment from a user/version with all its data to the current user/version
-    # If the user_id of the source is not given, the default QWB text (user_id=0, version =0) is taken
-    #
-    # Note: the col/fragment is taken out from its original scroll!
-    #
-    # Parameters
-    #   Id of the column/fragment
-    #   id of the user_id of the old owner (optional)
-    #   version from the old user/version (optional)
+# Adds the given column/fragment from a user/version with all its data to the current user/version
+# If the user_id of the source is not given, the default QWB text (user_id=0, version =0) is taken
+#
+# Note: the col/fragment is taken out from its original scroll!
+#
+# Parameters
+#   Id of the column/fragment
+#   id of the user_id of the old owner (optional)
+#   version from the old user/version (optional)
     sub add_owner_to_col {
-        my $self        = shift;
-        my $id          = shift;
-        my $where       = " col_to_line.col_id= $id";
+        my $self              = shift;
+        my $id                = shift;
+        my $where             = " col_to_line.col_id= $id";
         my $old_scrollversion = shift;
 
-        if (! defined $old_scrollversion) {
-            $old_scrollversion= 1;
+        if ( !defined $old_scrollversion ) {
+            $old_scrollversion = 1;
         }
-
-
 
         $self->_run_add_user_query( 'sign_char_reading_data',
             [ SIGN_CHAR_JOIN, LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN ],
@@ -549,19 +548,19 @@ MYSQL
 
         $self->_run_add_user_query( 'sign_char',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN ],
-            $where,  $old_scrollversion );
+            $where, $old_scrollversion );
 
         $self->_run_add_user_query( 'sign_relative_position',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN ],
-            $where,  $old_scrollversion );
+            $where, $old_scrollversion );
 
         $self->_run_add_user_query( 'real_char_area',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN ],
-            $where,  $old_scrollversion );
+            $where, $old_scrollversion );
 
         $self->_run_add_user_query( 'position_in_stream',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN ],
-            $where,  $old_scrollversion );
+            $where, $old_scrollversion );
 
         $self->_run_add_user_query( 'line_to_sign', [COL_TO_LINE_JOIN],
             $where, $old_scrollversion );
@@ -570,29 +569,27 @@ MYSQL
             $where, $old_scrollversion );
 
         $self->_run_add_user_query( 'col_to_line', [], $where,
-             $old_scrollversion );
+            $old_scrollversion );
 
         $self->_run_add_user_query( 'col_data', [], "col_data.col_id=$id",
             $old_scrollversion );
 
-
-
     }
 
-    # Adds the given scroll from a user/version with all its data to the current user/version
-    # If the user_id of the source is not given, the default QWB text (user_id=0, version =0) is taken
-    #
-    # Parameters
-    #   Id of the scroll
-    #   id of the userversion the old owner (optional)
+# Adds the given scroll from a user/version with all its data to the current user/version
+# If the user_id of the source is not given, the default QWB text (user_id=0, version =0) is taken
+#
+# Parameters
+#   Id of the scroll
+#   id of the userversion the old owner (optional)
     sub add_owner_to_scroll {
-        my $self        = shift;
-        my $scroll_id          = shift;
-        my $where       = " scroll_to_col.scroll_id= $scroll_id";
-        my $old_userversion    = shift;
+        my $self            = shift;
+        my $scroll_id       = shift;
+        my $where           = " scroll_to_col.scroll_id= $scroll_id";
+        my $old_userversion = shift;
 
-        if (! defined $old_userversion) {
-            $old_userversion =1;
+        if ( !defined $old_userversion ) {
+            $old_userversion = 1;
         }
 
         $self->create_new_scrollversion($scroll_id);
@@ -613,7 +610,7 @@ MYSQL
 
         $self->_run_add_user_query( 'sign_relative_position',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
-            $where, $old_userversion);
+            $where, $old_userversion );
 
         $self->_run_add_user_query( 'real_char_area',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
@@ -635,23 +632,26 @@ MYSQL
             $old_userversion );
 
         $self->_run_add_user_query( 'col_data', [SCROLL_TO_COL_JOIN], $where,
-            $old_userversion);
+            $old_userversion );
 
-        $self->_run_add_user_query( 'scroll_to_col', [], $where, $old_userversion);
+        $self->_run_add_user_query( 'scroll_to_col', [], $where,
+            $old_userversion );
 
         $self->_run_add_user_query( 'scroll_data', [],
-            "scroll_data.scroll_id=$scroll_id", $old_userversion );
+            "scroll_data.scroll_id=$scroll_id",
+            $old_userversion );
 
         # Added by Bronson for copying artefact data
         $self->_run_add_user_query( 'artefact', [],
-            "artefact.scroll_id=$scroll_id", $old_userversion );
+            "artefact.scroll_id=$scroll_id",
+            $old_userversion );
 
     }
 
-    # Removes the given scroll from a user/version with all its data from the current user/version
-    #
-    # Parameters
-    #   Id of the scroll
+# Removes the given scroll from a user/version with all its data from the current user/version
+#
+# Parameters
+#   Id of the scroll
     sub remove_owner_from_scroll {
         my $self  = shift;
         my $id    = shift;
@@ -704,10 +704,10 @@ MYSQL
 
     }
 
-    # Removes the given column/fragment from a user/version with all its data from the current user/version
-    #
-    # Parameters
-    #   Id of the column/fragment
+# Removes the given column/fragment from a user/version with all its data from the current user/version
+#
+# Parameters
+#   Id of the column/fragment
     sub remove_owner_from_col {
         my $self  = shift;
         my $id    = shift;
@@ -753,21 +753,20 @@ MYSQL
 
         $self->_run_remove_user_query( 'scroll_to_col', [], $where );
 
-
         $self->stop_logged_action;
 
     }
 
-    # Sets the user_id for a given user whose credential are provided
-    # Earlier set id's are overwritten.
-    # If version is provided, also the version number is set anew otherwise it is set to 0
-    # Parameters
-    #   username
-    #   password
-    #   version (optional)
-    # Returns the new scrollversion if ok, otherwise unddef and a ref to the appropriate error array
+# Sets the user_id for a given user whose credential are provided
+# Earlier set id's are overwritten.
+# If version is provided, also the version number is set anew otherwise it is set to 0
+# Parameters
+#   username
+#   password
+#   version (optional)
+# Returns the new scrollversion if ok, otherwise unddef and a ref to the appropriate error array
     sub set_user {
-        my ($self, $user_name, $password, $scrollversion) = @_;
+        my ( $self, $user_name, $password, $scrollversion ) = @_;
         undef $self->{private_SQE_DBI_data}->{main_action_sth};
 
         # Try to get the user id
@@ -778,14 +777,16 @@ MYSQL
         {
             #We got a unique user id - return datbase handler and id
             $sth->finish();
-            $self->{private_SQE_DBI_data}->{user_id}=$user_data->[0];
+            $self->{private_SQE_DBI_data}->{user_id} = $user_data->[0];
 
-            if ($self->{private_SQE_DBI_data}->{user_id} == 0 ) {
+            if ( $self->{private_SQE_DBI_data}->{user_id} == 0 ) {
                 $self->_set_scrollversion(1);
                 return 1;
-            } elsif (defined $scrollversion) {
+            }
+            elsif ( defined $scrollversion ) {
                 return $self->set_scrollversion($scrollversion);
-            } else {
+            }
+            else {
                 $self->_set_scrollversion(0);
                 return 0;
             }
@@ -793,58 +794,57 @@ MYSQL
         }
         elsif ($user_data) {
 
-            # We got more than one user ids - return without handler but with error data
+    # We got more than one user ids - return without handler but with error data
             $sth->finish();
             $self->disconnect();
-            return (undef, SQE_Error::NO_UNIQUE_USER);
+            return ( undef, SQE_Error::NO_UNIQUE_USER );
 
         }
         else {
             # We got no user id - - return without handler but with error data
             $sth->finish();
             $self->disconnect();
-            return (undef, SQE_Error::WRONG_USER_DATA);
+            return ( undef, SQE_Error::WRONG_USER_DATA );
         }
 
     }
 
-    # Sets the scrollversion to be used in sqe_queries
-    # The function checks, whether the new scrollversion does belong to the user.
-    # If ok, it returns the new scrollversion, otherwise undef and a ref to the  appropriate error-array
-    #
-    # Parameters:
-    #   new scrollversion
+# Sets the scrollversion to be used in sqe_queries
+# The function checks, whether the new scrollversion does belong to the user.
+# If ok, it returns the new scrollversion, otherwise undef and a ref to the  appropriate error-array
+#
+# Parameters:
+#   new scrollversion
     sub set_scrollversion {
-        my ($self, $new_scrollversion) = @_;
+        my ( $self, $new_scrollversion ) = @_;
 
         # First check whether the new scrollversion is the global QWB version
-        if ($new_scrollversion== 1) {
+        if ( $new_scrollversion == 1 ) {
             $self->_set_scrollversion(1);
             return 1;
         }
 
         # If not, check, whether the scrollversion belongs to the current user
-        my $check_sth = $self->prepare_cached(SQE_DBI_queries::CHECK_SCROLLVERSION);
+        my $check_sth =
+          $self->prepare_cached(SQE_DBI_queries::CHECK_SCROLLVERSION);
         $check_sth->execute($new_scrollversion);
         my $data_ref = $check_sth->fetchrow_arrayref;
         $check_sth->finish;
-        if ($data_ref && $data_ref->[0]==$self->user_id) {
+        if ( $data_ref && $data_ref->[0] == $self->user_id ) {
             $self->_set_scrollversion($new_scrollversion);
             return $new_scrollversion;
         }
-        return (undef, SQE_Error::WRONG_SCROLLVERSION);
+        return ( undef, SQE_Error::WRONG_SCROLLVERSION );
     }
 
     # Internal function to sert a new scrollversion without prior checking
     # Parameters
     #   new scrollversion
     sub _set_scrollversion {
-        my $self=shift;
+        my $self = shift;
         $self->{private_SQE_DBI_data}->{scrollversion} = shift;
         undef $self->{private_SQE_DBI_data}->{main_action_sth};
     }
-
-
 
     # Returns the current user_id
     sub user_id {
@@ -867,7 +867,7 @@ MYSQL
     sub start_logged_action {
         my $self = shift;
         $self->{AutoCommit} = 0;
-        my $sth  = $self->{private_SQE_DBI_data}->{main_action_sth};
+        my $sth = $self->{private_SQE_DBI_data}->{main_action_sth};
         if ( not $sth ) {
             my $query = NEW_MAIN_ACTION;
             $self->_inject_scroll_version_id( \$query );
@@ -875,7 +875,8 @@ MYSQL
             $self->{private_SQE_DBI_data}->{main_action_sth} = $sth;
         }
         $sth->execute();
-        $self->{private_SQE_DBI_data}->{main_action_id} = $self->{mysql_insertid};
+        $self->{private_SQE_DBI_data}->{main_action_id} =
+          $self->{mysql_insertid};
     }
 
     # Stops a set of logged actions startet with start_logged_action
@@ -889,11 +890,12 @@ MYSQL
     # The statement is always cached.
     # Parameters
     #    same as DB->prepare parameters
+    #@returns SQE_st
     sub prepare_sqe {
         my $self  = shift;
         my $query = shift;
         $self->_inject_scroll_version_id( \$query );
-        return bless $self->prepare_cached($query, @_), 'SQE_st';
+        return bless $self->prepare_cached( $query, @_ ), 'SQE_st';
     }
 
 # Internal function to substitute _user_ and _version_ found in a query with the current user- and version-is
@@ -971,13 +973,11 @@ MYSQL
         return $self->selectall_arrayref( $query, @_ );
     }
 
-
 }
 
 ############################################################################################
 #   SQE_st
 ############################################################################################
-
 
 # A child of DBI::st which adds function for logged actions
 {
@@ -994,10 +994,10 @@ MYSQL
 
     };
 
-    # Tells the statementhandler which kind of action and table the following executes affect
-    # Parameters
-    #   the action ('ADD' or 'DELETE')
-    #   the affected table
+# Tells the statementhandler which kind of action and table the following executes affect
+# Parameters
+#   the action ('ADD' or 'DELETE')
+#   the affected table
     sub set_action {
         my ( $self, $action_art, $table ) = @_;
         if ( not $self->{private_sth} ) {
@@ -1008,14 +1008,14 @@ MYSQL
         }
     }
 
-
     # Execute the statement and logs it
     #
     sub logged_execute {
         my ( $self, $id ) = @_;
-        my $dbh = $self->{Database};
-        my $result=$self->execute($id);
-        $self->{private_sth}->execute( $dbh->action_log_id, $id ) if $result>0;
+        my $dbh    = $self->{Database};
+        my $result = $self->execute($id);
+        $self->{private_sth}->execute( $dbh->action_log_id, $id )
+          if $result > 0;
         return $result;
 
     }
@@ -1032,7 +1032,6 @@ MYSQL
 ############################################################################################
 #   Signstreamhandler
 ############################################################################################
-
 
 # Internal class which provides the logic for a sign stream created by SQE_DB->create_sign_stream_for_fragment_id
 # or create_sign_stream_for_line_id
@@ -1052,15 +1051,14 @@ MYSQL
         return $self;
     }
 
-
     # Set the sign id as star id
     sub set_start_id {
         my $self = shift;
         $self->{current_sign_id} = shift;
     }
 
-    # Internal function which sets the the current sign id to the next value or to undef, if the end of the stream is reached.
-    # Returns the new id
+# Internal function which sets the the current sign id to the next value or to undef, if the end of the stream is reached.
+# Returns the new id
     sub _next_sign_id {
         my $self = shift;
         return $self->{current_sign_id} =
@@ -1089,6 +1087,4 @@ MYSQL
 }
 
 1;
-
-
 

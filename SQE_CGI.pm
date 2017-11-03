@@ -10,6 +10,7 @@ use parent 'CGI';
 our $sqe_sessions;
 
 
+#@returns SQE_db
 sub new {
     my ( $class, %args ) = @_;
     # $sqe->sessions should be initialised only once
