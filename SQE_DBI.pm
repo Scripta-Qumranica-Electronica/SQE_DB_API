@@ -84,21 +84,22 @@ sub get_login_sqe {
     use constant {
         GET_ALL_SIGNS_IN_FRAGMENT => << 'MYSQL',
 		SELECT
-			position_in_stream.next_sign_id,
-			position_in_stream.sign_id,
-			sign_char.sign,
-			sign_char.sign_type_id,
-			sign_type.type,
-			sign_char.width,
-			sign_char.might_be_wider,
-			sign_char_reading_data.readability,
-            sign_char_reading_data.is_retraced,
-            sign_char_reading_data.is_reconstructed,
-            sign_char_reading_data.correction,
-			sign_char.is_variant,
-            sign_char_reading_data.sign_char_reading_data_id,
-            sign_char.sign_char_id
-				FROM col_to_line
+            /* 0 */   position_in_stream.next_sign_id,
+            /* 1 */   position_in_stream.sign_id,
+            /* 2 */   sign_char.sign, /* 0 */
+            /* 3 */   sign_char.sign_type_id,
+            /* 4 */   sign_type.type,
+            /* 5 */   sign_char.width,
+            /* 6 */   sign_char.might_be_wider,
+            /* 7 */   sign_char_reading_data.readability,
+            /* 8 */   sign_char_reading_data.is_retraced,
+            /* 9 */   sign_char_reading_data.is_reconstructed,
+            /* 10 */  sign_char_reading_data.correction,
+            /* 11 */  sign_char.is_variant,
+            /* 12 */  sign_char_reading_data.sign_char_reading_data_id,
+            /* 13 */  sign_char.sign_char_id,
+            /* 14 */  if(sign_char_reading_data_owner.scroll_version_id != _scrollversion_, 1, NULL) as var
+        FROM col_to_line
 						JOIN line_to_sign USING (line_id)
 	JOIN position_in_stream USING (sign_id)
 	JOIN position_in_stream_owner USING (position_in_stream_id)
@@ -110,27 +111,29 @@ sub get_login_sqe {
 	WHERE col_id =?
 	AND sign_char_owner.scroll_version_id = _scrollversion_
 	AND position_in_stream_owner.scroll_version_id= _scrollversion_
-	AND (sign_char_reading_data_owner.scroll_version_id is null OR sign_char_reading_data_owner.scroll_version_id = _scrollversion_)
+        ORDER BY sign_char.sign_char_id, var
 
 MYSQL
 
         GET_ALL_SIGNS_IN_LINE => << 'MYSQL',
 		SELECT
-			position_in_stream.next_sign_id,
-			position_in_stream.sign_id,
-			sign_char.sign,
-			sign_char.sign_type_id,
-			sign_type.type,
-			sign_char.width,
-			sign_char.might_be_wider,
-            sign_char_reading_data.readability,
-            sign_char_reading_data.is_retraced,
-            sign_char_reading_data.is_reconstructed,
-            sign_char_reading_data.correction,
-			sign_char.is_variant,
-            sign_char_reading_data.sign_char_reading_data_id,
-            sign_char.sign_char_id
-				FROM line_to_sign
+        SELECT
+            /* 0 */   position_in_stream.next_sign_id,
+            /* 1 */   position_in_stream.sign_id,
+            /* 2 */   sign_char.sign, /* 0 */
+            /* 3 */   sign_char.sign_type_id,
+            /* 4 */   sign_type.type,
+            /* 5 */   sign_char.width,
+            /* 6 */   sign_char.might_be_wider,
+            /* 7 */   sign_char_reading_data.readability,
+            /* 8 */   sign_char_reading_data.is_retraced,
+            /* 9 */   sign_char_reading_data.is_reconstructed,
+            /* 10 */  sign_char_reading_data.correction,
+            /* 11 */  sign_char.is_variant,
+            /* 12 */  sign_char_reading_data.sign_char_reading_data_id,
+            /* 13 */  sign_char.sign_char_id,
+            /* 14 */  if(sign_char_reading_data_owner.scroll_version_id != _scrollversion_, 1, NULL) as var
+        FROM line_to_sign
 	JOIN position_in_stream USING (sign_id)
 	JOIN position_in_stream_owner USING (position_in_stream_id)
 	JOIN sign_char USING (sign_id)
@@ -141,7 +144,7 @@ MYSQL
 	WHERE line_id =?
 	AND sign_char_owner.scroll_version_id = _scrollversion_
 	AND position_in_stream_owner.scroll_version_id= _scrollversion_
-    AND (sign_char_reading_data_owner.scroll_version_id is null OR sign_char_reading_data_owner.scroll_version_id = _scrollversion_)
+        ORDER BY sign_char.sign_char_id, var
 
 MYSQL
 
@@ -373,9 +376,9 @@ MYSQL
         $sth->execute($id);
 
         # the record had been found
-        if ( my $data_ref = $sth->fetchrow_hashref or $id == 0) {
+        if ( my $data_ref = $sth->fetchrow_hashref or $id == 0 ) {
 
-            $data_ref= {} if !defined $data_ref;
+            $data_ref = {} if !defined $data_ref;
 
             # replace the old values by the given new ones
             foreach my $key ( keys %values ) {
@@ -425,18 +428,19 @@ MYSQL
             return ( undef, SQE_Error->RECORD_NOT_FOUND );
         }
         $sth->finish;
-#        if ( $table eq 'sign_char' ) {
-#            my $data_ids_sth = $self
-#              ->prepare_sqe(SQE_DBI_queries::GET_SIGN_CHAR_READING_DATA_IDS);
-#            $data_ids_sth->execute($id);
-#            foreach my $data_id ( $data_ids_sth->fetchrow_array ) {
-#                $self->change_value(
-#                    'sign_char_reading_data', $data_id,
-#                    'sign_char_id',           $insert_id
-#                );
-#            }
-#
-#        }
+
+  #        if ( $table eq 'sign_char' ) {
+  #            my $data_ids_sth = $self
+  #              ->prepare_sqe(SQE_DBI_queries::GET_SIGN_CHAR_READING_DATA_IDS);
+  #            $data_ids_sth->execute($id);
+  #            foreach my $data_id ( $data_ids_sth->fetchrow_array ) {
+  #                $self->change_value(
+  #                    'sign_char_reading_data', $data_id,
+  #                    'sign_char_id',           $insert_id
+  #                );
+  #            }
+  #
+  #        }
         return $insert_id;
     }
 
@@ -454,7 +458,7 @@ MYSQL
 # can be given as an arrray ref with the function name as first value followed by the parameters
 # Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
 # Note: ad the moment no nested function are allowed
-    #@method
+#@method
     sub add_value {
         my $self = shift;
         return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
@@ -501,7 +505,6 @@ MYSQL
 
         }
     }
-
 
 # Removes a record owned by the current user/version with the given id from user/version and logs it.
 #
@@ -1069,19 +1072,41 @@ MYSQL
     # Note - the next sign may also be a variant of the foregoing sign
     # thus the sequence is: sign1 - sign2 - sign2_var1 - sign2_var_2 -sign3 ...
     sub next_sign {
-        my $self = shift;
-        my $sign;
+        my $self     = shift;
+        my $old_sign = $self->{current_sign_id};
+        my $next_sign;
 
-        if ( $self->{current_sign_id} && not $sign =
+# Try to load into $next_sign the next variant of the current_sign
+# on succes, the variant index current_var_id is increased and points already
+# to the next possible variant and $next_sign contains the reference to the next sign
+# In this case we jump to elsif
+        if ( $self->{current_sign_id} && not $next_sign =
             $self->{signs_ref}->{ $self->{current_sign_id} }
             ->[ ++$self->{current_var_id} ] )
+
+ #this block is processed when no variant entrance for the current sign is found
         {
+            #reset the variant index
             $self->{current_var_id} = 0;
+
+            # return the next new sign if it exist
             if ( my $next_sign_id = $self->_next_sign_id ) {
-                return $self->{signs_ref}->{$next_sign_id}->[0];
-            }
+            return $self->{signs_ref}->{ $next_sign_id }->[0]
+              }
+         }
+        # the next sign is a variant
+        # test whether it is a real variant for this scrollversion
+        # or found while there had been an entrance to sign_char_reading_data by a different scrollversion
+        # which should only be taken if there was no previous record whith the same sign_char_id
+        # in this case we proceed to the next sign by simply calling this function recursively
+        elsif(defined $next_sign && defined $next_sign->[14] &&
+            $next_sign->[12] == $self->{signs_ref}->{$old_sign}->[$self->{current_var_id}-1]->[12]) {
+            pop @{$next_sign};
+            return $self->next_sign;
         }
-        return $sign;
+        # At this point $next_sign either refers to the next variant or is undefined because the end
+        # of the sign stream had been reached
+        return $next_sign;
     }
 
 }
