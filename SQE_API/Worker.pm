@@ -295,18 +295,19 @@ sub get_fragment {
 
     SIGNS: while ($sign_data_array_ref = $data->{sign_stream}->next_sign) {
         while ($sign_data_array_ref->[3]== 9) {
-            if ($sign_data_array_ref = $data->{sign_stream}->next_sign) {
+            $sign_data_array_ref = $data->{sign_stream}->next_sign;
+            if (defined $sign_data_array_ref && defined $sign_data_array_ref->[3]) {
                 $is_start = 1;
             } else {
                 last SIGNS;
             }
         }
-        if (defined $is_start) {
+        if ($is_start==1) {
             $data->{get_line_data_sth}->execute( $sign_data_array_ref->[1]);
             ( $next_sign_id, $data->{line_name} ) =
                 $data->{get_line_data_sth}->fetchrow_array;
             $data->{format_template}->format_line( $data->{line_name} );
-            $is_start=undef;
+            $is_start=0;
         }
         $data->{format_template}->format_sign( $sign_data_array_ref,
             $data->{sign_positions_ref} )

@@ -1,2 +1,13 @@
 SQE_Restricted.pm
 /SQE_GEO/svg_test.pl
+/SQE_Restricted.pm
+.DS_Store
+.idea/dataSources.local.xml
+.idea/dataSources/
+.idea/inspectionProfiles/Project_Default.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+SQE_DB_API.iml
+test_dbi.pl

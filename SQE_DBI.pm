@@ -98,7 +98,9 @@ sub get_login_sqe {
             /* 11 */  sign_char.is_variant,
             /* 12 */  sign_char_reading_data.sign_char_reading_data_id,
             /* 13 */  sign_char.sign_char_id,
-            /* 14 */  if(sign_char_reading_data_owner.scroll_version_id != _scrollversion_, 1, NULL) as var
+            /* 14 */  if(sign_char_reading_data_owner.scroll_version_id != 1088
+                         or sign_char_reading_data_owner.scroll_version_id is null, 1,
+                         0) as var
         FROM col_to_line
 						JOIN line_to_sign USING (line_id)
 	JOIN position_in_stream USING (sign_id)
@@ -131,7 +133,9 @@ MYSQL
             /* 11 */  sign_char.is_variant,
             /* 12 */  sign_char_reading_data.sign_char_reading_data_id,
             /* 13 */  sign_char.sign_char_id,
-            /* 14 */  if(sign_char_reading_data_owner.scroll_version_id != _scrollversion_, 1, NULL) as var
+            /* 14 */  if(sign_char_reading_data_owner.scroll_version_id != 1088
+                         or sign_char_reading_data_owner.scroll_version_id is null, 1,
+                         0) as var
 
         FROM line_to_sign
 	JOIN position_in_stream USING (sign_id)
@@ -1073,7 +1077,7 @@ MYSQL
     # thus the sequence is: sign1 - sign2 - sign2_var1 - sign2_var_2 -sign3 ...
     sub next_sign {
         my $self     = shift;
-        my $old_sign = $self->{current_sign_id};
+        my $old_sign_id = $self->{current_sign_id};
         my $next_sign;
 
 # Try to load into $next_sign the next variant of the current_sign
@@ -1090,22 +1094,22 @@ MYSQL
             $self->{current_var_id} = 0;
 
             # return the next new sign if it exist
-            if ( my $next_sign_id = $self->_next_sign_id ) {
-            return $self->{signs_ref}->{ $next_sign_id }->[0]
+            if ( my $next_sign_id = $self->_next_sign_id) {
+                $next_sign= $self->{signs_ref}->{$next_sign_id}->[0];
+                if ($next_sign->[14]) {
+                    pop @{$next_sign};
+                    $next_sign->[12]=undef;
+                }
+            return $next_sign;
               }
          }
         # the next sign is a variant
         # test whether it is a real variant for this scrollversion
-        # or found while there had been an entrance to sign_char_reading_data by a different scrollversion
+        # or found because there had been an entrance to sign_char_reading_data by a different scrollversion
         # which should only be taken if there was no previous record whith the same sign_char_id
         # in this case we proceed to the next sign by simply calling this function recursively
         elsif(defined $next_sign && defined $next_sign->[14]) {
-            if (!defined $self->{signs_ref}->{$old_sign}->[$self->{current_var_id}-1]->[12]
-                || $next_sign->[12] == $self->{signs_ref}->{$old_sign}->[$self->{current_var_id}-1]->[12]) {
                 return $self->next_sign;
-            }
-            pop @{$next_sign};
-            $next_sign->[12]=undef;
         }
         # At this point $next_sign either refers to the next variant or is undefined because the end
         # of the sign stream had been reached

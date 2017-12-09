@@ -68,7 +68,7 @@ sub format_sign {
     if ( $array_ref->[12] ) {
         $sign_text .= '"MIGHT_BE_WIDER":true' . ',' if $array_ref->[6];
         $sign_text .= '"READABILITY":"' . $array_ref->[7] . '",'
-          if $array_ref->[7] ne 'COMPLETE';
+          if $array_ref->[7] && $array_ref->[7] ne 'COMPLETE';
         $sign_text .= '"IS_RETRACED":true' . ','      if $array_ref->[8];
         $sign_text .= '"IS_RECONSTRUCTED":true' . ',' if $array_ref->[9];
     }
