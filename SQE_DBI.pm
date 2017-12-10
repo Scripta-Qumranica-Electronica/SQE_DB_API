@@ -346,9 +346,8 @@ MYSQL
 
         foreach my $key ( keys %values ) {
 
-# With Scalar::Util::reftype I (Bronson) got the error "Use of uninitialized value in string".
-# Since it is deprecated, I switched to Ref::Util, and everything works now.
-# if (Scalar::Util::reftype($values{$key}) eq 'ARRAY') {
+            # Search for values to be calculated first by a mysql-function
+            # and replace the function by the calculated values
             if ( Ref::Util::is_arrayref( $values{$key} ) ) {
                 my $command = shift @{ $values{$key} };
                 if ( $command =~ /[^A-Za-z0-9_]/ ) {
@@ -392,10 +391,11 @@ MYSQL
     # get all field-names except the id of the record and create a query to test
     # wether a different record containing the new vaules already exist
             my @keys =
-              grep { $_ ne '' }
-              map { $_ if $_ ne "${table}_id" } keys %$data_ref;
+              grep { defined $data_ref->{$_} && $_ ne '' }
+              map { $_ if defined $data_ref->{$_} && $_ ne "${table}_id" } keys %$data_ref;
             my $fields = join( ' = ? AND ', @keys ) . ' = ?';
             $query = "SELECT ${table}_id from  $table where $fields";
+            map {$query .= " AND $_ is null" if !defined $data_ref->{$_}} keys %$data_ref;
             my $new_sth = $self->prepare_cached($query);
             $new_sth->execute( map { $data_ref->{$_} } @keys );
             my @id = $new_sth->fetchrow_array;
