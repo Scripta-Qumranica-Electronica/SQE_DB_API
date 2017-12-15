@@ -98,9 +98,9 @@ sub get_login_sqe {
             /* 11 */  sign_char.is_variant,
             /* 12 */  sign_char_reading_data.sign_char_reading_data_id,
             /* 13 */  sign_char.sign_char_id,
-            /* 14 */  if(sign_char_reading_data_owner.scroll_version_id != 1088
-                         or sign_char_reading_data_owner.scroll_version_id is null, 1,
-                         0) as var
+            /* 14 */  if(sign_char_reading_data.sign_char_reading_data_id is null
+                         or sign_char_reading_data_owner.scroll_version_id = 1 , 0,
+                         1) as var
         FROM col_to_line
 						JOIN line_to_sign USING (line_id)
 	JOIN position_in_stream USING (sign_id)
@@ -133,9 +133,9 @@ MYSQL
             /* 11 */  sign_char.is_variant,
             /* 12 */  sign_char_reading_data.sign_char_reading_data_id,
             /* 13 */  sign_char.sign_char_id,
-            /* 14 */  if(sign_char_reading_data_owner.scroll_version_id != 1088
-                         or sign_char_reading_data_owner.scroll_version_id is null, 1,
-                         0) as var
+            /* 14 */     if(sign_char_reading_data.sign_char_reading_data_id is null
+                            or sign_char_reading_data_owner.scroll_version_id = 1 , 0,
+                            1) as var
 
         FROM line_to_sign
 	JOIN position_in_stream USING (sign_id)
@@ -1108,7 +1108,7 @@ MYSQL
         # or found because there had been an entrance to sign_char_reading_data by a different scrollversion
         # which should only be taken if there was no previous record whith the same sign_char_id
         # in this case we proceed to the next sign by simply calling this function recursively
-        elsif(defined $next_sign && defined $next_sign->[14]) {
+        elsif(defined $next_sign && $next_sign->[14]) {
                 return $self->next_sign;
         }
         # At this point $next_sign either refers to the next variant or is undefined because the end
