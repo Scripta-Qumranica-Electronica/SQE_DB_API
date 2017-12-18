@@ -4,19 +4,26 @@ use warnings FATAL => 'all';
 use Package::Constants;
 
 use constant {
-    CHECK_SCROLLVERSION => << 'HEREDOC',
-    SELECT user_id
-    FROM scroll_version
-    WHERE scroll_version_id = ?
-HEREDOC
+    CHECK_SCROLLVERSION => << 'MYSQL',
+SELECT user_id
+FROM scroll_version
+WHERE scroll_version_id = ?
+MYSQL
 
-    GET_ALL_VALUES => << 'HEREDOC',
+    SET_SESSION_SCROLLVERSION => << 'MYSQL',
+UPDATE sqe_session
+SET scroll_version_id = ?
+WHERE sqe_session_id = ?
+MYSQL
+
+
+    GET_ALL_VALUES => << 'MYSQL',
     SELECT _table_.*
     FROM _table_
      JOIN _table__owner USING (_table__id)
     WHERE _table__id = ?
     AND scroll_version_id = _scrollversion_
-HEREDOC
+MYSQL
 
     GET_SIGN_CHAR_READING_DATA_IDS => << 'MYSQL',
   SELECT sign_char_reading_data_id

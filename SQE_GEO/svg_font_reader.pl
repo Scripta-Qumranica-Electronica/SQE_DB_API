@@ -1,4 +1,4 @@
-package SQE_GEO::svg_font_reader;
+#!/usr/bin/perl
 use strict;
 use warnings FATAL => 'all';
 
@@ -6,6 +6,8 @@ use XML::Twig;
 use SQE_GEO::svg_glyph_path;
 use SQE_GEO::multipolygon;
 use SQE_DBI;
+
+
 
 binmode( STDOUT, ":encoding(UTF8)" );
 
@@ -47,7 +49,6 @@ MULTIPOLYGONFROMTEXT(?),
                 my $svg_path = SQE_GEO::svg_glyph_path->new($path, $units_em);
                 my $mp       = $svg_path->GIS_multipolygon;
                 $mp->move_to_origin;
-                $mp->flip;
                 print "$unicode\n";
                 print $mp->height . "\n";
 #                print $mp->as_MULTIPOLYGON_string . "\n";

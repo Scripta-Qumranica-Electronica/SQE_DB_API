@@ -99,7 +99,7 @@ sub get_login_sqe {
             /* 12 */  sign_char_reading_data.sign_char_reading_data_id,
             /* 13 */  sign_char.sign_char_id,
             /* 14 */  if(sign_char_reading_data.sign_char_reading_data_id is null
-                         or sign_char_reading_data_owner.scroll_version_id = 1 , 0,
+                         or sign_char_reading_data_owner.scroll_version_id = _scrollversion_ , 0,
                          1) as var
         FROM col_to_line
 						JOIN line_to_sign USING (line_id)
@@ -134,7 +134,7 @@ MYSQL
             /* 12 */  sign_char_reading_data.sign_char_reading_data_id,
             /* 13 */  sign_char.sign_char_id,
             /* 14 */     if(sign_char_reading_data.sign_char_reading_data_id is null
-                            or sign_char_reading_data_owner.scroll_version_id = 1 , 0,
+                            or sign_char_reading_data_owner.scroll_version_id = _scrollversion_ , 0,
                             1) as var
 
         FROM line_to_sign
@@ -848,9 +848,25 @@ MYSQL
     # Parameters
     #   new scrollversion
     sub _set_scrollversion {
-        my $self = shift;
-        $self->{private_SQE_DBI_data}->{scrollversion} = shift;
+        my ($self, $new_scrollversion) = @_;
+        $self->{private_SQE_DBI_data}->{scrollversion} = $new_scrollversion;
+        my $set_to_db_sth = $self->prepare_cached(SQE_DBI_queries::SET_SESSION_SCROLLVERSION);
+        $set_to_db_sth->execute($new_scrollversion, $self->session_id);
         undef $self->{private_SQE_DBI_data}->{main_action_sth};
+    }
+
+    #Returns the current SQE-session-id
+    sub session_id {
+        return shift->{private_SQE_DBI_data}->{session_id};
+    }
+
+    #Sets a new session_id
+    #Paramater:
+    #    session_id
+    sub set_session_id {
+        my ($self, $session_id)= @_;
+        $self->{private_SQE_DBI_data}->{session_id}=$session_id;
+
     }
 
     # Returns the current user_id

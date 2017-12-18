@@ -11,3 +11,4 @@ SQE_Restricted.pm
 .idea/workspace.xml
 SQE_DB_API.iml
 test_dbi.pl
+/SQE_API.request
