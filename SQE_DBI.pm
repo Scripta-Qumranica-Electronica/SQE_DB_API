@@ -195,6 +195,7 @@ MYSQL
         LINE_TO_SIGN_JOIN  => 'JOIN line_to_sign USING (sign_id)',
         COL_TO_LINE_JOIN   => 'JOIN col_to_line USING (line_id)',
         SCROLL_TO_COL_JOIN => 'JOIN scroll_to_col USING (col_id)',
+        ARTEFACT_POSITION_JOIN => 'JOIN artefact_position USING (artefact_id)',
 
         NEW_SCROLL_VERSION => << 'MYSQL',
         INSERT INTO scroll_version
@@ -649,9 +650,13 @@ MYSQL
             $old_userversion );
 
         # Added by Bronson for copying artefact data
-        $self->_run_add_user_query( 'artefact', [],
-            "artefact.scroll_id=$scroll_id",
-            $old_userversion );
+        $self->_run_add_user_query( 'artefact_position', [],
+            "artefact_position.scroll_id=$scroll_id", 
+	    $old_userversion );
+
+        $self->_run_add_user_query( 'artefact', [ARTEFACT_POSITION_JOIN],
+            "artefact_position.scroll_id=$scroll_id", 
+	    $old_userversion );
 
     }
 
