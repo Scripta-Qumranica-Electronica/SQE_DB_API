@@ -143,7 +143,7 @@ sub session_id {
 # Use print_json_error
 #@deprecated
 sub sent_json_error {
-    $shift->print_json_error;
+    shift->print_json_error;
 }
 
 # Prints a JSON-formated error to the CGI-output
@@ -170,7 +170,8 @@ sub start_json_output {
 
 # Prints the  Session Id in JSON format to the CGI output
 sub print_session_id {
-    $shift->print('"SESSION_ID":"'. $self->session_id . '",');
+    my $self = shift;
+    $self->print('"SESSION_ID":"'. $self->session_id . '",');
 
 }
 
