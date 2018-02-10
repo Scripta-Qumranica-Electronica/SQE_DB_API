@@ -24,8 +24,9 @@ sub get_sqe_dbh {
     my $class = shift;
     my %attr  = (
         PrintError => 0,    # turn off error reporting via warn()
-        RaiseError => 1
-    );                      # turn on error reporting via die()
+        RaiseError => 1,    # turn on error reporting via die()
+	    mysql_enable_utf8 => 1,
+    );
     my $dbh =
       DBI->connect( SQE_Restricted::DSN_SQE, SQE_Restricted::DB_USERNAME,
         SQE_Restricted::DB_PASSWORD,, \%attr );

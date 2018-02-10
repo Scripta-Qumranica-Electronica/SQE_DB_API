@@ -12,3 +12,6 @@ SQE_Restricted.pm
 SQE_DB_API.iml
 test_dbi.pl
 /SQE_API.request
+.vscode
+.vstags
+.idea
