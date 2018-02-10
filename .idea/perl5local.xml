@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="Perl5LocalSettings">
-    <option name="perlInterpreter" value="Perl v5.18.2" />
-    <option name="PERL_TIDY_PATH" value="$USER_HOME$/perl5/bin/perltidy" />
-    <option name="PERL_CRITIC_PATH" value="$USER_HOME$/perl5/bin/perlcritic" />
-  </component>
-</project>
