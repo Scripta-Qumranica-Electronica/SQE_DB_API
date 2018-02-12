@@ -651,13 +651,21 @@ MYSQL
             $old_userversion );
 
         # Added by Bronson for copying artefact data
-        $self->_run_add_user_query( 'artefact_position', [],
-            "artefact_position.scroll_id=$scroll_id", 
-	    $old_userversion );
+        $self->_run_add_user_query( 'artefact_position',
+            [],
+            "artefact_position.scroll_id=$scroll_id",
+            $old_userversion );
 
-        $self->_run_add_user_query( 'artefact', [ARTEFACT_POSITION_JOIN],
-            "artefact_position.scroll_id=$scroll_id", 
-	    $old_userversion );
+        $self->_run_add_user_query( 'artefact',
+            [ARTEFACT_POSITION_JOIN],
+            "artefact_position.scroll_id=$scroll_id",
+            $old_userversion );
+
+        $self->_run_add_user_query( 'artefact_data',
+            [ARTEFACT_POSITION_JOIN],
+            "artefact_position.scroll_id=$scroll_id",
+            $old_userversion );
+
 
     }
 
