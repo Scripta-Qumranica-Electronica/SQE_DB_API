@@ -1,7 +1,7 @@
 package SQE_API::format_qwb_html;
 use strict;
 use warnings FATAL => 'all';
-use lib qw(/home/perl_libs);
+use lib qw(../);
 use parent 'SQE_API::format_json';
 
 sub new {

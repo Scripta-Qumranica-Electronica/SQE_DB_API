@@ -1,6 +1,6 @@
 package SQE_API::Worker;
 use strict;
-use lib qw(/home/perl_libs);
+use lib qw(../);
 
 use warnings FATAL => 'all';
 
