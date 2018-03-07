@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 use Data::UUID;
 use SQE_DBI;
 use SQE_CGI_queries;
+use JSON qw( decode_json );
 
 use parent 'CGI';
 
@@ -26,12 +27,27 @@ sub new {
         if ($self->url_param) {
          #   $self->sent_json_error(SQE_Error::NO_GET_REQUESTS);
             return ($self, SQE_Error::NO_GET_REQUESTS);
-
         }
 
+    # Initialize variables for reading CGI post data.
+    my $user_name = undef;
+    my $password = undef;
+    my $scrollversion = undef;
+    my $json_post = undef;
 
-
-    $self->{SQE_SESSION_ID} = $self->param('SESSION_ID');
+    # Support both form data and straight JSON post data.
+    if (defined $self->param('POSTDATA')) {
+        $json_post = decode_json(''.$self->param('POSTDATA'));
+        $self->{SQE_SESSION_ID} = $json_post->{SESSION_ID};
+        $user_name = $json_post->{USER_NAME};
+        $password = $json_post->{PASSWORD};
+        $scrollversion = $json_post->{SCROLLVERSION};
+    } else {
+        $self->{SQE_SESSION_ID} = $self->param('SESSION_ID');
+        $user_name = $self->param('USER_NAME');
+        $password = $self->param('PASSWORD');
+        $scrollversion = $self->param('SCROLLVERSION');
+    }
 
     # Sessionid is provided
     if ( $self->{SQE_SESSION_ID} ) {
@@ -82,9 +98,9 @@ sub new {
     else {
 
         # Try to get a databasehandler via credentials
-        my $user_name = $self->param('USER_NAME');
-        my $password = $self->param('PASSWORD');
-        my $scrollversion = $self->param('SCROLLVERSION');
+        my $user_name = $json_post->{USER_NAME};
+        my $password = $json_post->{PASSWORD};
+        my $scrollversion = $json_post->{SCROLLVERSION};
         ( $dbh, my $error_ref ) = SQE_DBI->get_login_sqe(
             $user_name, $password, $scrollversion
         );
