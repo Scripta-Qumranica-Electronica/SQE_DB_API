@@ -563,7 +563,7 @@ MYSQL
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN ],
             $where, $old_scrollversion );
 
-        $self->_run_add_user_query( 'real_char_area',
+        $self->_run_add_user_query( 'real_sign_area',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN ],
             $where, $old_scrollversion );
 
@@ -621,7 +621,7 @@ MYSQL
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where, $old_userversion );
 
-        $self->_run_add_user_query( 'real_char_area',
+        $self->_run_add_user_query( 'real_sign_area',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where, $old_userversion );
 
@@ -696,7 +696,7 @@ MYSQL
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where );
 
-        $self->_run_remove_user_query( 'real_char_area',
+        $self->_run_remove_user_query( 'real_sign_area',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where );
 
@@ -752,7 +752,7 @@ MYSQL
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where );
 
-        $self->_run_remove_user_query( 'real_char_area',
+        $self->_run_remove_user_query( 'real_sign_area',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where );
 
