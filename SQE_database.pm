@@ -16,7 +16,7 @@ sub get_dbh {
         PrintError => 0,    # turn off error reporting via warn()
         RaiseError => 1
     );                      # turn on error reporting via die()
-    my $dbh = DBI->connect( SQE_Restricted::DSN_SQE_A, SQE_Restricted::DB_USERNAME, SQE_Restricted::DB_PASSWORD, \%attr );
+    my $dbh = DBI->connect( SQE_Restricted::DSN_SQE, SQE_Restricted::DB_USERNAME, SQE_Restricted::DB_PASSWORD, \%attr );
     if ($dbh) {
         return $dbh;
     }

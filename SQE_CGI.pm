@@ -1,147 +1,108 @@
+=head1 NAME
+
+SQE_CGI - an expanded Perl-CGI
+
+=head1 VERSION
+
+0.1.0
+
+=head1 DESCRIPTION
+
+
+
+=head1 AUTHORS
+
+Ingo Kottsieper
+
+=head1 COPYRIGHT AND LICENSE
+
+
+=head1 Predefined Keys
+
+
+=over 1
+
+=item CGIDATA = Hashref to JSON object conatining the parameters send to the CGI by the browser
+
+=item DBH = SQE_db database handler
+
+
+=back
+
+=head1 Methods
+
+=cut
+
 package SQE_CGI;
 use strict;
 use warnings FATAL => 'all';
 use Data::UUID;
 use SQE_DBI;
 use SQE_CGI_queries;
+use SQE_Session::Container;
 use JSON qw( decode_json );
+use CGI::Carp qw(fatalsToBrowser);
 
 use parent 'CGI';
 
-our $sqe_sessions;
+our Container $sqe_sessions;
 
-
-#@returns SQE_db
+#@returns SQE_CGI
 sub new {
-    my ( $class, %args ) = @_;
-    # $sqe->sessions should be initialised only once
-    $sqe_sessions = {} if !defined $sqe_sessions;
-    my SQE_db $dbh;
+    my ( $class, @args ) = @_;
 
-    my $self = $class->SUPER::new(%args);
+    # $sqe->sessions should be initialised only once
+    $sqe_sessions = Container->new if !defined $sqe_sessions;
+
+    my SQE_CGI $self = $class->SUPER::new(@args);
     bless $self, 'SQE_CGI';
 
-    #$self->start_json_output;
+    #We give out only JSON objects
+    $self->print( $self->header('application/json;charset=UTF-8') );
+    print '{';
 
-    # We don't want get-parameter
-        if ($self->url_param) {
-         #   $self->sent_json_error(SQE_Error::NO_GET_REQUESTS);
-            return ($self, SQE_Error::NO_GET_REQUESTS);
-        }
+    my $content_type   = $self->content_type();
+    my $request_method = $self->request_method();
+    my $error_ref;
 
-    # Initialize variables for reading CGI post data.
-    my $user_name = undef;
-    my $password = undef;
-    my $scrollversion = undef;
-    my $json_post = undef;
+    # We only want JSON as POST-parameter
+    if (  !$request_method
+        || $request_method ne 'POST'
+        || !$content_type
+        || $self->content_type() ne 'application/json'
+        || !$self->param('POSTDATA') )
+    {
+        $self->throw_error(SQE_Error::NO_JSON_POST_REQUEST);
+    }
 
-    # Support both form data and straight JSON post data.
-    if (defined $self->param('POSTDATA')) {
-        $json_post = decode_json(''.$self->param('POSTDATA'));
-        $self->{SQE_SESSION_ID} = $json_post->{SESSION_ID};
-        $user_name = $json_post->{USER_NAME};
-        $password = $json_post->{PASSWORD};
-        $scrollversion = $json_post->{SCROLLVERSION};
+    #We got JSON as POST-parameter - let's test if they are correct formatted
+    $self->{CGIDATA} = eval { decode_json( '' . $self->param('POSTDATA') ) };
+    $self->throw_error(SQE_Error::WRONG_JSON_FORMAT) if !$self->{CGIDATA};
+
+    #We got correct formatted JSON-data, let's check if we should continue a running session
+    if ($self->{CGIDATA}->{SESSION_ID}) {
+        ($self->{DBH}, $error_ref) = $sqe_sessions->get_session_dbh_by_id($self->{CGIDATA}->{SESSION_ID});
+        $self->throw_error($error_ref) if !$self->{DBH};
     } else {
-        $self->{SQE_SESSION_ID} = $self->param('SESSION_ID');
-        $user_name = $self->param('USER_NAME');
-        $password = $self->param('PASSWORD');
-        $scrollversion = $self->param('SCROLLVERSION');
+        #A new session is required
+        ($self->{DBH}, $error_ref) = $sqe_sessions->new_session_dbh($self->{CGIDATA});
+        $self->throw_error($error_ref) if !$self->{DBH};
     }
 
-    # Sessionid is provided
-    if ( $self->{SQE_SESSION_ID} ) {
-        $dbh = $sqe_sessions->{$self->{SQE_SESSION_ID}};
+    # At this point, we should have a valid SQE_CGI instance
+    return $self;
 
-
-        # But no Databasehandle
-        if ( !defined $dbh ) {
-
-            # Get a new Databasehandler
-            ( $dbh, my $error_ref ) = SQE_DBI->get_sqe_dbh();
-
-            # A Databasehandler could not be created
-            if ( !defined $dbh ) {
-              #  $self->sent_json_error($error_ref);
-                return ( $self, $error_ref );
-            }
-
-            # Otherwise, get the data for the Sessionid
-            $dbh = bless $dbh, 'SQE_db';
-            $sqe_sessions->{SQE_SESSION_ID} = $dbh;
-            my $session_id_sth =
-              $dbh->prepare(SQE_CGI_queries::GET_SQE_SESSION);
-            $session_id_sth->execute( $self->{SQE_SESSION_ID} );
-          #  $self->print($self->{SQE_SESSION_ID});
-            # Data are available
-            my $result_ref = $session_id_sth->fetchrow_arrayref;
-
-            if (defined $result_ref->[0] ) {
-                $dbh->{private_SQE_DBI_data}->{user_id} = $result_ref->[0];
-                $dbh->{private_SQE_DBI_data}->{scrollversion} =
-                  $result_ref->[1];
-                $sqe_sessions->{$self->{SQE_SESSION_ID}}=$dbh;
-                $dbh->set_session_id($self->{SQE_SESSION_ID});
-            }
-
-            # No entry found
-            else {
-                $dbh->disconnect;
-             #   $self->sent_json_error(SQE_Error::WRONG_SESSION_ID);
-                return ( $self, SQE_Error::WRONG_SESSION_ID );
-            }
-        }
-    }
-
-    # No sessionid given
-    # Try to create a new session
-    else {
-
-        # Try to get a databasehandler via credentials
-        my $user_name = $json_post->{USER_NAME};
-        my $password = $json_post->{PASSWORD};
-        my $scrollversion = $json_post->{SCROLLVERSION};
-        ( $dbh, my $error_ref ) = SQE_DBI->get_login_sqe(
-            $user_name, $password, $scrollversion
-        );
-
-        # If no handler could be created
-        if ( !defined $dbh ) {
-         #   $self->sent_json_error($error_ref);
-         #   $self->finish_json_output;
-            return ( $self, $error_ref );
-        }
-
-        # We got a handler - let's start a new session
-        else {
-            my $ug         = Data::UUID->new;
-            my $session_id = $ug->to_string( $ug->create );
-            $sqe_sessions->{$session_id} = $dbh;
-            my $session_sth = $dbh->prepare(SQE_CGI_queries::NEW_SQE_SESSION);
-            $session_sth->execute( $session_id, $dbh->user_id,
-                $dbh->scrollversion );
-
-            #            $self->{DBH} = $dbh;
-
-            # ToDo: Put the Session_id finally to the DB-handler and not in in the CGI object
-            $self->{SQE_SESSION_ID} = $session_id;
-            $dbh->set_session_id($session_id);
-
-        }
-    }
-    $self->{DBH} = $dbh;
-   # $self->print( '"SESSION_ID":"' . $self->{SQE_SESSION_ID} . '",' );
-    return ($self);
 }
 
 sub DESTROY {
     my $self = shift;
     if ( $self->{DBH} ) {
         $self->{DBH}->do( SQE_CGI_queries::SET_SESSION_END,
-            undef, $self->{DBH}->scrollversion, $self->session_id );
+            undef, $self->{DBH}->scrollversion,
+            $self->session_id
+        );
     }
 }
-
 
 # Retrieves the current databse handler
 #@returns SQE_db
@@ -154,7 +115,6 @@ sub session_id {
     return shift->{DBH}->session_id;
 }
 
-
 # Prints a JSON-formated error to the CGI-output
 # Use print_json_error
 #@deprecated
@@ -165,7 +125,8 @@ sub sent_json_error {
 # Prints a JSON-formated error to the CGI-output
 # Parameters:
 #     error_ref: reference to an error array
-sub print_json_error{
+#@deprecated
+sub print_json_error {
     my ( $self, $error_ref ) = @_;
     $self->print( '"TYPE":"ERROR","ERROR_CODE":'
           . $error_ref->[0]
@@ -173,7 +134,6 @@ sub print_json_error{
           . $error_ref->[1]
           . '"' );
 }
-
 
 # Print a JSON header to the CGI-output and opnes a JSON-object
 # Should be used instead of the header fundtion of the normal CGI
@@ -183,18 +143,52 @@ sub start_json_output {
     $self->print('{');
 }
 
-
 # Prints the  Session Id in JSON format to the CGI output
 sub print_session_id {
     my $self = shift;
-    $self->print('"SESSION_ID":"'. $self->session_id . '",');
+    $self->print( '"SESSION_ID":"' . $self->session_id . '",' );
 
 }
-
-
 
 sub finish_json_output {
     shift->print('}');
 }
+
+=head2 throw_error($error_code)
+
+Sends an error message as an JSON-object to the browser and terminates the CGI process
+
+=over 1
+
+=item Parameters: Arrayref with error-data, cf. SQE_Error.pm
+
+=item Returns nothing
+
+=back
+
+=cut
+
+sub throw_error {
+    my ( $self, $error_ref ) = @_;
+    $self->print( '"TYPE":"ERROR","ERROR_CODE":'
+          . $error_ref->[0]
+          . ',"ERROR_TEXT":"'
+          . $error_ref->[1]
+          . '"}' );
+    exit;
+}
+
+
+
+sub get_text_of_fragment {
+    my ($self, $frag_id, $class) = @_;
+    $self->{DBH}->get_text_of_fragment($frag_id, $class);
+}
+
+sub get_text_of_line {
+    my ($self, $line_id, $class) = @_;
+    $self->{DBH}->get_text_of_line($line_id, $class);
+}
+
 
 1;

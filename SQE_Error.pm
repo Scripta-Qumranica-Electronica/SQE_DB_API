@@ -9,15 +9,17 @@ use constant {
     NO_UNIQUE_USER  => [ 3, 'No unique user' ],
     WRONG_SESSION_ID=> [4, 'The given session id is not valid.'],
 
+
     SCROLL_NOT_FOUND   => [ 101, 'Scroll not found' ],
     NO_UNIQUE_SCROLL   => [ 102, 'No unique scroll' ],
     FRAGMENT_NOT_FOUND => [ 103, 'Fragment not found' ],
     NO_UNIQUE_FRAGMENT => [ 104, 'No unique fragment' ],
     LINE_NOT_FOUND     => [ 105, 'Line not found' ],
-    NO_GET_REQUESTS    => [ 106, 'We do not handle GET-requests', ],
+    NO_JSON_POST_REQUEST    => [ 106, 'We only accept POST-requests in JSON format', ],
     NO_ACTION          => [ 107, 'No valid action requested' ],
     WRONG_FORMAT       => [ 108, 'Format not known or not yet implemented' ],
     NOT_IMPLEMENTED    => [ 109, 'Not yet implemented' ],
+    WRONG_JSON_FORMAT => [110, 'Format of JSON is not valid'],
 
     WRONG_SCROLLVERSION => [
         201,

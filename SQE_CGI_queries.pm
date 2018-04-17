@@ -4,6 +4,8 @@ use warnings FATAL => 'all';
 use Package::Constants;
 
 use constant {
+
+
     NEW_SQE_SESSION => << 'MYSQL',
     INSERT INTO sqe_session
     (sqe_session_id, user_id, scroll_version_id)
@@ -22,6 +24,10 @@ MYSQL
         scroll_version_id = ?
     WHERE sqe_session_id = ?
 MYSQL
+
+
+
+
 
 
 };

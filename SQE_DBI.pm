@@ -1,10 +1,31 @@
 
-############################################################################################
-#   SQE_DBI
-############################################################################################
+=pod
 
-# A child of the normal Perl-DBI package which offers some functions for diret login
-# and to create database-handler of the type SQE_db
+=head1 NAME
+
+SQE_DBI expands the normal DBI package
+
+=head1 VERSION
+
+0.1.0
+
+=head1 DESCRIPTION
+
+
+
+=head1 AUTHORS
+
+Ingo Kottsieper
+
+=head1 COPYRIGHT AND LICENSE
+
+
+=head1 SQE_DBI
+
+A child of DBI which offers some functions for diret login
+and to create database-handler of the type SQE_db
+
+=cut
 
 package SQE_DBI;
 use strict;
@@ -15,22 +36,25 @@ use SQE_Restricted;
 use SQE_Error;
 use SQE_database_queries;
 use SQE_DBI_queries;
+use SQE_sign_stream;
 use parent 'DBI';
 
 use Ref::Util;
 
-# Returns a normal Perl DBI database handler for the SQE database
+# Returns a  SQE database handler for the SQE database or (undef, error_ref) if no hanlder can be created
+#@returns SQE_db
 sub get_sqe_dbh {
     my $class = shift;
     my %attr  = (
-        PrintError => 0,    # turn off error reporting via warn()
-        RaiseError => 1,    # turn on error reporting via die()
-	    mysql_enable_utf8 => 1,
+        PrintError        => 0,    # turn off error reporting via warn()
+        RaiseError        => 1,    # turn on error reporting via die()
+        mysql_enable_utf8 => 1,
     );
     my $dbh =
       DBI->connect( SQE_Restricted::DSN_SQE, SQE_Restricted::DB_USERNAME,
         SQE_Restricted::DB_PASSWORD,, \%attr );
     if ($dbh) {
+        $dbh = bless $dbh, 'SQE_db';
         return $dbh;
     }
     else {
@@ -49,6 +73,7 @@ sub get_login_sqe {
       if not( $user_name && $password );
 
     # Try to get an database handler
+
     my ( $dbh, $error_ref ) = SQE_DBI->get_sqe_dbh();
 
     # Return with error data if no database handler is available
@@ -62,7 +87,7 @@ sub get_login_sqe {
     if ( !defined $scrollversion ) {
 
 # The scrollversion does not exist or is not available for the user  - return the error and undef for the handler
-        $dbh->disconnect;
+        $dbh->disconnect();
         return ( undef, $error_ref );
     }
     else {
@@ -79,137 +104,331 @@ sub get_login_sqe {
 # to include user ids and versions, to log changes and to retrieve data.
 {
 
+=pod
+
+=head1 SQE_db
+
+A child of DBI::db
+
+=cut
+
     package SQE_db;
+
+    use SQE_sign;
+
+    # All formats defined in SQE_Format (except the Parent) need to be mentioned here
+    use SQE_Format::HTML;
+    use SQE_Format::JSON;
+
     use parent -norequire, 'DBI::db';
 
     use constant {
-        GET_ALL_SIGNS_IN_FRAGMENT => << 'MYSQL',
-		SELECT
-            /* 0 */   position_in_stream.next_sign_id,
-            /* 1 */   position_in_stream.sign_id,
-            /* 2 */   sign_char.sign, /* 0 */
-            /* 3 */   sign_char.sign_type_id,
-            /* 4 */   sign_type.type,
-            /* 5 */   sign_char.width,
-            /* 6 */   sign_char.might_be_wider,
-            /* 7 */   sign_char_reading_data.readability,
-            /* 8 */   sign_char_reading_data.is_retraced,
-            /* 9 */   sign_char_reading_data.is_reconstructed,
-            /* 10 */  sign_char_reading_data.correction,
-            /* 11 */  sign_char.is_variant,
-            /* 12 */  sign_char_reading_data.sign_char_reading_data_id,
-            /* 13 */  sign_char.sign_char_id,
-            /* 14 */  if(sign_char_reading_data.sign_char_reading_data_id is null
-                         or sign_char_reading_data_owner.scroll_version_id = _scrollversion_ , 0,
-                         1) as var
-        FROM col_to_line
-						JOIN line_to_sign USING (line_id)
-	JOIN position_in_stream USING (sign_id)
-	JOIN position_in_stream_owner USING (position_in_stream_id)
-	JOIN sign_char USING (sign_id)
-   JOIN sign_char_owner USING (sign_char_id)
-	JOIN sign_type USING(sign_type_id)
-	LEFT JOIN sign_char_reading_data USING (sign_char_id)
-	LEFT JOIN sign_char_reading_data_owner USING (sign_char_reading_data_id)
-	WHERE col_id =?
-	AND sign_char_owner.scroll_version_id = _scrollversion_
-	AND position_in_stream_owner.scroll_version_id= _scrollversion_
-        ORDER BY sign_char.sign_char_id, var
+        SESSION => 'private_session',
 
+        NEW_MAIN_ACTION => <<'MYSQL',
+          INSERT INTO main_action
+              (scroll_version_id) VALUES (_scrollversion_)
 MYSQL
 
-        GET_ALL_SIGNS_IN_LINE => << 'MYSQL',
-        SELECT
-            /* 0 */   position_in_stream.next_sign_id,
-            /* 1 */   position_in_stream.sign_id,
-            /* 2 */   sign_char.sign, /* 0 */
-            /* 3 */   sign_char.sign_type_id,
-            /* 4 */   sign_type.type,
-            /* 5 */   sign_char.width,
-            /* 6 */   sign_char.might_be_wider,
-            /* 7 */   sign_char_reading_data.readability,
-            /* 8 */   sign_char_reading_data.is_retraced,
-            /* 9 */   sign_char_reading_data.is_reconstructed,
-            /* 10 */  sign_char_reading_data.correction,
-            /* 11 */  sign_char.is_variant,
-            /* 12 */  sign_char_reading_data.sign_char_reading_data_id,
-            /* 13 */  sign_char.sign_char_id,
-            /* 14 */     if(sign_char_reading_data.sign_char_reading_data_id is null
-                            or sign_char_reading_data_owner.scroll_version_id = _scrollversion_ , 0,
-                            1) as var
-
-        FROM line_to_sign
-	JOIN position_in_stream USING (sign_id)
-	JOIN position_in_stream_owner USING (position_in_stream_id)
-	JOIN sign_char USING (sign_id)
-    JOIN sign_char_owner USING (sign_char_id)
-	JOIN sign_type USING(sign_type_id)
-    LEFT JOIN sign_char_reading_data USING (sign_char_id)
-    LEFT JOIN sign_char_reading_data_owner USING (sign_char_reading_data_id)
-	WHERE line_id =?
-	AND sign_char_owner.scroll_version_id = _scrollversion_
-	AND position_in_stream_owner.scroll_version_id= _scrollversion_
-        ORDER BY sign_char.sign_char_id, var
-
-MYSQL
-
-        NEW_MAIN_ACTION => << 'MYSQL',
-INSERT INTO main_action
-(scroll_version_id) VALUES (_scrollversion_)
-MYSQL
-
-        ADD_USER => << 'MYSQL',
-        INSERT IGNORE INTO _table__owner
-        (_table__id, scroll_version_id)
-        SELECT
-            _table__id,
-            _scrollversion_
-        FROM _table__owner
+        ADD_USER => <<'MYSQL',
+            INSERT IGNORE INTO _table__owner
+              (_table__id, scroll_version_id)
+    SELECT
+        _table__id,
+        _scrollversion_
+    FROM _table__owner
         JOIN _table_ USING (_table__id)
-        _join_
-        WHERE _where_
-         AND _table__owner.scroll_version_id = _oldscrollversion_
+      _join_
+      WHERE _where_
+      AND _table__owner.scroll_version_id = _oldscrollversion_
 MYSQL
 
-        REMOVE_USER => << 'MYSQL',
-        DELETE _table__owner
-        FROM _table__owner
-        JOIN _table_ USING (_table__id)
-        _join_
-        WHERE _where_
-         AND _table__owner.scroll_version_id = _scrollversion_
+        REMOVE_USER               => <<'MYSQL',
+          DELETE _table__owner
+          FROM _table__owner
+          JOIN _table_ USING (_table__id)
+          _join_
+          WHERE _where_
+          AND _table__owner.scroll_version_id = _scrollversion_
 
 MYSQL
 
-        LOG_CHANGE_USER => << 'MYSQL',
-        INSERT INTO single_action
-        (main_action_id, action, `table`, id_in_table)
-            SELECT _mainid_, '_actionart_', '_table_', _table__id
-        FROM _table__owner
-        JOIN _table_ USING (_table__id)
-        _join_
-        WHERE _where_
-         AND _table__owner.scroll_version_id = _scrollversion_
+        LOG_CHANGE_USER => <<'MYSQL',
+          INSERT INTO single_action
+              (main_action_id, action, `table`, id_in_table)
+          SELECT _mainid_, '_actionart_', '_table_', _table__id
+          FROM _table__owner
+          JOIN _table_ USING (_table__id)
+          _join_
+          WHERE _where_
+          AND _table__owner.scroll_version_id = _scrollversion_
 MYSQL
 
-        SIGN_CHAR_JOIN     => 'JOIN sign_char USING (sign_char_id)',
-        LINE_TO_SIGN_JOIN  => 'JOIN line_to_sign USING (sign_id)',
-        COL_TO_LINE_JOIN   => 'JOIN col_to_line USING (line_id)',
-        SCROLL_TO_COL_JOIN => 'JOIN scroll_to_col USING (col_id)',
-        ARTEFACT_POSITION_JOIN => 'JOIN artefact_position USING (artefact_id)',
+        SIGN_CHAR_JOIN            => 'JOIN sign_char USING (sign_char_id)',
+        LINE_TO_SIGN_JOIN         => 'JOIN line_to_sign USING (sign_id)',
+        COL_TO_LINE_JOIN          => 'JOIN col_to_line USING (line_id)',
+        SCROLL_TO_COL_JOIN        => 'JOIN scroll_to_col USING (col_id)',
+        ARTEFACT_POSITION_JOIN    => 'JOIN artefact_position USING (artefact_id)',
 
-        NEW_SCROLL_VERSION => << 'MYSQL',
+        NEW_SCROLL_VERSION        => <<'MYSQL',
         INSERT INTO scroll_version
         (user_id, scroll_id, version) values (?,?,?)
 MYSQL
 
-        NEXT_VERSION => << 'MYSQL',
+        NEXT_VERSION => <<'MYSQL',
         SELECT IFNULL(MAX(version)+1,0)
-            FROM scroll_version
-            WHERE user_id=? AND scroll_id=?
+        FROM scroll_version
+        WHERE user_id=? AND scroll_id=?
 MYSQL
 
     };
+
+=head2 Internal Database Functions
+
+Contains all functions which can be used as shortcuts for executing queries
+
+
+=head3 start_logged_action()
+
+Starts a set of logged actions and must be stopped with stop_logged_action().
+
+Logged actions must use an SQE_st statement and must be executed by its function logged_exectue().
+
+=over 1
+
+=item Parameters: none
+
+=item Returns nothing
+
+=back
+
+=cut
+
+    # Starts a set of logged actions
+    # Must be ended by stop_logged_action
+    # Logged action must use an SQE_st Statement and executed by logged_execute
+    sub start_logged_action {
+        my $self = shift;
+        $self->{AutoCommit} = 0;
+        my $sth = $self->{private_SQE_DBI_data}->{main_action_sth};
+        if ( not $sth ) {
+            my $query = NEW_MAIN_ACTION;
+            $self->_inject_scroll_version_id( \$query );
+            $sth = $self->prepare_cached($query);
+            $self->{private_SQE_DBI_data}->{main_action_sth} = $sth;
+        }
+        $sth->execute();
+        $self->{private_SQE_DBI_data}->{main_action_id} =
+          $self->{mysql_insertid};
+    }
+
+=head3 stop_logged_action()
+
+Stops a set of logged actions started with start_logged_action()
+
+=over 1
+
+=item Parameters: none
+
+=item Returns nothing
+
+=back
+
+=cut
+
+    sub stop_logged_action {
+        my $self = shift;
+        $self->commit;
+        $self->{AutoCommit} = 1;
+    }
+
+=head3 prepare_sqe_with_version_ids()
+
+Creates a prepared SQE_st statement handler with injected scroll_version_group_id.
+
+Any instance of _svgi_ will be replaced with the current scroll version group id
+
+=over 1
+
+=item Parameters: query string
+
+=item Returns SQE_st statement
+
+=back
+
+=cut
+
+    #@returns SQE_st
+    sub prepare_sqe_with_version_ids {
+        my ( $self, $query ) = @_;
+        $query =~
+          s/_svgi_/$self->{private_SQE_DBI_data}->{SCROLL_VERSION_GROUP_ID}/goe;
+        return bless $self->prepare_cached( $query, @_ ), 'SQE_st';
+    }
+
+=head3 selectall_hashref_with_key_from_column()
+
+Returns a reference to a hash whose keys are the values given in the key column.
+
+The value of a key is an array containing arrays of the values of each line which has the
+key value:
+
+{
+key1=>[[values of 1. row with key_column=key1],[values of 2. row with key_column=key1] ...],
+key2=>[[values of 1. row with key_column=key2],[values of 2. row with key_column=key2] ...]
+}
+
+Thus, the key column needs not to provide uniques keys
+
+
+=over 1
+
+=item Parameters: query string, integer of the key column, values of the query as array
+
+=item Returns reference to result hash
+
+=back
+
+=cut
+
+    sub selectall_hashref_with_key_from_column {
+        my ( $self, $query, $column, @query_values ) = @_;
+        my $sth = $self->prepare_sqe_with_version_ids($query);
+        $sth->execute(@query_values);
+        my $key;
+        my $out_hash_ref = {};
+
+        $sth->bind_col( $column, \$key );
+        while ( my @array = $sth->fetchrow_array ) {
+            if ( !defined $out_hash_ref->{$key} ) {
+                $out_hash_ref->{$key} = [];
+            }
+            push @{ $out_hash_ref->{$key} }, \@array;
+        }
+        $sth->finish;
+        return $out_hash_ref;
+    }
+
+
+    sub _get_text {
+        my ($self, $query, $id, $format, $start_id) = @_;
+        my $sth=$self->prepare_cached($query);
+        my $sth_out = $self->prepare_cached(SQE_DBI_queries::GET_REF_DATA);
+        my $signs={};
+
+        if ( $sth->execute($id, $self->scroll_version_group_id)) {
+            my SQE_sign $sign = SQE_sign->new($sth->fetchrow_arrayref);
+            my SQE_sign $old_sign = $sign;
+
+            while (my $data_ref = $sth->fetchrow_arrayref) {
+                my $sign = $old_sign->add_data($data_ref);
+                if ($sign != $old_sign) {
+                    $signs->{$old_sign->{sign_id}} = $old_sign;
+                    $old_sign=$sign;
+                }
+
+            }
+            $signs->{$old_sign->{sign_id}} = $old_sign;
+            $format->print($signs, $start_id, $sth_out, $self->scroll_version_group_id);
+        }
+        $sth->finish;
+        $sth_out->finish;
+    }
+
+    sub get_text_of_fragment {
+        my ($self, $frag_id, $class) = @_;
+        my @start=$self->get_first_row_as_array(SQE_DBI_queries::GET_FIRST_SIGN_IN_COLUMN, $frag_id, $self->scroll_version_group_id);
+        $self->_get_text(SQE_DBI_queries::GET_ALL_SIGNS_IN_FRAGMENT_QUERY, $frag_id, $class, $start[0]);
+    }
+
+    sub get_text_of_line {
+        my ($self, $line_id, $class) = @_;
+        my @start=$self->get_first_row_as_array(SQE_DBI_queries::GET_FIRST_SIGN_IN_LINE, $line_id, $self->scroll_version_group_id);
+        $self->_get_text(SQE_DBI_queries::GET_ALL_SIGNS_IN_LINE_QUERY, $line_id, $class, $start[0]);
+    }
+
+
+    sub scroll_version_group_id {
+        my ($self) = @_;
+        return $self->{private_SQE_DBI_data}->{SESSION}->{SCROLL_VERSION_GROUP_ID};
+    }
+
+
+=head2 Sign streams
+
+=cut
+
+=head3 get_sign_stream_for_fragment_id($id)
+
+Creates a SQE_sign_stream for a fragment
+
+
+=over 1
+
+=item Parameters: the internal id of the fragment
+
+=item Returns SQE_sign_stream
+
+=back
+
+=cut
+
+    #@returns SQE_sign_stream
+    #@deprecated
+    sub create_sign_stream_for_fragment_id {
+        my ( $self, $id ) = @_;
+        return SQE_sign_stream->new(
+            $self->selectall_hashref_with_key_from_column
+              ( SQE_DBI_queries::GET_ALL_SIGNS_IN_FRAGMENT,
+                2, $id
+              ),
+        );
+    }
+
+    sub create_sign_stream_for_line_id {
+        my ( $self, $id ) = @_;
+        return SQE_sign_stream->new(
+            $self->selectall_hashref_with_key_from_column
+              ( SQE_DBI_queries::GET_ALL_SIGNS_IN_LINE,
+                2, $id
+              ),
+        );
+    }
+
+    # = DBI::db->selectcol_arrayref calles with a query string,
+    # but uses injects automatically the current user-id and vesion
+    sub selectcol_arrayref_sqe {
+        my $self = shift;
+        my $sth  = $self->prepare_sqe(shift);
+        return $self->selectcol_arrayref( $sth, @_ );
+    }
+
+    # = DBI::db->selectall_arrayref calles with a query string,
+    # but uses injects automatically the current user-id and vesion
+    sub selectall_arrayref_sqe {
+        my $self  = shift;
+        my $query = shift;
+        $self->_inject_scroll_version_id( \$query );
+        return $self->selectall_arrayref( $query, @_ );
+    }
+
+    sub get_first_row_as_hash_ref {
+        my ( $self, $query, @data ) = @_;
+        my $sth = $self->prepare_cached($query);
+        $sth->execute(@data);
+        my $result = $sth->fetchrow_hashref;
+        $sth->finish;
+        reutrn $result;
+    }
+
+    sub get_first_row_as_array {
+        my ( $self, $query, @data ) = @_;
+        my $sth = $self->prepare_cached($query);
+        $sth->execute(@data);
+        my @result = $sth->fetchrow_array;
+        $sth->finish;
+        return @result;
+    }
 
 # Internal function to add the current user/version to a table for a whole scroll or part of it
 # The adding is not logged, thus to rewind it, one must use remove_user manually
@@ -394,10 +613,12 @@ MYSQL
     # wether a different record containing the new vaules already exist
             my @keys =
               grep { defined $data_ref->{$_} && $_ ne '' }
-              map { $_ if defined $data_ref->{$_} && $_ ne "${table}_id" } keys %$data_ref;
+              map { $_ if defined $data_ref->{$_} && $_ ne "${table}_id" }
+              keys %$data_ref;
             my $fields = join( ' = ? AND ', @keys ) . ' = ?';
             $query = "SELECT ${table}_id from  $table where $fields";
-            map {$query .= " AND $_ is null" if !defined $data_ref->{$_}} keys %$data_ref;
+            map { $query .= " AND $_ is null" if !defined $data_ref->{$_} }
+              keys %$data_ref;
             my $new_sth = $self->prepare_cached($query);
             $new_sth->execute( map { $data_ref->{$_} } @keys );
             my @id = $new_sth->fetchrow_array;
@@ -651,21 +872,17 @@ MYSQL
             $old_userversion );
 
         # Added by Bronson for copying artefact data
-        $self->_run_add_user_query( 'artefact_position',
-            [],
+        $self->_run_add_user_query( 'artefact_position', [],
             "artefact_position.scroll_id=$scroll_id",
             $old_userversion );
 
-        $self->_run_add_user_query( 'artefact',
-            [ARTEFACT_POSITION_JOIN],
+        $self->_run_add_user_query( 'artefact', [ARTEFACT_POSITION_JOIN],
             "artefact_position.scroll_id=$scroll_id",
             $old_userversion );
 
-        $self->_run_add_user_query( 'artefact_data',
-            [ARTEFACT_POSITION_JOIN],
+        $self->_run_add_user_query( 'artefact_data', [ARTEFACT_POSITION_JOIN],
             "artefact_position.scroll_id=$scroll_id",
             $old_userversion );
-
 
     }
 
@@ -786,6 +1003,7 @@ MYSQL
 #   password
 #   version (optional)
 # Returns the new scrollversion if ok, otherwise unddef and a ref to the appropriate error array
+# #@method
     sub set_user {
         my ( $self, $user_name, $password, $scrollversion ) = @_;
         undef $self->{private_SQE_DBI_data}->{main_action_sth};
@@ -837,96 +1055,120 @@ MYSQL
 # Parameters:
 #   new scrollversion
     sub set_scrollversion {
-        my ( $self, $new_scrollversion ) = @_;
 
-        # First check whether the new scrollversion is the global QWB version
-        if ( $new_scrollversion == 1 ) {
-            $self->_set_scrollversion(1);
-            return 1;
-        }
+        my ( $self, $scroll_version_id ) = @_;
 
-        # If not, check, whether the scrollversion belongs to the current user
-        my $check_sth =
-          $self->prepare_cached(SQE_DBI_queries::CHECK_SCROLLVERSION);
-        $check_sth->execute($new_scrollversion);
-        my $data_ref = $check_sth->fetchrow_arrayref;
-        $check_sth->finish;
-        if ( $data_ref && $data_ref->[0] == $self->user_id ) {
-            $self->_set_scrollversion($new_scrollversion);
-            return $new_scrollversion;
+        ( $scroll_version_id, my $scroll_version_group_id ) =
+          $self->get_first_row_as_array( SQE_DBI_queries::GET_SCROLLVERSION,
+            $self->user_id, $scroll_version_id );
+
+        # Return the scroll version id if the version could have been retrieved
+        # other wise (undef, error_ref)
+
+        if ( $scroll_version_id && $scroll_version_group_id ) {
+            $self->{private_SQE_DBI_data}->{SCROLL_VERSION_ID} =
+              $scroll_version_id;
+            $self->{private_SQE_DBI_data}->{SCROLL_VERSION_GROUP_ID} =
+              $scroll_version_group_id;
         }
-        return ( undef, SQE_Error::WRONG_SCROLLVERSION );
+        return $self->{SCROLL_VERSION_ID} && $self->{SCROLL_VERSION_GROUP_ID}
+          ? $self->{SCROLL_VERSION_ID}
+          : ( undef, SQE_Error::WRONG_SCROLLVERSION );
+
+ #        my ( $self, $new_scrollversion ) = @_;
+ #
+ #        # First check whether the new scrollversion is the global QWB version
+ #        if ( $new_scrollversion == 1 ) {
+ #            $self->_set_scrollversion(1);
+ #            return 1;
+ #        }
+ #
+ #        # If not, check, whether the scrollversion belongs to the current user
+ #        my $check_sth =
+ #          $self->prepare_cached(SQE_DBI_queries::CHECK_SCROLLVERSION);
+ #        $check_sth->execute($new_scrollversion);
+ #        my $data_ref = $check_sth->fetchrow_arrayref;
+ #        $check_sth->finish;
+ #        if ( $data_ref && $data_ref->[0] == $self->user_id ) {
+ #            $self->_set_scrollversion($new_scrollversion);
+ #            return $new_scrollversion;
+ #        }
+ #        return ( undef, SQE_Error::WRONG_SCROLLVERSION );
     }
 
     # Internal function to sert a new scrollversion without prior checking
     # Parameters
     #   new scrollversion
     sub _set_scrollversion {
-        my ($self, $new_scrollversion) = @_;
+        my ( $self, $new_scrollversion ) = @_;
         $self->{private_SQE_DBI_data}->{scrollversion} = $new_scrollversion;
-        my $set_to_db_sth = $self->prepare_cached(SQE_DBI_queries::SET_SESSION_SCROLLVERSION);
-        $set_to_db_sth->execute($new_scrollversion, $self->session_id);
+        my $set_to_db_sth =
+          $self->prepare_cached(SQE_DBI_queries::SET_SESSION_SCROLLVERSION);
+        $set_to_db_sth->execute( $new_scrollversion, $self->session_id );
         undef $self->{private_SQE_DBI_data}->{main_action_sth};
     }
 
     #Returns the current SQE-session-id
     sub session_id {
-        return shift->{private_SQE_DBI_data}->{session_id};
+        my ($self) = @_;
+        return $self->{private_SQE_DBI_data}->{SESSION}->{SESSION_ID};
     }
 
     #Sets a new session_id
     #Paramater:
     #    session_id
     sub set_session_id {
-        my ($self, $session_id)= @_;
-        $self->{private_SQE_DBI_data}->{session_id}=$session_id;
+        my ( $self, $session_id ) = @_;
+        $self->{private_SQE_DBI_data}->{session_id} = $session_id;
 
+    }
+
+=head2 set_session($session)
+
+Set the session the database handler works for.
+It also stores a reference of the databse handler in the session object
+
+=over 1
+
+=item Parameters: SQE_Session::Session
+
+=item Returns nothing
+
+=back
+
+=cut
+
+    sub set_session {
+        my ( $self, $session ) = @_;
+        $self->{private_SQE_DBI_data}->{SESSION} = $session;
+        $session->{DBH} = $self;
     }
 
     # Returns the current user_id
     sub user_id {
-        return shift->{private_SQE_DBI_data}->{user_id};
+        return $_[0]->{private_SQE_DBI_data}->{user_id};
     }
 
     # Returns the current version
     sub scrollversion {
-        return shift->{private_SQE_DBI_data}->{scrollversion};
+        return $_[0]->{private_SQE_DBI_data}->{scrollversion};
     }
 
     # Returns the current action_log_id
     sub action_log_id {
-        return shift->{private_SQE_DBI_data}->{main_action_id};
+        return $_[0]->{private_SQE_DBI_data}->{main_action_id};
     }
 
-    # Starts a set of logged actions
-    # Must be ended by stop_logged_action
-    # Logged action must use an SQE_st Statement and executed by logged_execute
-    sub start_logged_action {
-        my $self = shift;
-        $self->{AutoCommit} = 0;
-        my $sth = $self->{private_SQE_DBI_data}->{main_action_sth};
-        if ( not $sth ) {
-            my $query = NEW_MAIN_ACTION;
-            $self->_inject_scroll_version_id( \$query );
-            $sth = $self->prepare_cached($query);
-            $self->{private_SQE_DBI_data}->{main_action_sth} = $sth;
-        }
-        $sth->execute();
-        $self->{private_SQE_DBI_data}->{main_action_id} =
-          $self->{mysql_insertid};
-    }
+=head2 Depreciatead
 
-    # Stops a set of logged actions startet with start_logged_action
-    sub stop_logged_action {
-        my $self = shift;
-        $self->commit;
-        $self->{AutoCommit} = 1;
-    }
+
+=cut
 
     # Prepares a SQE-statement handler with injected user- and version-id.
     # The statement is always cached.
     # Parameters
     #    same as DB->prepare parameters
+    #@deprecated
     #@returns SQE_st
     sub prepare_sqe {
         my $self  = shift;
@@ -938,76 +1180,12 @@ MYSQL
 # Internal function to substitute _user_ and _version_ found in a query with the current user- and version-is
 # Parameter:
 # Reference to the query string
+#@deprecated
     sub _inject_scroll_version_id {
         my $self  = shift;
         my $query = shift;
         $$query =~ s/_scrollversion_/$self->scrollversion/goe;
 
-    }
-
-# Gives a reference to an hash.
-# The keys are taken from the column number given after the query.
-# Each key points to an ref to an array of refs to arrays which contain the rows
-# found with the key values provided by the key column.
-# Thus, the key column need not to provide unique keys.
-#
-# Parameters:
-# query
-# column number
-# array of all values to be passed to the execute as to a normal execute
-    sub selectall_hashref_with_key_from_column {
-        my $self = shift;
-        my $sth  = $self->prepare_sqe(shift);
-        my $col  = shift;
-        $sth->execute(@_);
-        my $key;
-        my $out_hash_ref = {};
-
-        $sth->bind_col( $col, \$key );
-        while ( my @array = $sth->fetchrow_array ) {
-            if ( !defined $out_hash_ref->{$key} ) {
-                $out_hash_ref->{$key} = [];
-            }
-            push @{ $out_hash_ref->{$key} }, \@array;
-        }
-        $sth->finish;
-        return $out_hash_ref;
-    }
-
-    sub create_sign_stream_for_fragment_id {
-        my ( $self, $id ) = @_;
-        return SQE_sign_stream->new(
-            $self->selectall_hashref_with_key_from_column
-              ( GET_ALL_SIGNS_IN_FRAGMENT, 2, $id
-              ),
-        );
-    }
-
-    sub create_sign_stream_for_line_id {
-        my ( $self, $id ) = @_;
-        return SQE_sign_stream->new(
-            $self
-              ->selectall_hashref_with_key_from_column( GET_ALL_SIGNS_IN_LINE,
-                2, $id
-              ),
-        );
-    }
-
-    # = DBI::db->selectcol_arrayref calles with a query string,
-    # but uses injects automatically the current user-id and vesion
-    sub selectcol_arrayref_sqe {
-        my $self = shift;
-        my $sth  = $self->prepare_sqe(shift);
-        return $self->selectcol_arrayref( $sth, @_ );
-    }
-
-    # = DBI::db->selectall_arrayref calles with a query string,
-    # but uses injects automatically the current user-id and vesion
-    sub selectall_arrayref_sqe {
-        my $self  = shift;
-        my $query = shift;
-        $self->_inject_scroll_version_id( \$query );
-        return $self->selectall_arrayref( $query, @_ );
     }
 
 }
@@ -1062,88 +1240,6 @@ MYSQL
         my $self = shift;
         $self->{private_sth}->finish if $self->{private_sth};
         $self->SUPER::finish;
-    }
-
-}
-
-############################################################################################
-#   Signstreamhandler
-############################################################################################
-
-# Internal class which provides the logic for a sign stream created by SQE_DB->create_sign_stream_for_fragment_id
-# or create_sign_stream_for_line_id
-# A "sign" is in fact a ref to an hash containng all relevant data of the sign
-
-{
-
-    package SQE_sign_stream;
-
-    sub new {
-        my $class = shift;
-        my $self  = bless {
-            signs_ref       => shift,
-            current_sign_id => shift,
-            current_var_id  => 0,
-        }, $class;
-        return $self;
-    }
-
-    # Set the sign id as star id
-    sub set_start_id {
-        my $self = shift;
-        $self->{current_sign_id} = shift;
-    }
-
-# Internal function which sets the the current sign id to the next value or to undef, if the end of the stream is reached.
-# Returns the new id
-    sub _next_sign_id {
-        my $self = shift;
-        return $self->{current_sign_id} =
-          $self->{signs_ref}->{ $self->{current_sign_id} }->[0]->[0];
-    }
-
-    # Returns the next sign in the stream or undef if the end was reached.
-    # Note - the next sign may also be a variant of the foregoing sign
-    # thus the sequence is: sign1 - sign2 - sign2_var1 - sign2_var_2 -sign3 ...
-    sub next_sign {
-        my $self     = shift;
-        my $old_sign_id = $self->{current_sign_id};
-        my $next_sign;
-
-# Try to load into $next_sign the next variant of the current_sign
-# on succes, the variant index current_var_id is increased and points already
-# to the next possible variant and $next_sign contains the reference to the next sign
-# In this case we jump to elsif
-        if ( $self->{current_sign_id} && not $next_sign =
-            $self->{signs_ref}->{ $self->{current_sign_id} }
-            ->[ ++$self->{current_var_id} ] )
-
- #this block is processed when no variant entrance for the current sign is found
-        {
-            #reset the variant index
-            $self->{current_var_id} = 0;
-
-            # return the next new sign if it exist
-            if ( my $next_sign_id = $self->_next_sign_id) {
-                $next_sign= $self->{signs_ref}->{$next_sign_id}->[0];
-                if ($next_sign->[14]) {
-                    pop @{$next_sign};
-                    $next_sign->[12]=undef;
-                }
-            return $next_sign;
-              }
-         }
-        # the next sign is a variant
-        # test whether it is a real variant for this scrollversion
-        # or found because there had been an entrance to sign_char_reading_data by a different scrollversion
-        # which should only be taken if there was no previous record whith the same sign_char_id
-        # in this case we proceed to the next sign by simply calling this function recursively
-        elsif(defined $next_sign && $next_sign->[14]) {
-                return $self->next_sign;
-        }
-        # At this point $next_sign either refers to the next variant or is undefined because the end
-        # of the sign stream had been reached
-        return $next_sign;
     }
 
 }
