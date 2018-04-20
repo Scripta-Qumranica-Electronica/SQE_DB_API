@@ -175,13 +175,33 @@ MYSQL
         (user_id, scroll_id, version) values (?,?,?)
 MYSQL
 
-        NEXT_VERSION => <<'MYSQL',
-        SELECT IFNULL(MAX(version)+1,0)
-        FROM scroll_version
-        WHERE user_id=? AND scroll_id=?
-MYSQL
 
     };
+
+=head2 Internal Functions
+
+
+=head3 _set_scroll_version($scroll_version_id, $scroll_version_group_id)
+
+Sets the scroll version and scroll version group id into the internal hash
+
+=over 1
+
+=item Parameters: scroll_version_id, scroll_version_group_id
+
+=item Returns
+
+=back
+
+=cut
+
+    sub _set_scroll_version {
+        my ($self, $scroll_version_id, $scroll_version_group_id) = @_;
+        $self->{private_SQE_DBI_data}->{SCROLL_VERSION_ID} =
+            $scroll_version_id;
+        $self->{private_SQE_DBI_data}->{SCROLL_VERSION_GROUP_ID} =
+            $scroll_version_group_id;
+    }
 
 =head2 Internal Database Functions
 
@@ -291,6 +311,7 @@ Thus, the key column needs not to provide uniques keys
 
 =cut
 
+    #@deprecated
     sub selectall_hashref_with_key_from_column {
         my ( $self, $query, $column, @query_values ) = @_;
         my $sth = $self->prepare_sqe_with_version_ids($query);
@@ -309,8 +330,83 @@ Thus, the key column needs not to provide uniques keys
         return $out_hash_ref;
     }
 
+=head3 get_first_row_as_hash_ref($query, @data)
 
-    sub _get_text {
+Execute a query with the given data and returns a reference to a hash containing the
+data of the first record
+
+=over 1
+
+=item Parameters: Query as string, data as as array
+
+=item Returns reference to a hash containing the data of the first record
+
+=back
+
+=cut
+
+    sub get_first_row_as_hash_ref {
+        my ( $self, $query, @data ) = @_;
+        my $sth = $self->prepare_cached($query);
+        $sth->execute(@data);
+        my $result = $sth->fetchrow_hashref;
+        $sth->finish;
+        reutrn $result;
+    }
+
+=head3 get_first_row_as_array($query, @data)
+
+Execute a query with the given data and returns  the
+data of the first record as an array
+
+=over 1
+
+=item Parameters: Query as string, data as as array
+
+=item Returns array containing the data of the first record
+
+=back
+
+=cut
+
+    sub get_first_row_as_array {
+        my ( $self, $query, @data ) = @_;
+        my $sth = $self->prepare_cached($query);
+        $sth->execute(@data);
+        my @result = $sth->fetchrow_array;
+        $sth->finish;
+        return @result;
+    }
+
+
+
+    sub scroll_version_group_id {
+        my ($self) = @_;
+        return $self->{private_SQE_DBI_data}->{SESSION}->{SCROLL_VERSION_GROUP_ID};
+    }
+
+
+=head2 Retrieve Text
+
+=cut
+
+=head3 print_formatted_text($query, $id, $format, $start_id)
+
+Retrieves a chunk of text, formats, and print it out.
+
+
+
+=over 1
+
+=item Parameters:
+
+=item Returns
+
+=back
+
+=cut
+
+    sub print_formatted_text {
         my ($self, $query, $id, $format, $start_id) = @_;
         my $sth=$self->prepare_cached($query);
         my $sth_out = $self->prepare_cached(SQE_DBI_queries::GET_REF_DATA);
@@ -338,99 +434,20 @@ Thus, the key column needs not to provide uniques keys
     sub get_text_of_fragment {
         my ($self, $frag_id, $class) = @_;
         my @start=$self->get_first_row_as_array(SQE_DBI_queries::GET_FIRST_SIGN_IN_COLUMN, $frag_id, $self->scroll_version_group_id);
-        $self->_get_text(SQE_DBI_queries::GET_ALL_SIGNS_IN_FRAGMENT_QUERY, $frag_id, $class, $start[0]);
+        $self->print_formatted_text(SQE_DBI_queries::GET_ALL_SIGNS_IN_FRAGMENT_QUERY, $frag_id, $class, $start[0]);
     }
 
     sub get_text_of_line {
         my ($self, $line_id, $class) = @_;
         my @start=$self->get_first_row_as_array(SQE_DBI_queries::GET_FIRST_SIGN_IN_LINE, $line_id, $self->scroll_version_group_id);
-        $self->_get_text(SQE_DBI_queries::GET_ALL_SIGNS_IN_LINE_QUERY, $line_id, $class, $start[0]);
+        $self->print_formatted_text(SQE_DBI_queries::GET_ALL_SIGNS_IN_LINE_QUERY, $line_id, $class, $start[0]);
     }
 
 
-    sub scroll_version_group_id {
-        my ($self) = @_;
-        return $self->{private_SQE_DBI_data}->{SESSION}->{SCROLL_VERSION_GROUP_ID};
-    }
 
 
-=head2 Sign streams
 
-=cut
-
-=head3 get_sign_stream_for_fragment_id($id)
-
-Creates a SQE_sign_stream for a fragment
-
-
-=over 1
-
-=item Parameters: the internal id of the fragment
-
-=item Returns SQE_sign_stream
-
-=back
-
-=cut
-
-    #@returns SQE_sign_stream
-    #@deprecated
-    sub create_sign_stream_for_fragment_id {
-        my ( $self, $id ) = @_;
-        return SQE_sign_stream->new(
-            $self->selectall_hashref_with_key_from_column
-              ( SQE_DBI_queries::GET_ALL_SIGNS_IN_FRAGMENT,
-                2, $id
-              ),
-        );
-    }
-
-    sub create_sign_stream_for_line_id {
-        my ( $self, $id ) = @_;
-        return SQE_sign_stream->new(
-            $self->selectall_hashref_with_key_from_column
-              ( SQE_DBI_queries::GET_ALL_SIGNS_IN_LINE,
-                2, $id
-              ),
-        );
-    }
-
-    # = DBI::db->selectcol_arrayref calles with a query string,
-    # but uses injects automatically the current user-id and vesion
-    sub selectcol_arrayref_sqe {
-        my $self = shift;
-        my $sth  = $self->prepare_sqe(shift);
-        return $self->selectcol_arrayref( $sth, @_ );
-    }
-
-    # = DBI::db->selectall_arrayref calles with a query string,
-    # but uses injects automatically the current user-id and vesion
-    sub selectall_arrayref_sqe {
-        my $self  = shift;
-        my $query = shift;
-        $self->_inject_scroll_version_id( \$query );
-        return $self->selectall_arrayref( $query, @_ );
-    }
-
-    sub get_first_row_as_hash_ref {
-        my ( $self, $query, @data ) = @_;
-        my $sth = $self->prepare_cached($query);
-        $sth->execute(@data);
-        my $result = $sth->fetchrow_hashref;
-        $sth->finish;
-        reutrn $result;
-    }
-
-    sub get_first_row_as_array {
-        my ( $self, $query, @data ) = @_;
-        my $sth = $self->prepare_cached($query);
-        $sth->execute(@data);
-        my @result = $sth->fetchrow_array;
-        $sth->finish;
-        return @result;
-    }
-
-# Internal function to add the current user/version to a table for a whole scroll or part of it
+    # Internal function to add the current user/version to a table for a whole scroll or part of it
 # The adding is not logged, thus to rewind it, one must use remove_user manually
 #
 # Parameters
@@ -497,6 +514,15 @@ Creates a SQE_sign_stream for a fragment
 
     }
 
+
+    sub set_scroll_version_group_admin {
+        my ($self, $scroll_version_group_id, $user_id) = @_;
+        my $sth->prepare_cached(SQE_DBI_queries::CREATE_SCROLL_VERSION_GROUP_ADMIN);
+        $sth->execute($scroll_version_group_id, $user_id);
+        $sth->finish;
+    }
+
+
     # Creates a new scrollversion for the current user and the given scroll.
     # The new scrollversion can be retrieved by scrollverion
     #
@@ -505,15 +531,25 @@ Creates a SQE_sign_stream for a fragment
     sub create_new_scrollversion {
         my $self             = shift;
         my $scroll_id        = shift;
-        my $next_version_sth = $self->prepare_cached(NEXT_VERSION);
-        $next_version_sth->execute( $self->user_id, $scroll_id );
-        my $version = $next_version_sth->fetchrow_arrayref->[0];
-        $next_version_sth->finish;
-        my $new_scrollversion_sth = $self->prepare_cached(NEW_SCROLL_VERSION);
-        $new_scrollversion_sth->execute( $self->user_id, $scroll_id, $version );
-        $self->_set_scrollversion( $self->{mysql_insertid} );
-        $new_scrollversion_sth->finish;
 
+        # First create a new scroll_version_group
+        my $sth = $self->prepare_cached(SQE_DBI_queries::NEW_SCROLL_VERSION_GROUP);
+        $sth->execute( $self->user_id, $scroll_id );
+        my $scroll_version_group_id=$self->{mysql_insertid};
+        $sth->finish;
+
+        $self->set_scroll_version_group_admin($scroll_version_group_id, $self->user_id);
+
+        # Create a new scroll_version as member of the new group
+        $sth->prepare_cached(SQE_DBI_queries::NEW_SCROLL_VERSION);
+        $sth->execute($self->user_id, $scroll_version_group_id);
+        my $scroll_version_id = $self->{mysql_insertid};
+        $sth->finish;
+
+        $self->_set_scroll_version($scroll_version_id, $scroll_version_group_id);
+
+
+        return $scroll_version_id;
     }
 
     # Internal function, thats removes an scrollversion from a table and logs it
@@ -834,6 +870,8 @@ Creates a SQE_sign_stream for a fragment
             $old_userversion
         );
 
+
+
         $self->_run_add_user_query( 'sign_char',
             [ LINE_TO_SIGN_JOIN, COL_TO_LINE_JOIN, SCROLL_TO_COL_JOIN ],
             $where, $old_userversion );
@@ -1048,6 +1086,9 @@ Creates a SQE_sign_stream for a fragment
 
     }
 
+
+
+
 # Sets the scrollversion to be used in sqe_queries
 # The function checks, whether the new scrollversion does belong to the user.
 # If ok, it returns the new scrollversion, otherwise undef and a ref to the  appropriate error-array
@@ -1065,11 +1106,8 @@ Creates a SQE_sign_stream for a fragment
         # Return the scroll version id if the version could have been retrieved
         # other wise (undef, error_ref)
 
-        if ( $scroll_version_id && $scroll_version_group_id ) {
-            $self->{private_SQE_DBI_data}->{SCROLL_VERSION_ID} =
-              $scroll_version_id;
-            $self->{private_SQE_DBI_data}->{SCROLL_VERSION_GROUP_ID} =
-              $scroll_version_group_id;
+        if ( $scroll_version_id && $scroll_version_group_id, $scroll_version_group_id ) {
+            $self->_set_scroll_version($scroll_version_id,)
         }
         return $self->{SCROLL_VERSION_ID} && $self->{SCROLL_VERSION_GROUP_ID}
           ? $self->{SCROLL_VERSION_ID}
@@ -1096,17 +1134,7 @@ Creates a SQE_sign_stream for a fragment
  #        return ( undef, SQE_Error::WRONG_SCROLLVERSION );
     }
 
-    # Internal function to sert a new scrollversion without prior checking
-    # Parameters
-    #   new scrollversion
-    sub _set_scrollversion {
-        my ( $self, $new_scrollversion ) = @_;
-        $self->{private_SQE_DBI_data}->{scrollversion} = $new_scrollversion;
-        my $set_to_db_sth =
-          $self->prepare_cached(SQE_DBI_queries::SET_SESSION_SCROLLVERSION);
-        $set_to_db_sth->execute( $new_scrollversion, $self->session_id );
-        undef $self->{private_SQE_DBI_data}->{main_action_sth};
-    }
+
 
     #Returns the current SQE-session-id
     sub session_id {
@@ -1126,7 +1154,7 @@ Creates a SQE_sign_stream for a fragment
 =head2 set_session($session)
 
 Set the session the database handler works for.
-It also stores a reference of the databse handler in the session object
+It also stores a reference of the database handler in the session object
 
 =over 1
 
@@ -1159,10 +1187,70 @@ It also stores a reference of the databse handler in the session object
         return $_[0]->{private_SQE_DBI_data}->{main_action_id};
     }
 
-=head2 Depreciatead
+=head2 Deprecated
 
 
 =cut
+
+
+    =head3 get_sign_stream_for_fragment_id($id)
+
+    Creates a SQE_sign_stream for a fragment
+
+
+=over 1
+
+=item Parameters: the internal id of the fragment
+
+=item Returns SQE_sign_stream
+
+=back
+
+=cut
+
+    #@returns SQE_sign_stream
+    #@deprecated
+    sub create_sign_stream_for_fragment_id {
+        my ( $self, $id ) = @_;
+        return SQE_sign_stream->new(
+            $self->selectall_hashref_with_key_from_column
+                ( SQE_DBI_queries::GET_ALL_SIGNS_IN_FRAGMENT,
+                    2, $id
+                ),
+        );
+    }
+
+    #@deprecated
+    sub create_sign_stream_for_line_id {
+        my ( $self, $id ) = @_;
+        return SQE_sign_stream->new(
+            $self->selectall_hashref_with_key_from_column
+                ( SQE_DBI_queries::GET_ALL_SIGNS_IN_LINE,
+                    2, $id
+                ),
+        );
+    }
+
+    # = DBI::db->selectcol_arrayref calles with a query string,
+    # but uses injects automatically the current user-id and vesion
+    #@deprecated
+    sub selectcol_arrayref_sqe {
+        my $self = shift;
+        my $sth  = $self->prepare_sqe(shift);
+        return $self->selectcol_arrayref( $sth, @_ );
+    }
+
+    # = DBI::db->selectall_arrayref calles with a query string,
+    # but uses injects automatically the current user-id and vesion
+    #@deprecated
+    sub selectall_arrayref_sqe {
+        my $self  = shift;
+        my $query = shift;
+        $self->_inject_scroll_version_id( \$query );
+        return $self->selectall_arrayref( $query, @_ );
+    }
+
+
 
     # Prepares a SQE-statement handler with injected user- and version-id.
     # The statement is always cached.
@@ -1186,6 +1274,20 @@ It also stores a reference of the databse handler in the session object
         my $query = shift;
         $$query =~ s/_scrollversion_/$self->scrollversion/goe;
 
+    }
+
+
+    # Internal function to sert a new scrollversion without prior checking
+    # Parameters
+    #   new scrollversion
+    #@deprecated
+    sub _set_scrollversion {
+        my ( $self, $new_scrollversion ) = @_;
+        $self->{private_SQE_DBI_data}->{scrollversion} = $new_scrollversion;
+        my $set_to_db_sth =
+            $self->prepare_cached(SQE_DBI_queries::SET_SESSION_SCROLLVERSION);
+        $set_to_db_sth->execute( $new_scrollversion, $self->session_id );
+        undef $self->{private_SQE_DBI_data}->{main_action_sth};
     }
 
 }
@@ -1242,7 +1344,6 @@ MYSQL
         $self->SUPER::finish;
     }
 
-}
 
 1;
 
