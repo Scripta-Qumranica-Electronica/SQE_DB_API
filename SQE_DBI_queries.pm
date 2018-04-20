@@ -53,17 +53,16 @@ MYSQL_FRAGMENT
 
 MYSQL_FRAGMENT
 
-    # Defines the where part of a query to get the sign data from a sign stream for the scrollverion
-    # Should follow a GET_XXX_WHERE part according to the text part looked for
+# Defines the where part of a query to get the sign data from a sign stream for the scrollverion
+# Should follow a GET_XXX_WHERE part according to the text part looked for
     SIGN_QUERY_SCROLLVERSION_PART => <<'MYSQL_FRAGMENT',
         AND sva.scroll_version_group_id = svb.scroll_version_group_id
         AND svb.scroll_version_group_id= ?
 
 MYSQL_FRAGMENT
 
-
-    # The last part of a query to get the sign data from a sign stream
-    # Should follow a GET_QUERY_SCROLLVERSION part according to the text part looked for
+# The last part of a query to get the sign data from a sign stream
+# Should follow a GET_QUERY_SCROLLVERSION part according to the text part looked for
     SIGN_QUERY_END => <<'MYSQL_FRAGMENT',
         ORDER BY sign_char.sign_char_id,
                  sign_char.is_variant,
@@ -102,14 +101,13 @@ MYSQL_FRAGMENT
 
 MYSQL_FRAGMENT
 
-
-    GET_REF_DATA                  => << 'MYSQL',
-    SELECT scroll_data.scroll_id,
-    scroll_data.name,
-    col_data.col_id,
-    col_data.name,
-    line_data.line_id,
-    line_data.name
+    GET_REF_DATA => << 'MYSQL',
+    SELECT  scroll_data.scroll_id,
+            scroll_data.name,
+            col_data.col_id,
+            col_data.name,
+            line_data.line_id,
+            line_data.name
 
     FROM line_to_sign
 
@@ -132,10 +130,6 @@ MYSQL_FRAGMENT
       AND col_sv.scroll_version_group_id = line_sv.scroll_version_group_id
       AND line_sv.scroll_version_group_id = ?
 MYSQL
-
-
-
-
 
     CHECK_SCROLLVERSION => << 'MYSQL',
 SELECT user_id
@@ -242,6 +236,24 @@ ORDER BY sign_char.sign_char_id, var
 
 MYSQL
 
+    NEW_SCROLL_VERSION_GROUP => <<'MYSQL',
+      INSERT INTO scroll_version_group
+        (user_id, scroll_id)
+        values (?,?)
+MYSQL
+
+    CREATE_SCROLL_VERSION_GROUP_ADMIN => << 'MYSQL',
+      INSERT INTO  scroll_version_group_admin
+        (scroll_version_group_id, user_id)
+        values (?,?)
+MYSQL
+
+    NEW_SCROLL_VERSION => <<'MYSQL',
+      INSERT INTO scroll_version
+        (user_id, scroll_version_group_id)
+        values (?,?)
+MYSQL
+
 };
 
 use constant {
@@ -256,7 +268,7 @@ use constant {
       . GET_FRAGMENT_FROM
       . SIGN_JOIN_PART
       . GET_FRAGMENT_WHERE
-        . SIGN_QUERY_SCROLLVERSION_PART
+      . SIGN_QUERY_SCROLLVERSION_PART
       . SIGN_QUERY_END,
 
     # Predefined querie to get the sign data from a sign stream from a line
@@ -264,21 +276,20 @@ use constant {
       . GET_LINE_FROM
       . SIGN_JOIN_PART
       . GET_LINE_WHERE
-        . SIGN_QUERY_SCROLLVERSION_PART
+      . SIGN_QUERY_SCROLLVERSION_PART
       . SIGN_QUERY_END,
 
     GET_FIRST_SIGN_IN_COLUMN => 'SELECT sign_id '
-        . GET_FRAGMENT_FROM
-        . SIGN_JOIN_PART
-        . 'where col_id=? '
-        . SIGN_QUERY_SCROLLVERSION_PART,
+      . GET_FRAGMENT_FROM
+      . SIGN_JOIN_PART
+      . 'where col_id=? '
+      . SIGN_QUERY_SCROLLVERSION_PART,
 
-        GET_FIRST_SIGN_IN_LINE => 'SELECT sign_id '
-            . GET_FRAGMENT_FROM
-            . SIGN_JOIN_PART
-            . 'where line_id=? '
-            . SIGN_QUERY_SCROLLVERSION_PART
-
+    GET_FIRST_SIGN_IN_LINE => 'SELECT sign_id '
+      . GET_FRAGMENT_FROM
+      . SIGN_JOIN_PART
+      . 'where line_id=? '
+      . SIGN_QUERY_SCROLLVERSION_PART
 
 };
 

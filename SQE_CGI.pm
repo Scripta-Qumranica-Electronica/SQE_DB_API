@@ -49,12 +49,12 @@ our Container $sqe_sessions;
 
 #@returns SQE_CGI
 sub new {
-    my ( $class, @args ) = @_;
+    my ( $class) = @_;
 
     # $sqe->sessions should be initialised only once
     $sqe_sessions = Container->new if !defined $sqe_sessions;
 
-    my SQE_CGI $self = $class->SUPER::new(@args);
+    my SQE_CGI $self = $class->SUPER::new(@ARGV);
     bless $self, 'SQE_CGI';
 
     #We give out only JSON objects
