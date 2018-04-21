@@ -69,7 +69,7 @@ sub new {
     if (  !$request_method
         || $request_method ne 'POST'
         || !$content_type
-        || $self->content_type() ne 'application/json'
+        || $self->content_type() !~ m/application\/json/
         || !$self->param('POSTDATA') )
     {
         $self->throw_error(SQE_Error::NO_JSON_POST_REQUEST);
@@ -189,6 +189,16 @@ sub get_text_of_line {
     my ($self, $line_id, $class) = @_;
     $self->{DBH}->get_text_of_line($line_id, $class);
 }
+
+sub user_id {
+    $_[0]->{DBH}->user_id;
+}
+
+sub scroll_version_id {
+    $_[0]->{DBH}->scroll_version_id;
+}
+
+
 
 
 1;

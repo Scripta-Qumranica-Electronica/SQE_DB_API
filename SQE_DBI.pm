@@ -1164,14 +1164,19 @@ It also stores a reference of the database handler in the session object
 
     # Returns the current user_id
     sub user_id {
-        return $_[0]->{private_SQE_DBI_data}->{user_id};
+        return $_[0]->{private_SQE_DBI_data}->{SESSION}->{USER_ID};
     }
 
     # Returns the current version
+    #@deprecated
     sub scrollversion {
-        return $_[0]->{private_SQE_DBI_data}->{scrollversion};
+        return $_[0]->{private_SQE_DBI_data}->{SESSION}->{SCROLL_VERSION_ID};
     }
 
+    sub scroll_version_id {
+        return $_[0]->{private_SQE_DBI_data}->{SESSION}->{SCROLL_VERSION_ID};
+
+    }
     # Returns the current action_log_id
     sub action_log_id {
         return $_[0]->{private_SQE_DBI_data}->{main_action_id};
