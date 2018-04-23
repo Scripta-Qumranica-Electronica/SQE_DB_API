@@ -35,6 +35,13 @@ MYSQL
       AND   pw = SHA2(?, 224);
 MYSQL
 
+    RELOAD_SESSION => << "MYSQL"
+      SELECT user_id, scroll_version_id, attributes
+      FROM sqe_session
+      WHERE sqe_session_id = ?;
+MYSQL
+
+
 };
 
 use Exporter 'import';

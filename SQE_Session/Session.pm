@@ -45,6 +45,28 @@ use SQE_Error;
 use SQE_Session::Container;
 
 
+=head1 Internal functions
+
+=cut
+    sub _new {
+        my ( $class, $cgi_data ) = @_;
+
+        my $self = {SCROLL_VERSION_ID => 0};
+        bless $self, $class;
+
+        # First, let's get an database handler
+        my ( $dbh, $error_ref ) = SQE_DBI->get_sqe_dbh();
+
+        # Return with error if no valid database handler
+        return ( undef, $error_ref ) if !$dbh;
+
+        $dbh->set_session($self);
+
+        return $self;
+
+    }
+
+
 
 
 
@@ -68,38 +90,67 @@ referred scroll version as the one to work on.
 =cut
 
 sub new {
-    my ( $class, $cgi_data ) = @_;
+    my ($class, $cgi_data) = @_;
+    my ($self, $error_ref) = _new($class);
 
-    my $self = {SCROLL_VERSION_ID => 0};
-    bless $self, $class;
+    return (undef, $error_ref) if !$self;
 
-    # First, let's get an database handler
-    my ( $dbh, $error_ref ) = SQE_DBI->get_sqe_dbh();
-
-    # Return with error if no valid database handler
-    return ( undef, $error_ref ) if !$dbh;
-
-    # We got an database handler - let's try to login
     my $user_name = $cgi_data->{USER_NAME};
     my $password = $cgi_data->{PASSWORD};
     my $scroll_version_id = $cgi_data->{SCROLL_VERSION_ID};
 
 
     ( $self->{USER_ID} ) =
-      $dbh->get_first_row_as_array( Queries::LOGIN, $user_name,
+      $self->{DBH}->get_first_row_as_array( Queries::LOGIN, $user_name,
         $password );
 
     # If no user_id is set, than we got wrong credentials
-    return ( undef, SQE_Error::WRONG_USER_DATA ) if !defined $self->{USER_ID};
+    if (!defined $self->{USER_ID}) {
+    $self->{DBH}->disconnect;
+        return ( undef, SQE_Error::WRONG_USER_DATA )
+    }
 
-    $dbh->set_session($self);
+
 
     #Let's try to set the scrollversion if a scroll_vwersion_id os provided
-    return ( undef, SQE_Error::WRONG_SCROLLVERSION )
-      if $scroll_version_id && !$self->set_scrollversion($scroll_version_id);
+    if ($scroll_version_id && !$self->set_scrollversion($scroll_version_id)) {
+        $self->{DBH}->disconnect;
+        return(undef, SQE_Error::WRONG_SCROLLVERSION);
+    }
 
     $self->{SESSION_ID} = $uuid->create_str();
+
+    my $sth = $self->{DBH}->prepare_cached(Queries::NEW_SQE_SESSION);
+    $sth->execute($self->{SESSION_ID}, $self->{USER_ID}, $self->{SCROLL_VERSION_ID});
+    $sth->finish;
     return $self;
+}
+
+sub reload {
+    my ($class, $session_id) = @_;
+    my ($self, $error_ref) = _new($class);
+
+    return (undef, $error_ref) if !$self;
+
+
+    # We got an database handler - let's try to retrieve old  sessiion data
+    ($self->{USER_ID}, my $scroll_version_id , $self->{ATTRIBUTES}) =
+        $self->{DBH}->get_first_row_as_array( Queries::RELOAD_SESSION, $session_id );
+
+    # If no user_id is set, than we could not reload a session
+    if (!$self->{USER_ID}) {
+        $self->{DBH}->disconnect;
+        return(undef, SQE_Error::WRONG_SESSION_ID);
+    }
+
+    #Let's try to set the scrollversion to test wether it is still valid
+    if ($scroll_version_id && !$self->set_scrollversion($scroll_version_id)) {
+        $self->{DBH}->disconnect;
+        return(undef, SQE_Error::SCROLLVERSION_OUTDATED);
+    }
+
+    return $self;
+
 }
 
 

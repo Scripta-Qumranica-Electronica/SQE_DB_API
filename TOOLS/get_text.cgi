@@ -7,6 +7,8 @@ use SQE_CGI qw(:standard);
 my ( $cgi, $error_ref ) = SQE_CGI->new;
 
 
+print '{';
+
 if ($cgi->{CGIDATA}->{GET_LINE}) {
     $cgi->get_text_of_line($cgi->{CGIDATA}->{GET_LINE}, 'SQE_Format::JSON');
 } elsif ($cgi->{CGIDATA}->{GET_FRAGMENT}) {

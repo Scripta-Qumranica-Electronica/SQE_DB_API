@@ -48,7 +48,12 @@ sub get_session_dbh_by_id {
         # Validate its databasehandler and return the session or (undef, error_ref)
         return $session->valid_dbh();
     } else {
-        return (undef, SQE_Error::WRONG_SESSION_ID)
+        ($session, my $error_ref) = Session->reload($session_id);
+        if ($session) {
+            return $session->{DBH};
+        } else {
+            return (undef, $error_ref)
+        }
     }
 }
 

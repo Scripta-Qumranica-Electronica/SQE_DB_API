@@ -59,7 +59,7 @@ sub new {
 
     #We give out only JSON objects
     $self->print( $self->header('application/json;charset=UTF-8') );
-    print '{';
+
 
     my $content_type   = $self->content_type();
     my $request_method = $self->request_method();
@@ -170,7 +170,7 @@ Sends an error message as an JSON-object to the browser and terminates the CGI p
 
 sub throw_error {
     my ( $self, $error_ref ) = @_;
-    $self->print( '"TYPE":"ERROR","ERROR_CODE":'
+    $self->print( '{"TYPE":"ERROR","ERROR_CODE":'
           . $error_ref->[0]
           . ',"ERROR_TEXT":"'
           . $error_ref->[1]
