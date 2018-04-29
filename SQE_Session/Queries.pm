@@ -28,6 +28,13 @@ MYSQL
       WHERE user_id like ?  AND scroll_version_id = ?;
 MYSQL
 
+    SET_SCROLLVERSION => << 'MYSQL',
+      UPDATE sqe_session
+          set scroll_version_id= ?
+          WHERE sqe_session_id = ?
+MYSQL
+
+
     LOGIN => <<'MYSQL',
       SELECT user_id
       FROM user
@@ -35,12 +42,17 @@ MYSQL
       AND   pw = SHA2(?, 224);
 MYSQL
 
-    RELOAD_SESSION => << "MYSQL"
+    RELOAD_SESSION => << 'MYSQL',
       SELECT user_id, scroll_version_id, attributes
       FROM sqe_session
-      WHERE sqe_session_id = ?;
+      WHERE sqe_session_id like ?;
 MYSQL
 
+    REMOVE_SESSION => << 'MYSQL',
+      DELETE FROM sqe_session
+      WHERE sqe_session_id like ?
+
+MYSQL
 
 };
 

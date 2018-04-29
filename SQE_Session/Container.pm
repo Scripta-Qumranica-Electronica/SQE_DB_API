@@ -24,7 +24,7 @@ sub new {
     return bless {}, $_[0];
 }
 
-=head2 get_session_dbh_by_id($session_id)
+=head2 get_session_dbh_by_id($session_id, $scroll_version_id)
 
 Calls or reloads a defined a session and returns it database handler
 
@@ -40,7 +40,7 @@ Calls or reloads a defined a session and returns it database handler
 
 #@returns SQE_db
 sub get_session_dbh_by_id {
-    my ($self, $session_id) = @_;
+    my ($self, $session_id, $scroll_version_id) = @_;
 
     my Session $session = $self->{$session_id};
     if ($session) {
@@ -48,8 +48,9 @@ sub get_session_dbh_by_id {
         # Validate its databasehandler and return the session or (undef, error_ref)
         return $session->valid_dbh();
     } else {
-        ($session, my $error_ref) = Session->reload($session_id);
+        ($session, my $error_ref) = Session->reload($session_id, $scroll_version_id);
         if ($session) {
+            $self->{$session_id}=$session;
             return $session->{DBH};
         } else {
             return (undef, $error_ref)
