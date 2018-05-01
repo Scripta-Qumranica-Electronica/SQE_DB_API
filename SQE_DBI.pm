@@ -777,6 +777,7 @@ ewven belongs to the current scrollversion than undef is returne, if it belongs 
         # get the old record
         my $query = SQE_DBI_queries::GET_ALL_VALUES;
         $query =~ s/_table_/$table/og;
+        $query =~ s/_scrollversion_/$self->scrollversion/oe;
         my $sth = $self->prepare_sqe($query);
         $sth->execute($id);
 
