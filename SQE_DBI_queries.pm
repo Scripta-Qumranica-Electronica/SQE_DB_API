@@ -349,6 +349,52 @@ MYSQL
         (scroll_version_id) VALUES (?)
 MYSQL
 
+    NEW_SIGN_CHAR => <<'MYSQL',
+      INSERT INTO sign_char
+      (sign_id, is_variant, sign)
+          VALUES (?,1,?)
+MYSQL
+
+
+    ADD_OWNER_TO_SIGN_CHAR_DATA => << 'MYSQL',
+      INSERT INTO *TABLE*_owner
+      (*TABLE*_id, scroll_version_id)
+          SELECT (*TABLE*_id, *SVID*)
+          FROM *TABLE*
+          WHERE sign_char_id=*SIGNCHARID*
+MYSQL
+
+
+
+
+    CLONE_ATTRIBUTE_NUMERIC => <<'MYSQL_FRAGMENT',
+    INSERT INTO attribute_numeric
+    (sign_char_attribute_id, value)
+    select (*OLDID*, value)
+    FROM attribute_numeric
+    WHERE sign_char_attribute_id=*OLDID*
+MYSQL_FRAGMENT
+
+
+
+    CLONE_SIGN_CHAR_ATTRIBUTES => <<'MYSQL_FRAGMENT',
+      INSERT INTO sign_char_attribute
+      (sign_char_id, attribute_value_id, sequence)
+          SELECT *OLDID*, attribute_value_id, sequence
+          FROM sign_char_attribute
+          WHERE sign_char_id=*OLDID*
+
+MYSQL_FRAGMENT
+
+    CLONE_SIGN_CHAR_ROI => <<'MYSQL_FRAGMENT',
+      INSERT INTO sign_char_roi
+      (sign_char_id, roi_shape_id, roi_position_id, values_set, exceptional)
+          SELECT *OLDID*, roi_shape_id, roi_position_id, values_set, exceptional
+          FROM sign_char_roi
+          WHERE sign_char_id=*OLDID*
+MYSQL_FRAGMENT
+
+
 
 
 
