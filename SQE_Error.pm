@@ -30,7 +30,14 @@ use constant {
     UNRECOGNIZED_FUNCTION  => [ 204, 'The function given is unknown or provided with wrong data.' ],
     FORBIDDEN_FUNCTION     => [ 205, 'The function given is not allowed.' ],
     WRONG_PARAMETERS       => [ 206, 'The parameters do not fit the given function' ],
-    SCROLLVERSION_OUTDATED => [ 207, 'The session has an outdated scrollversion'],
+    SCROLLVERSION_OUTDATED => [ 207, 'The session has an outdated scrollversion' ],
+    MAY_NOT_WRITE          => [ 208, 'The current user is not allowed to write to the current scrollverion' ],
+    NO_SVG_ADMIN => [209, 'Only an administrator of this scroll version group can do this.'],
+
+
+    NO_ATTRIBUTES          => [ 300, 'You can\'t add a sign without any attribute given or retrievable from a preceding sign.' ],
+    NO_POSITION            => [ 301, 'I don\'t know where to place the sign without given sign before and/or after.' ],
+    NO_MAIN_CHAR_ENTRANCE  => [302, 'A main entrance for char would be missing.']
 };
 
 use Exporter 'import';

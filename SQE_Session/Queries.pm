@@ -23,9 +23,14 @@ MYSQL
 
     GET_SCROLLVERSION => <<'MYSQL',
       SELECT  scroll_version_id,
-              scroll_version_group_id
+              scroll_version_group_id,
+              may_write,
+              may_lock,
+              scroll_id,
+              locked
       FROM scroll_version
-      WHERE user_id like ?  AND scroll_version_id = ?;
+          JOIN scroll_version_group USING (scroll_version_group_id)
+      WHERE (user_id like ? OR user_id=1) AND scroll_version_id = ?;
 MYSQL
 
     SET_SCROLLVERSION => << 'MYSQL',

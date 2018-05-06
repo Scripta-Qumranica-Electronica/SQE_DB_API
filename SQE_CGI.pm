@@ -229,12 +229,14 @@ sub throw_error {
 
 sub get_text_of_fragment {
     my ($self, $frag_id, $class) = @_;
-    $self->dbh->get_text_of_fragment($frag_id, $class);
+    my ($erg, $error_ref) = $self->dbh->get_text_of_fragment($frag_id, $class);
+    $self->throw_error($error_ref) if $error_ref;
 }
 
 sub get_text_of_line {
-    my ($self, $line_id, $class) = @_;
-    $self->dbh->get_text_of_line($line_id, $class);
+    my ($self, $line_id, $class, $own_version) = @_;
+    my ($erg, $error_ref) = $self->dbh->get_text_of_line($line_id, $class, $own_version);
+    $self->throw_error($error_ref) if $error_ref;
 }
 
 sub user_id {
@@ -267,17 +269,14 @@ using set_scrollversion:
 
 sub clone_scrollversion {
     my ($self) = @_;
-    $self->dbh->start_transaction;
-    my $new_scrollversion_id = $self->dbh->create_new_scrollversion($self->user_id);
-    $self->dbh->clone_scroll_version($self->scrollversion_id, $new_scrollversion_id);
-    $self->dbh->stop_transaction;
+    my $new_scrollversion_id = $self->dbh->clone_current_scroll();
     return $new_scrollversion_id
 }
 
 
 =head2 delete_scrollversion()
 
-Deletes the current scollversion and all it's data.
+Deletes a scollversion and all it's data.
 
 Beware: This step can't be redone and the current scrollversion is no more valid.
 Thus, the script should not try to do anything more on the current scrollversion and return or
@@ -286,7 +285,7 @@ set a new scrollversion instead.
 
 =over 1
 
-=item Parameters: none
+=item Parameters: id of scroll version to be deleted; if not set the current scroll version is deleted
 
 =item Returns nothing
 
@@ -295,8 +294,10 @@ set a new scrollversion instead.
 =cut
 
 sub delete_scrollversion {
-    my ($self) = @_;
-    $self->dbh->delete_scroll_version($self->scrollversion_id);
+    my ($self, $scroll_version_id) = @_;
+    $scroll_version_id = $scroll_version_id ? $scroll_version_id : $self->scrollversion_id;
+    my ($erg, $error_ref) = $self->dbh->delete_scroll_version($scroll_version_id);
+    $self->throw_error($error_ref) if $error_ref;
 }
 
 =head2 set_scrollversion($scroll_version_id)
@@ -339,14 +340,15 @@ Note: Do not confuse this with attribute_value_id or an attribute_id!
 
 sub remove_sign_char_attribute {
     my ($self, $sign_char_attribute_id) = @_;
-    $self->dbh->start_logged_action;
-    $self->dbh->remove_owner('sign_char_attribute', $sign_char_attribute_id, 0);
-    $self->dbh->stop_logged_action;
+    if ($self->start_logged_writing) {
+        $self->dbh->remove_data('sign_char_attribute', $sign_char_attribute_id, 0);
+        $self->stop_logged_writing;
+    }
 }
 
 =head2 set_sign_char_attribute($sign_char_id, $attribute_value_id, $numeric_value)
 
-Set the attribute value with the given id as an attribute of the sign char with the given od
+Set the attribute value with the given id as an attribute of the sign char with the given id
 
 =over 1
 
@@ -362,10 +364,12 @@ Set the attribute value with the given id as an attribute of the sign char with 
 
 sub set_sign_char_attribute {
     my ($self, $sign_char_id, $attribute_value_id, $numeric_value) = @_;
-    $self->dbh->start_logged_action;
-    my $new_sign_char_attrinute_id=$self->dbh->set_sign_char_attribute($sign_char_id, $attribute_value_id, $numeric_value);
-    $self->dbh->stop_logged_action;
-    return $new_sign_char_attrinute_id;
+    if ($self->start_logged_writing) {
+
+        my $new_sign_char_attribute_id = $self->dbh->set_sign_char_attribute($sign_char_id, $attribute_value_id, $numeric_value);
+        $self->stop_logged_writing;
+        return $new_sign_char_attribute_id;
+    }
 }
 
 
@@ -390,19 +394,100 @@ to set several different attributes
 
 sub set_sign_char_attribute_ordered_values {
     my ($self, $sign_char_id, @attribute_value_ids) = @_;
-    $self->dbh->start_logged_action;
-    $self->dbh->delete_sign_char_attributes_for_attribute($sign_char_id,$attribute_value_ids[0]);
-    my $numeric_value=0;
-    my $new_ids= [];
-    for my $attribute_value_id (@attribute_value_ids) {
-        push @$new_ids, $self->dbh->set_sign_char_attribute($sign_char_id, $attribute_value_id, $numeric_value++);
+    if ($self->start_logged_writing) {
 
+        $self->dbh->delete_sign_char_attributes_for_attribute($sign_char_id, $attribute_value_ids[0]);
+        my $numeric_value = 0;
+        my $new_ids = [];
+        for my $attribute_value_id (@attribute_value_ids) {
+            push @$new_ids, $self->dbh->set_sign_char_attribute($sign_char_id, $attribute_value_id, undef, $numeric_value++);
+
+        }
+        $self->stop_logged_writing;
+        return $new_ids;
     }
-    $self->dbh->stop_logged_action;
-    return $new_ids;
 }
 
 
+=head2 add_roi($sign_char_id, $roi_shape, $roi_position, $values_set, $exceptional)
 
+Adds a ROI to the given sign_char
+
+=over 1
+
+=item Parameters:   id of the sign char,
+                    path ot the ROI shap as GeoJSON object = {"type": "MultiPolygon", "coordinates"}
+                    the position matrix as JSON array
+                    flag whether the values are deemed as set
+                    flag whether the the values are deemed as exceptional
+
+=item Returns nothing
+
+=back
+
+=cut
+
+sub add_roi {
+    my ($self, $sign_char_id, $roi_shape, $roi_position, $values_set, $exceptional) = @_;
+    if ($self->start_logged_writing) {
+
+        $self->dbh->add_roi($sign_char_id, $roi_shape, $roi_position, $values_set, $exceptional);
+        $self->stop_logged_writing;
+    }
+}
+
+sub add_sign_char_variant {
+    my ($self, $sign_id, $char, $as_main) =  @_;
+    if ($self->start_logged_writing) {
+
+        $self->dbh->new_sign_char_variant($sign_id, $char, $as_main ? 0 : 1);
+        $self->stop_logged_writing;
+    }
+}
+
+sub remove_sign_char {
+    my ($self, $sign_char_id) = @_;
+    if ($self->start_logged_writing) {
+
+        $self->dbh->remove_sign_char($sign_char_id);
+        $self->stop_logged_writing;
+    }
+}
+
+sub remove_sign {
+    my ($self, $sign_id) = @_;
+    if ($self->dbh->start_logged_action) {
+        $self->dbh->remove_sign($sign_id);
+        $self->dbh->stop_logged_action;
+    }
+
+}
+
+sub stop_logged_writing {
+    $_[0]->dbh->stop_logged_action;
+}
+
+sub start_logged_writing {
+    my ($self) = @_;
+    my ($may, $error_ref) = $self->dbh->start_logged_action;
+    if (!$may) {
+        $self->throw_error($error_ref);
+    } else {
+        return 1;
+    }
+    return 0;
+}
+
+sub insert_sign {
+    my ($self, $sign, $after, $before, @attributes) = @_;
+    my $new_sign_id;
+if ($self->start_logged_writing   ) {
+        $new_sign_id=$self->dbh->new_sign($sign, $after, $before, undef, @attributes);
+        $self->stop_logged_writing;
+    return $new_sign_id;
+    }
+
+
+}
 
 1;

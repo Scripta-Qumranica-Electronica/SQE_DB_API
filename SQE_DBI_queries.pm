@@ -3,6 +3,63 @@ use strict;
 use warnings FATAL => 'all';
 use Package::Constants;
 
+=head2 Common Database Functions
+
+
+=cut
+
+
+use constant {
+
+
+    GET_OWNER_TABLE_NAMES => <<'MYSQL',
+      SELECT TABLE_NAME
+      FROM information_schema.TABLES
+      WHERE TABLE_NAME like '%_owner'
+MYSQL
+};
+
+
+=head2 User and Scrollversion Management
+
+=cut
+
+use constant {
+    CHECK_SCROLLVERSION           => <<'MYSQL',
+      SELECT user_id
+      FROM scroll_version
+      WHERE scroll_version_id = ?
+MYSQL
+
+    SET_SESSION_SCROLLVERSION => <<'MYSQL',
+      UPDATE sqe_session
+      SET scroll_version_id = ?
+      WHERE sqe_session_id = ?
+MYSQL
+
+};
+
+
+=head2 Writing of data
+
+
+=cut
+
+use constant {
+
+    NEW_MAIN_ACTION => <<'MYSQL',
+      INSERT INTO main_action
+        (scroll_version_id) VALUES (?)
+MYSQL
+
+};
+
+=head2 Retrieve text
+
+Queries used to retriev textual data
+
+=cut
+
 use constant {
 
 # Predefined common parts of a query to get the sign data from a sign stream
@@ -64,8 +121,9 @@ MYSQL_FRAGMENT
 # The last part of a query to get the sign data from a sign stream
 # Should follow a GET_QUERY_SCROLLVERSION part according to the text part looked for
     SIGN_QUERY_END => <<'MYSQL_FRAGMENT',
-        ORDER BY sign_char.sign_char_id,
+        ORDER BY sign_char.sign_id,
                  sign_char.is_variant,
+                 sign_char.sign_char_id,
                  attribute.attribute_id,
                  sign_char_attribute.`sequence`,
                  sign_char_attribute.attribute_value_id
@@ -131,17 +189,6 @@ MYSQL_FRAGMENT
       AND line_sv.scroll_version_group_id = ?
 MYSQL
 
-    CHECK_SCROLLVERSION => << 'MYSQL',
-SELECT user_id
-FROM scroll_version
-WHERE scroll_version_id = ?
-MYSQL
-
-    SET_SESSION_SCROLLVERSION => << 'MYSQL',
-UPDATE sqe_session
-SET scroll_version_id = ?
-WHERE sqe_session_id = ?
-MYSQL
 
     GET_ALL_VALUES => << 'MYSQL',
     SELECT _table_.*
@@ -160,12 +207,39 @@ MYSQL
     
 MYSQL
 
-    GET_SCROLLVERSION => <<'MYSQL',
-SELECT  scroll_version_id,
-    scroll_version_group_id
-FROM scroll_version
-WHERE user_name like ?  AND scroll_version_id = ?;
+    GET_SCROLLVERSION_DATA => <<'MYSQL',
+      SELECT  scroll_version_id, user_id, scroll_version_group_id, may_write, may_lock
+      FROM scroll_version
+      WHERE scroll_version_id = ?;
 MYSQL
+
+    GET_SCROLLVERSION_ID => <<'MYSQL',
+      SELECT scroll_version_id
+          FROM scroll_version
+          WHERE user_id = ?
+          AND scroll_version_group_id = ?
+MYSQL
+
+
+    GET_DIFFERENT_SCROLL_VERSION_GROUP_ADMIN => <<'MYSQL',
+        SELECT user_id
+        FROM scroll_version_group
+            JOIN scroll_version_group_admin USING (scroll_version_group_id)
+            WHERE scroll_version_group_id = ?
+            AND user_id != ?
+MYSQL
+
+
+
+    IS_SCROLL_VERSION_GROUP_ADMIN => <<'MYSQL',
+    SELECT 1
+        FROM scroll_version_group
+            JOIN scroll_version_group_admin USING (scroll_version_group_id)
+        WHERE scroll_version_group_id = ?
+        AND user_id = ?
+
+MYSQL
+
 
     GET_ALL_SIGNS_IN_FRAGMENT => <<'MYSQL',
 SELECT
@@ -238,11 +312,8 @@ MYSQL
 
     NEW_SCROLL_VERSION_GROUP => <<'MYSQL',
       INSERT INTO scroll_version_group
-        (scroll_id)
-      SELECT scroll_id
-      FROM scroll_version
-        JOIN scroll_version_group USING (scroll_version_group_id)
-      WHERE scroll_version_id = ?
+        (scroll_id, locked) VALUES (?,?)
+
 MYSQL
 
     CREATE_SCROLL_VERSION_GROUP_ADMIN => << 'MYSQL',
@@ -253,26 +324,30 @@ MYSQL
 
     NEW_SCROLL_VERSION => <<'MYSQL',
       INSERT INTO scroll_version
-        (user_id, scroll_version_group_id)
-        values (?,?)
+        (user_id, scroll_version_group_id, may_write, may_lock)
+        values (?,?, 1 , 1)
 MYSQL
 
 
-    GET_OWNER_TABLE_NAMES => <<'MYSQL',
-      SELECT TABLE_NAME
-      FROM information_schema.TABLES
-      WHERE TABLE_NAME like '%_owner'
-MYSQL
 
     DELETE_SCROLLVERSION_FROM_ACTIONS=> <<'MYSQL',
-      DELETE FROM main_action
-          WHERE scroll_version_id = ?
+      DELETE main_action FROM main_action
+      JOIN scroll_version USING (scroll_version_id)
+          WHERE scroll_version_group_id = ?
 MYSQL
 
     DELETE_SCROLLVERSION => <<'MYSQL',
       DELETE FROM scroll_version
           WHERE scroll_version_id = ?
 MYSQL
+
+    DELETE_SCROLL_VERSION_GROUP => <<'MYSQL',
+      DELETE scroll_version_group
+          FROM scroll_version_group
+          WHERE scroll_version_group_id=?
+
+MYSQL
+
 
     DELETE_EMPTY_SCROLLVERSION_GROUPS => <<'MYSQL',
       DELETE scroll_version_group
@@ -281,9 +356,7 @@ MYSQL
           WHERE scroll_version_id is null
 MYSQL
 
-    CHANGE_SCROLL_NAME => << 'MYSQL',
-      UPDATE
-MYSQL
+
 
     NEW_SINGLE_ACTION => <<'MYSQL',
       INSERT INTO single_action
@@ -293,18 +366,16 @@ MYSQL
 
 
     GET_SIGN_CHAR_ATTRIBUTE => << 'MYSQL',
-      SELECT sign_char_attribute_id, scroll_version_id
+      SELECT sign_char_attribute_id
       FROM sign_char_attribute
-      LEFT JOIN sign_char_attribute_owner USING (sign_char_attribute_id)
       WHERE sign_char_id = ?
         AND attribute_value_id = ?
           AND sequence = ?
 MYSQL
 
     GET_SIGN_CHAR_ATTRIBUTE_NUMERIC => << 'MYSQL',
-      SELECT sign_char_attribute_id, scroll_version_id
+      SELECT sign_char_attribute_id
       FROM sign_char_attribute
-      JOIN sign_char_attribute_owner USING (sign_char_attribute_id)
       JOIN attribute_numeric USING (sign_char_attribute_id)
       WHERE sign_char_id = ?
       AND attribute_value_id = ?
@@ -316,12 +387,128 @@ MYSQL
       SELECT sign_char_attribute_id
       FROM sign_char_attribute
         JOIN sign_char_attribute_owner USING (sign_char_attribute_id)
+          JOIN scroll_version USING (scroll_version_id)
         JOIN attribute_value as a USING (attribute_value_id)
         JOIN attribute_value as b USING (attribute_id)
       WHERE sign_char_id = ?
-        AND scroll_version_id = ?
+        AND scroll_version_group_id = ?
         AND b.attribute_value_id = ?
 MYSQL
+
+    GET_ALL_ATTRIBUTES => << 'MYSQL',
+    SELECT sign_char_attribute_id, sign_char_id, attribute_value_id, value, sequence
+        FROM sign_char_attribute
+            JOIN sign_char_attribute_owner USING (sign_char_attribute_id)
+            JOIN scroll_version USING (scroll_version_id)
+            LEFT JOIN attribute_numeric USING (sign_char_attribute_id)
+        WHERE sign_char_id = ?
+        AND scroll_version_group_id = ?
+
+MYSQL
+
+    GET_ALL_ROIS => << 'MYSQL',
+      SELECT sign_char_roi_id, sign_char_id, roi_shape_id, roi_position_id, values_set, exceptional
+          FROM sign_char_roi
+              JOIN sign_char_roi_owner USING (sign_char_roi_id)
+              JOIN scroll_version USING (scroll_version_id)
+          WHERE sign_char_id = ?
+          AND scroll_version_group_id = ?
+MYSQL
+
+    GET_MAIN_SIGN_CHAR => << 'MYSQL',
+      SELECT sign_char_id, sign_id, is_variant, sign
+        FROM sign_char
+            JOIN sign_char_attribute USING (sign_char_id)
+            JOIN sign_char_attribute_owner USING (sign_char_attribute_id)
+            JOIN scroll_version USING (scroll_version_id)
+          WHERE sign_id = ?
+          AND is_variant=0
+          AND scroll_version_group_id = ?
+MYSQL
+
+    GET_ALL_SIGN_CHARS => << 'MYSQL',
+      SELECT sign_char_id
+          FROM sign_char
+          JOIN sign_char_attribute USING (sign_char_id)
+          JOIN sign_char_attribute_owner USING (sign_char_attribute_id)
+              JOIN scroll_version USING (scroll_version_id)
+          WHERE sign_id = ?
+          AND scroll_version_group_id = ?
+MYSQL
+
+    GET_POSITION_IN_STREAM_ID => <<'MYSQL',
+        SELECT position_in_stream_id
+            FROM position_in_stream
+            JOIN position_in_stream_owner USING (position_in_stream_id)
+                JOIN scroll_version USING (scroll_version_id)
+            WHERE sign_id = ?
+            AND next_sign_id = ?
+            AND scroll_version_group_id = ?
+MYSQL
+
+
+
+    GET_POSITION_IN_STREAM_DATA => <<'MYSQL',
+      SELECT position_in_stream_id,next_sign_id
+          FROM position_in_stream
+              JOIN position_in_stream_owner USING (position_in_stream_id)
+              JOIN scroll_version USING (scroll_version_id)
+          WHERE sign_id = ?
+          AND scroll_version_group_id = ?
+
+MYSQL
+
+    GET_PREV_POSITION_IN_STREAM_DATA => <<'MYSQL',
+      SELECT position_in_stream_id, sign_id
+          FROM position_in_stream
+          JOIN position_in_stream_owner USING (position_in_stream_id)
+              JOIN scroll_version USING (scroll_version_id)
+          WHERE next_sign_id = ?
+          AND scroll_version_group_id = ?
+
+MYSQL
+
+
+
+
+
+    NEW_POSITION_IN_STREAM => << 'MYSQL',
+      INSERT INTO position_in_stream
+      (sign_id, next_sign_id)
+          values (?,?)
+
+MYSQL
+
+    GET_POSITION_IN_STREAM => << 'MYSQL',
+      SELECT position_in_stream_id
+          FROM position_in_stream
+          WHERE sign_id=?
+          AND next_sign_id = ?
+MYSQL
+
+    GET_LINE_TO_SIGN_FOR_SCROLL_VERSION_GROUP => << 'MYSQL',
+      SELECT line_to_sign_id, line_id
+          FROM line_to_sign
+          JOIN line_to_sign_owner USING (line_to_sign_id)
+              JOIN scroll_version USING (scroll_version_id)
+          WHERE sign_id = ?
+          AND scroll_version_group_id = ?;
+MYSQL
+
+    GET_LINE_TO_SIGN => << 'MYSQL',
+        SELECT line_to_sign_id
+            FROM line_to_sign
+            WHERE sign_id = ?
+            AND line_id = ?
+MYSQL
+
+
+    NEW_LINE_TO_SIGN => << 'MYSQL',
+      INSERT into line_to_sign
+      (sign_id, line_id) VALUES (?,?)
+
+MYSQL
+
 
 
     NEW_SIGN_CHAR_ATTRIBUTE => << 'MYSQL',
@@ -344,47 +531,92 @@ MYSQL
 
 MYSQL
 
-    NEW_MAIN_ACTION => <<'MYSQL',
-      INSERT INTO main_action
-        (scroll_version_id) VALUES (?)
+
+
+    GET_SIGN_CHAR_ROI => << 'MYSQL',
+      SELECT sign_char_roi_id
+          FROM sign_char_roi
+          WHERE sign_char_id = ?
+          AND roi_shape_id = ?
+          AND roi_position_id = ?
+          AND values_set = ?
+          AND exceptional = ?
 MYSQL
+
+
+    NEW_SIGN_CHAR_ROI => << 'MYSQL',
+      INSERT INTO sign_char_roi
+      (sign_char_id, roi_shape_id, roi_position_id, values_set, exceptional)
+          VALUES (?, ?, ?, ?, ?)
+MYSQL
+
+    NEW_ROI_SHAPE_FROM_GEO_JSON => << 'MYSQL',
+      INSERT INTO roi_shape
+      (path)
+          VALUES (ST_GeomFromGeoJSON(?))
+
+MYSQL
+
+    NEW_ROI_POSITION => << 'MYSQL',
+      INSERT INTO roi_position
+      (transform_matrix)
+          VALUES (?)
+MYSQL
+
+    GET_ROI_SHAPE_ID => << 'MYSQL',
+      SELECT roi_shape_id
+      FROM roi_shape
+      WHERE path = ST_GeomFromGeoJSON(?)
+MYSQL
+
+    GET_ROI_POSITION_ID => << 'MYSQL',
+      SELECT roi_position_id
+      FROM roi_position
+      WHERE transform_matrix = ?
+MYSQL
+
+    GET_SIGN_CHAR_DATA => << 'MYSQL',
+      SELECT sign_id, is_variant, sign
+          FROM sign_char
+          WHERE sign_char_id=?
+MYSQL
+
+
+    GET_SIGN_CHAR => << 'MYSQL',
+      SELECT sign_char_id
+          FROM sign_char
+          WHERE sign_id=?
+          AND is_variant=?
+          AND sign = ?
+MYSQL
+
+
+
 
     NEW_SIGN_CHAR => <<'MYSQL',
       INSERT INTO sign_char
       (sign_id, is_variant, sign)
-          VALUES (?,1,?)
+          VALUES (?,?,?)
+MYSQL
+
+    NEW_SIGN => <<'MYSQL',
+      INSERT INTO sign VALUES ()
+
 MYSQL
 
 
-    ADD_OWNER_TO_SIGN_CHAR_DATA => << 'MYSQL',
-      INSERT INTO *TABLE*_owner
-      (*TABLE*_id, scroll_version_id)
-          SELECT (*TABLE*_id, *SVID*)
-          FROM *TABLE*
-          WHERE sign_char_id=*SIGNCHARID*
-MYSQL
+    #    ADD_OWNER_TO_SIGN_CHAR_DATA => << 'MYSQL',
+#      INSERT INTO *TABLE*_owner
+#      (*TABLE*_id, scroll_version_id)
+#          SELECT (*TABLE*_id, *SVID*)
+#          FROM *TABLE*
+#          WHERE sign_char_id=*SIGNCHARID*
+#MYSQL
 
 
 
 
-    CLONE_ATTRIBUTE_NUMERIC => <<'MYSQL_FRAGMENT',
-    INSERT INTO attribute_numeric
-    (sign_char_attribute_id, value)
-    select (*OLDID*, value)
-    FROM attribute_numeric
-    WHERE sign_char_attribute_id=*OLDID*
-MYSQL_FRAGMENT
 
-
-
-    CLONE_SIGN_CHAR_ATTRIBUTES => <<'MYSQL_FRAGMENT',
-      INSERT INTO sign_char_attribute
-      (sign_char_id, attribute_value_id, sequence)
-          SELECT *OLDID*, attribute_value_id, sequence
-          FROM sign_char_attribute
-          WHERE sign_char_id=*OLDID*
-
-MYSQL_FRAGMENT
 
     CLONE_SIGN_CHAR_ROI => <<'MYSQL_FRAGMENT',
       INSERT INTO sign_char_roi
@@ -401,13 +633,22 @@ MYSQL_FRAGMENT
     CLONE_SCROLL_VERSION => <<'MYSQL_FRAGMENT',
     INSERT INTO *OWNER* (*TABLE*_id, scroll_version_id)
     SELECT *TABLE*_id, *SVID* FROM *OWNER*
+    JOIN scroll_version USING (scroll_version_id)
+    WHERE scroll_version_group_id = *OLDSVID*
+MYSQL_FRAGMENT
+
+    COPY_SCROLL_VERSION_DATA => <<'MYSQL_FRAGMENT',
+    INSERT INTO *OWNER* (*TABLE*_id, scroll_version_id)
+    SELECT *TABLE*_id, *SVID* FROM *OWNER*
     WHERE scroll_version_id = *OLDSVID*
 MYSQL_FRAGMENT
 
 
     DELETE_SCROLLVERSION_FROM_OWNERS => <<'MYSQL_FRAGMENT',
-    DELETE FROM *OWNER*
-    WHERE scroll_version_id = *SVID*
+    DELETE *OWNER*
+    FROM *OWNER*
+    JOIN scroll_version USING (scroll_version_id)
+    WHERE scroll_version_group_id = *SVID*
 MYSQL_FRAGMENT
 
 };

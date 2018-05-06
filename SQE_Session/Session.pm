@@ -189,7 +189,7 @@ sub valid_dbh {
 
 =head2 set_scrollversion($scroll_version_id)
 
-Set a new scroll version (its id and the id of its group) as the default
+Set a new scroll version (its id and the id of its group and write flag) as the default
 
 =over 1
 
@@ -208,7 +208,7 @@ sub set_scrollversion {
     return $scroll_version_id if $self->{SCROLL_VERSION_ID} == $scroll_version_id;
 
     # Otherwise try to retrieve the scroll version from the database
-     ( $scroll_version_id, my $scroll_version_group_id ) =
+     ( $scroll_version_id, my $scroll_version_group_id, my $may_write, my $may_lock, my $scroll_id, my $locked ) =
       $self->{DBH}->get_first_row_as_array( Queries::GET_SCROLLVERSION,
         $self->{USER_ID}, $scroll_version_id );
 
@@ -217,6 +217,11 @@ sub set_scrollversion {
     if ($scroll_version_id && $scroll_version_group_id) {
         $self->{SCROLL_VERSION_ID} = $scroll_version_id;
         $self->{SCROLL_VERSION_GROUP_ID} = $scroll_version_group_id;
+        $self->{MAY_WRITE} = $may_write;
+        $self->{MAY_LOCK} = $may_lock;
+        $self->{SCROLL_ID} = $scroll_id;
+        $self->{LOCKED} = $locked;
+        $self->{WRITABLE} = $may_write && !$locked;
         $self->{DBH}->do(Queries::SET_SCROLLVERSION, undef, $scroll_version_id, $self->{SESSION_ID});
         return $scroll_version_id;
     } else {
