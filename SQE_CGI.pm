@@ -239,6 +239,26 @@ sub get_text_of_line {
     $self->throw_error($error_ref) if $error_ref;
 }
 
+=head3 get_sign_char_commentary($sign_char_commentary_id)
+
+Retrieves the text of the referrenced sign char commentary
+
+=over 1
+
+=item Parameters: id of sign char commentary
+
+=item Returns commentary text
+
+=back
+
+=cut
+
+sub get_sign_char_commentary {
+    my ($self, $sign_char_commentary_id) = @_;
+    return $self->dbh->get_sign_char_commentary($sign_char_commentary_id);
+}
+
+
 sub user_id {
     $_[0]->dbh->user_id;
 }

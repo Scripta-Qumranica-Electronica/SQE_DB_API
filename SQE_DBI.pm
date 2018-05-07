@@ -166,6 +166,12 @@ the global variable $data_tables holding a reference to the hash
             JOIN scroll_version USING (scroll_version_id)
             WHERE ${table}_id = ? AND scroll_version_group_id = ?";
 
+            $data_tables->{$table}->{SIMPLE_GET_QUERY} = "
+            SELECT *
+            FROM $table
+            WHERE ${table}_id = ?
+             ";
+
             $data_tables->{$table}->{GET_OWNER_TABLES} = "
         SELECT *
         FROM ${table}_owner
@@ -1228,6 +1234,61 @@ Removes a sign and all data connected to it from the current scroll version grou
 
     }
 
+
+=head3 add_roi($sign_char_id, $roi_shape, $roi_position, $values_set, $execeptional)
+
+Adds a ROI to a sign char
+
+=over 1
+
+=item Parameters:   id of the sign char
+                    path of the ROI as GEoJSON object
+                    transformation matrix as JSON array
+                    tag vir vaules set
+                    tag for execeptional
+
+=item Returns nothing
+
+=back
+
+=cut
+
+    sub add_roi {
+        my (
+            $self,         $sign_char_id, $roi_shape,
+            $roi_position, $values_set,   $execeptional
+        ) = @_;
+        my $roi_shape_id     = $self->get_roi_shape_id($roi_shape);
+        my $roi_position_id  = $self->get_roi_position_id($roi_position);
+        my $sign_char_roi_id = $self->set_new_data_to_owner('sign_char_roi',
+            $sign_char_id, $roi_shape_id, $roi_position_id,
+            $values_set,   $execeptional );
+        $self->add_owner( 'sign_char_roi', $sign_char_roi_id );
+
+    }
+
+=head3 remove_roi($sign_char_roi_id)
+
+Remove the refrenced roi from the sign_char
+
+=over 1
+
+=item Parameters: id of sign char roi
+
+=item Returns nothing
+
+=back
+
+=cut
+
+    sub remove_roi {
+        my ($self, $sign_char_roi_id) = @_;
+        $self->remove_data('sign_char_roi', $sign_char_roi_id);
+    }
+
+
+
+
 =head3 clone_attributes($source_sign_char_id, $destination_sign_char_id)
 
 Copies all attributes connectect to the source sign char to the destinaton sign char
@@ -1683,58 +1744,27 @@ If the record does not exist, it will be created automatically.
         return $roi_position_id;
     }
 
+=head3 get_sign_char_commentary($sign_char_commentary_id)
 
-=head3 add_roi($sign_char_id, $roi_shape, $roi_position, $values_set, $execeptional)
-
-Adds a ROI to a sign char
+Retrieves the text of the referrenced sign char commentary
 
 =over 1
 
-=item Parameters:   id of the sign char
-                    path of the ROI as GEoJSON object
-                    transformation matrix as JSON array
-                    tag vir vaules set
-                    tag for execeptional
+=item Parameters: id of sign char commentary
 
-=item Returns nothing
+=item Returns commentary text
 
 =back
 
 =cut
 
-    sub add_roi {
-        my (
-            $self,         $sign_char_id, $roi_shape,
-            $roi_position, $values_set,   $execeptional
-        ) = @_;
-        my $roi_shape_id     = $self->get_roi_shape_id($roi_shape);
-        my $roi_position_id  = $self->get_roi_position_id($roi_position);
-        my $sign_char_roi_id = $self->set_new_data_to_owner('sign_char_roi',
-            $sign_char_id, $roi_shape_id, $roi_position_id,
-            $values_set,   $execeptional );
-        $self->add_owner( 'sign_char_roi', $sign_char_roi_id );
-
+    sub get_sign_char_commentary {
+        my ($self, $sign_char_commentary_id)= @_;
+       return
+           ($self->get_first_row_as_array(
+                $data_tables->{sign_char_commentary}->{SIMPLE_GET_QUERY},
+                $sign_char_commentary_id))[3];
     }
-
-=head3 remove_roi($sign_char_roi_id)
-
-Remove the refrenced roi from the sign_char
-
-=over 1
-
-=item Parameters: id of sign char roi
-
-=item Returns nothing
-
-=back
-
-=cut
-
-    sub remove_roi {
-        my ($self, $sign_char_roi_id) = @_;
-        $self->remove_data('sign_char_roi', $sign_char_roi_id);
-    }
-
 
 # Sets the user_id for a given user whose credential are provided
 # Earlier set id's are overwritten.

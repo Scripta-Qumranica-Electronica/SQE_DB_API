@@ -20,7 +20,7 @@ if ($cgi->{CGIDATA}->{GET_LINE}) {
 }
     print '}';
 
-exit;
+
 my $new_scroll_version_id = $cgi->clone_scrollversion;
 
 $cgi->set_scrollversion($new_scroll_version_id);
@@ -36,11 +36,17 @@ print "}\n{";
 my $com_id=$cgi->set_sign_char_commentary(1,1,'Kommentar');
 #$cgi->remove_sign_char_commentary($com_id);
 
-exit;
+print "\n{";
 
+$cgi->get_text_of_line($cgi->{CGIDATA}->{GET_LINE}, 'SQE_Format::JSON');
+
+print "}\n{";
+
+print $cgi->get_sign_char_commentary($com_id);
 #my $new=$cgi->set_sign_char_attribute(1,24,300);
 
 #$cgi->remove_sign(1);
+print "}\n{";
 
 my $new_sign= $cgi->insert_sign('C', 1,2,2,3);
 
