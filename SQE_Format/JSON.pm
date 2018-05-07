@@ -47,7 +47,9 @@ use constant {
     ATTRIBUTE_VALUE_ID_LABLE      => [ '"attribute_value_id":', '', ',' ],
     ATTRIBUTE_STRING_VALUE_LABLE  => [ '"attribute_value":', '"', '"', '["', '"]', '","' ],
     ATTRIBUTE_NUMERIC_VALUE_LABLE =>
-        [ '"attribute_value":', '', '', '[', ']', ',' ]
+        [ '"attribute_value":', '', '', '[', ']', ',' ],
+    SIGN_CHAR_COMMENTARY_ID_LABLE=> [ '"commentary_id":', '', ',', '', '' ]
+
 };
 
 1;
