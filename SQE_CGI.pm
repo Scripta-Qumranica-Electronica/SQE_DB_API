@@ -341,7 +341,7 @@ Note: Do not confuse this with attribute_value_id or an attribute_id!
 sub remove_sign_char_attribute {
     my ($self, $sign_char_attribute_id) = @_;
     if ($self->start_logged_writing) {
-        $self->dbh->remove_data('sign_char_attribute', $sign_char_attribute_id, 0);
+        $self->dbh->remove_sign_char_attribute($sign_char_attribute_id);
         $self->stop_logged_writing;
     }
 }
@@ -408,10 +408,60 @@ sub set_sign_char_attribute_ordered_values {
     }
 }
 
+=head2 remove_sign_char_commentary($sign_char_commentary_id)
+
+Removes the sign char commentary with the given id.
+
+=over 1
+
+=item Parameters: id of the sign_char_commentary to be removed
+
+=item Returns nothing
+
+=back
+
+=cut
+
+sub remove_sign_char_commentary {
+    my ($self, $sign_char_commetary_id) = @_;
+    if ($self->start_logged_writing) {
+        $self->dbh->remove_sign_char_commentary($sign_char_commetary_id);
+        $self->stop_logged_writing;
+    }
+}
+
+=head2 set_sign_char_commentary($sign_char_id, $attribute_id, $commentary)
+
+Sets acommentary to a certain attribute with the given id as an attribute of the sign char with the given id
+
+=over 1
+
+=item Parameters:  id of the sign char,
+                   id of the attribute value,
+                   commentary text
+
+=item Returns id of the new sign_char_commentary
+
+=back
+
+=cut
+
+sub set_sign_char_commentary {
+    my ($self, $sign_char_id, $attribute_id, $commentary) = @_;
+    if ($self->start_logged_writing) {
+
+        my $new_sign_char_commentary_id = $self->dbh->set_sign_char_commentary($sign_char_id, $attribute_id, $commentary);
+        $self->stop_logged_writing;
+        return $new_sign_char_commentary_id;
+    }
+}
+
 
 =head2 add_roi($sign_char_id, $roi_shape, $roi_position, $values_set, $exceptional)
 
-Adds a ROI to the given sign_char
+Adds a ROI to the given sign_char.
+
+Throws error, if the user may not change data.
 
 =over 1
 
@@ -434,6 +484,32 @@ sub add_roi {
         $self->dbh->add_roi($sign_char_id, $roi_shape, $roi_position, $values_set, $exceptional);
         $self->stop_logged_writing;
     }
+}
+
+=head2 remove_roi($sign_char_roi_id)
+
+Removes the referenced ROI-data from the connected sign char.
+
+Throws error, if the user may not change data.
+
+=over 1
+
+=item Parameters: id of the sign char ROI
+
+=item Returns nothing
+
+=back
+
+=cut
+
+sub remove_roi {
+    my ($self, $sign_char_roi_id) = @_;
+    if ($self->start_logged_writing) {
+
+        $self->dbh->remove_roi($sign_char_roi_id);
+        $self->stop_logged_writing;
+    }
+
 }
 
 sub add_sign_char_variant {

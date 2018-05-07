@@ -866,6 +866,35 @@ Adds the current scroll version as owner sto the record referred by id of the ta
         $sth->finish;
     }
 
+=head3 set_sign_char_commentary($sign_char_id, $attribute_id, $text)
+
+Creates a new commentary to a sign char refereing to a certain attribute
+
+=over 1
+
+=item Parameters: id of the sign char
+                  id of the attribute
+                  commentary text
+
+=item Returns the id of the new commentary
+
+=back
+
+=cut
+
+    sub set_sign_char_commentary {
+        my ($self, $sign_char_id, $attribute_id, $text) = @_;
+        my $new_id =
+            $self->set_new_data_to_owner( 'sign_char_commentary', $sign_char_id, $attribute_id, $text );
+        return $new_id;
+    }
+
+
+    sub remove_sign_char_commentary {
+        my ($self, $sign_char_commentary_id) = @_;
+        $self->remove_data('sign_char_commentary', $sign_char_commentary_id);
+
+    }
 
 
 =head3 set_sign_char_attribute($sign_char_id, $attribute_value_id, $numeric_value)
@@ -1071,6 +1100,27 @@ The last parameter to be set to the query must be scroll_version_group_id
         $sth->finish;
 
     }
+
+=head3 remove_sign_char_attribute($sign_char_attribute_id)
+
+Removes the sign char attribute with the given id.
+
+=over 1
+
+=item Parameters: id of the sign_char_attribute to be removed
+
+=item Returns nothing
+
+=back
+
+=cut
+
+    sub remove_sign_char_attribute {
+        my ($self, $sign_char_attribute_id) = @_;
+            $self->dbh->remove_data('sign_char_attribute', $sign_char_attribute_id);
+    }
+
+
 
 =head3 remove_sign_char($sign_char_id)
 
@@ -1598,7 +1648,7 @@ If the record does not exist, it will be created autoamtically.
     sub get_roi_shape_id {
         my ( $self, $roi_shape ) = @_;
         my ($roi_shape_id) =
-            $self->set_new_data_to_owner( SQE_DBI_queries::GET_ROI_SHAPE_ID,
+            $self->set_new_data( SQE_DBI_queries::GET_ROI_SHAPE_ID,
                 SQE_DBI_queries::NEW_ROI_SHAPE_FROM_GEO_JSON,
                 $roi_shape
             );
@@ -1666,91 +1716,24 @@ Adds a ROI to a sign char
 
     }
 
+=head3 remove_roi($sign_char_roi_id)
 
+Remove the refrenced roi from the sign_char
 
+=over 1
 
-# Adds  a duplicate of record owned by current user/version with the given id with changed values and logs it.
-# If the new values given are identical with the old ones, the record will be not duplicated
-# and instead of the new id the old id is returned.
-#
-#
-# Parameters
-#   Table-name
-#   id of the record to be duplicated
-#   new values as array of field-name1, value1[, field-name2, value2, ...]
-# if the value need to be calculated by a mysql-function the function and its parameters
-#
-# can be given as an arrray ref with the function name as first value followed by the parameters
-# Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
-# Note: ad the moment no nested function are allowed
-#@method
-    sub add_value {
-        my $self = shift;
-        return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
-        $self->start_logged_action;
-        my ( $new_id, $error_ref ) = $self->_add_value(@_);
-        $self->stop_logged_action;
-        return ( $new_id, $error_ref );
+=item Parameters: id of sign char roi
 
+=item Returns nothing
+
+=back
+
+=cut
+
+    sub remove_roi {
+        my ($self, $sign_char_roi_id) = @_;
+        $self->remove_data('sign_char_roi', $sign_char_roi_id);
     }
-
-# Changes the record owned by the current user/version with the given id using the given values and logs it.
-# If the new values given are identical with the old ones, nothing happens and the old id is returned
-# Otherwise the id of the record with the changed value is returned
-#
-#
-# Parameters
-#   Table-name
-#   id of the record to be changed
-#   new values as array of field-name1, value1[, field-name2, value2, ...]
-#
-# if the value need to be calculated by a mysql-function the function and its parameters
-#
-# can be given as an arrray ref with the function name as first value followed by the parameters
-# Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
-# Note: ad the moment no nested function are allowed
-
-    sub change_value {
-        my $self  = shift;
-        my $table = shift;
-        my $id    = shift;
-        return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
-        $self->start_logged_action;
-        my ( $new_id, $error_ref ) = $self->_add_value( $table, $id, @_ );
-        if ( defined $new_id ) {
-            if ( $id != $new_id ) {
-                $self->remove_data( $table, $id );
-            }
-            $self->stop_logged_action;
-            return $new_id;
-        }
-        else {
-            $self->stop_logged_action;
-            return ( undef, $error_ref );
-
-        }
-    }
-
-# Removes a record owned by the current user/version with the given id from user/version and logs it.
-#
-#
-# Parameters
-#   Table-name
-#   id of the record to be duplicated
-    sub remove_entry {
-        my ( $self, $table, $id ) = @_;
-        return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
-        $self->start_logged_action;
-        my $result = $self->remove_data( $table, $id );
-        $self->stop_logged_action;
-        if ( $result > 0 ) {
-            return $result;
-        }
-        else {
-            return ( undef, SQE_Error::RECORD_NOT_FOUND );
-        }
-    }
-
 
 
 # Sets the user_id for a given user whose credential are provided
@@ -1944,6 +1927,93 @@ INSERT INTO scroll_version
 MYSQL
 
     };
+
+
+    # Adds  a duplicate of record owned by current user/version with the given id with changed values and logs it.
+    # If the new values given are identical with the old ones, the record will be not duplicated
+    # and instead of the new id the old id is returned.
+    #
+    #
+    # Parameters
+    #   Table-name
+    #   id of the record to be duplicated
+    #   new values as array of field-name1, value1[, field-name2, value2, ...]
+    # if the value need to be calculated by a mysql-function the function and its parameters
+    #
+    # can be given as an arrray ref with the function name as first value followed by the parameters
+    # Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
+    # Note: ad the moment no nested function are allowed
+    #@method
+    #@deprecated
+    sub add_value {
+        my $self = shift;
+        return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
+        $self->start_logged_action;
+        my ( $new_id, $error_ref ) = $self->_add_value(@_);
+        $self->stop_logged_action;
+        return ( $new_id, $error_ref );
+
+    }
+
+    # Changes the record owned by the current user/version with the given id using the given values and logs it.
+    # If the new values given are identical with the old ones, nothing happens and the old id is returned
+    # Otherwise the id of the record with the changed value is returned
+    #
+    #
+    # Parameters
+    #   Table-name
+    #   id of the record to be changed
+    #   new values as array of field-name1, value1[, field-name2, value2, ...]
+    #
+    # if the value need to be calculated by a mysql-function the function and its parameters
+    #
+    # can be given as an arrray ref with the function name as first value followed by the parameters
+    # Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
+    # Note: ad the moment no nested function are allowed
+
+    #@deprecated
+    sub change_value {
+        my $self  = shift;
+        my $table = shift;
+        my $id    = shift;
+        return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
+        $self->start_logged_action;
+        my ( $new_id, $error_ref ) = $self->_add_value( $table, $id, @_ );
+        if ( defined $new_id ) {
+            if ( $id != $new_id ) {
+                $self->remove_data( $table, $id );
+            }
+            $self->stop_logged_action;
+            return $new_id;
+        }
+        else {
+            $self->stop_logged_action;
+            return ( undef, $error_ref );
+
+        }
+    }
+
+    # Removes a record owned by the current user/version with the given id from user/version and logs it.
+    #
+    #
+    # Parameters
+    #   Table-name
+    #   id of the record to be duplicated
+    #@deprecated
+    sub remove_entry {
+        my ( $self, $table, $id ) = @_;
+        return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
+        $self->start_logged_action;
+        my $result = $self->remove_data( $table, $id );
+        $self->stop_logged_action;
+        if ( $result > 0 ) {
+            return $result;
+        }
+        else {
+            return ( undef, SQE_Error::RECORD_NOT_FOUND );
+        }
+    }
+
 
 
 

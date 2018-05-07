@@ -47,7 +47,8 @@ use constant {
     ATTRIBUTE_NAME          => 7,
     ATTRIBUTE_STRING_VALUE  => 8,
     ATTRIBUTE_NUMERIC_VALUE => 9,
-    LINE_ID                 => 10
+    LINE_ID                 => 10,
+    SIGN_CHAR_COMMENTARY_ID    => 11
 
 };
 
@@ -126,6 +127,7 @@ sub _add_new_attribute {
       {
         attribute_id     => $sign_data_ref->[ATTRIBUTE_ID],
         attribute_name   => $sign_data_ref->[ATTRIBUTE_NAME],
+        commentary_id => $sign_data_ref->[SIGN_CHAR_COMMENTARY_ID],
         attribute_values => []
       };
     $self->_add_new_attribute_value($sign_data_ref);

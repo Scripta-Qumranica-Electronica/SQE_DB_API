@@ -86,7 +86,9 @@ use constant {
   /* 7 */   attribute.name,
   /* 8 */   attribute_value.string_value,
   /* 9 */   attribute_numeric.value,
-  /* 10 */  line_to_sign.line_id
+  /* 10 */  line_to_sign.line_id,
+  /* 11 */  sign_char_commentary_id
+
 
 MYSQL_FRAGMENT
 
@@ -108,12 +110,18 @@ MYSQL_FRAGMENT
         JOIN attribute_value USING (attribute_value_id)
         JOIN attribute USING (attribute_id)
 
+        LEFT JOIN sign_char_commentary USING (sign_char_id,attribute_id)
+        LEFT JOIN sign_char_commentary_owner USING (sign_char_commentary_id)
+        LEFT JOIN scroll_version as svc on svc.scroll_version_id=sign_char_commentary_owner.scroll_version_id
+
+
 MYSQL_FRAGMENT
 
 # Defines the where part of a query to get the sign data from a sign stream for the scrollverion
 # Should follow a GET_XXX_WHERE part according to the text part looked for
     SIGN_QUERY_SCROLLVERSION_PART => <<'MYSQL_FRAGMENT',
         AND sva.scroll_version_group_id = svb.scroll_version_group_id
+        AND (svc.scroll_version_group_id = svb.scroll_version_group_id or svc.scroll_version_group_id is null)
         AND svb.scroll_version_group_id= ?
 
 MYSQL_FRAGMENT
@@ -679,14 +687,20 @@ use constant {
     GET_FIRST_SIGN_IN_COLUMN => 'SELECT sign_id '
       . GET_FRAGMENT_FROM
       . SIGN_JOIN_PART
-      . 'where col_id=? '
+      . 'where col_id=? AND sign_char_attribute.attribute_value_id = 12 '
       . SIGN_QUERY_SCROLLVERSION_PART,
 
     GET_FIRST_SIGN_IN_LINE => 'SELECT sign_id '
-      . GET_FRAGMENT_FROM
-      . SIGN_JOIN_PART
-      . 'where line_id=? '
-      . SIGN_QUERY_SCROLLVERSION_PART
+        . GET_FRAGMENT_FROM
+        . SIGN_JOIN_PART
+        . 'where line_id=? AND sign_char_attribute.attribute_value_id = 10 '
+        . SIGN_QUERY_SCROLLVERSION_PART,
+
+    GET_LAST_SIGN_IN_LINE => 'SELECT sign_id '
+        . GET_FRAGMENT_FROM
+        . SIGN_JOIN_PART
+        . 'where line_id=? AND sign_char_attribute.attribute_value_id = 11 '
+        . SIGN_QUERY_SCROLLVERSION_PART
 
 };
 
