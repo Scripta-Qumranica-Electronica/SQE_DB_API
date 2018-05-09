@@ -1247,7 +1247,7 @@ Adds a ROI to a sign char
                     tag vir vaules set
                     tag for execeptional
 
-=item Returns nothing
+=item Returns new sign char roi id
 
 =back
 
@@ -1264,6 +1264,8 @@ Adds a ROI to a sign char
             $sign_char_id, $roi_shape_id, $roi_position_id,
             $values_set,   $execeptional );
         $self->add_owner( 'sign_char_roi', $sign_char_roi_id );
+
+        return $sign_char_roi_id;
 
     }
 
@@ -1593,6 +1595,37 @@ If as_variant = 0 then the new variant will be set as the main sign_char for thi
 
 =cut
 
+
+=head3 get_roi_data($sign_char_roi_id, $as_text)
+
+Retrieves the ROI data for the given sign_char_roi id. The path will be given either as WKT (as_text set) or as GeoJSON
+
+=over 1
+
+=item Parameters: id of the sign_char_roi
+                  flag whether the path should be given as WKT (set) or as GeoJSON (not set)
+
+=item Returns sign_char_id
+               path as WKT or GeoJSON
+               transform matrix
+               values set flag
+               exceptional flag
+
+=back
+
+=cut
+
+    sub get_roi_data {
+        my ($self, $sign_char_roi_id, $as_text) = @_;
+
+        if ($as_text) {
+            return $self->get_first_row_as_array(SQE_DBI_queries::GET_ROI_DATA_TEXT, $sign_char_roi_id);
+        } else {
+            return $self->get_first_row_as_array(SQE_DBI_queries::GET_ROI_DATA_GEOJSON, $sign_char_roi_id);
+        }
+    }
+
+
 =head3 print_formatted_text($query, $id, $format, $start_id)
 
 Retrieves a chunk of text, formats, and print it out.
@@ -1710,7 +1743,7 @@ If the record does not exist, it will be created autoamtically.
         my ( $self, $roi_shape ) = @_;
         my ($roi_shape_id) =
             $self->set_new_data( SQE_DBI_queries::GET_ROI_SHAPE_ID,
-                SQE_DBI_queries::NEW_ROI_SHAPE_FROM_GEO_JSON,
+                SQE_DBI_queries::NEW_ROI_SHAPE_FROM_WKT,
                 $roi_shape
             );
         return $roi_shape_id;

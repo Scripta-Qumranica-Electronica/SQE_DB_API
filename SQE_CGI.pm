@@ -226,6 +226,33 @@ sub throw_error {
 }
 
 
+=head2 get_roi_data($sign_char_roi_id, $as_text)
+
+Retrieves the ROI data for the given sign_char_roi id. The path will be given either as WKT (as_text set) or as GeoJSON
+
+=over 1
+
+=item Parameters: id of the sign_char_roi
+                  flag whether the path should be given as WKT (set) or as GeoJSON (not set)
+
+=item Returns sign_char_id
+               path as WKT or GeoJSON
+               transform matrix
+               values set flag
+               exceptional flag
+
+=back
+
+=cut
+
+sub get_roi_data {
+    my ($self, $sign_char_roi_id, $as_text) = @_;
+
+    return $self->dbh->get_roi_data($sign_char_roi_id, $as_text);
+}
+
+
+
 
 sub get_text_of_fragment {
     my ($self, $frag_id, $class) = @_;
@@ -491,7 +518,7 @@ Throws error, if the user may not change data.
                     flag whether the values are deemed as set
                     flag whether the the values are deemed as exceptional
 
-=item Returns nothing
+=item Returns the new ROI id
 
 =back
 
@@ -499,11 +526,13 @@ Throws error, if the user may not change data.
 
 sub add_roi {
     my ($self, $sign_char_id, $roi_shape, $roi_position, $values_set, $exceptional) = @_;
+    my $roi_id;
     if ($self->start_logged_writing) {
 
-        $self->dbh->add_roi($sign_char_id, $roi_shape, $roi_position, $values_set, $exceptional);
+        $roi_id = $self->dbh->add_roi($sign_char_id, $roi_shape, $roi_position, $values_set, $exceptional);
         $self->stop_logged_writing;
     }
+    return $roi_id;
 }
 
 =head2 remove_roi($sign_char_roi_id)

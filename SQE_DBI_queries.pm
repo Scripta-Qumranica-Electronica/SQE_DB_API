@@ -558,10 +558,10 @@ MYSQL
           VALUES (?, ?, ?, ?, ?)
 MYSQL
 
-    NEW_ROI_SHAPE_FROM_GEO_JSON => << 'MYSQL',
+    NEW_ROI_SHAPE_FROM_WKT => << 'MYSQL',
       INSERT INTO roi_shape
       (path)
-          VALUES (ST_GeomFromGeoJSON(?))
+          VALUES (ST_GeomFromText(?))
 
 MYSQL
 
@@ -574,7 +574,7 @@ MYSQL
     GET_ROI_SHAPE_ID => << 'MYSQL',
       SELECT roi_shape_id
       FROM roi_shape
-      WHERE path = ST_GeomFromGeoJSON(?)
+      WHERE path = ST_GeomFromText(?)
 MYSQL
 
     GET_ROI_POSITION_ID => << 'MYSQL',
@@ -587,6 +587,24 @@ MYSQL
       SELECT sign_id, is_variant, sign
           FROM sign_char
           WHERE sign_char_id=?
+MYSQL
+
+    GET_ROI_DATA_GEOJSON => << 'MYSQL',
+      SELECT sign_char_id, ST_AsGeoJSON(path), transform_matrix, values_set, exceptional
+          FROM sign_char_roi
+          JOIN roi_shape USING (roi_shape_id)
+          JOIN roi_position USING (roi_position_id)
+      WHERE sign_char_roi_id=?
+
+MYSQL
+
+    GET_ROI_DATA_TEXT => << 'MYSQL',
+      SELECT sign_char_id, ST_AsText(path), transform_matrix, values_set, exceptional
+      FROM sign_char_roi
+        JOIN roi_shape USING (roi_shape_id)
+        JOIN roi_position USING (roi_position_id)
+      WHERE sign_char_roi_id=?
+
 MYSQL
 
 
@@ -700,7 +718,13 @@ use constant {
         . GET_FRAGMENT_FROM
         . SIGN_JOIN_PART
         . 'where line_id=? AND sign_char_attribute.attribute_value_id = 11 '
-        . SIGN_QUERY_SCROLLVERSION_PART
+        . SIGN_QUERY_SCROLLVERSION_PART,
+
+        GET_LAST_SIGN_FRAGMENT => 'SELECT sign_id '
+            . GET_FRAGMENT_FROM
+            . SIGN_JOIN_PART
+            . 'where line_id=? AND sign_char_attribute.attribute_value_id = 11 '
+            . SIGN_QUERY_SCROLLVERSION_PART
 
 };
 

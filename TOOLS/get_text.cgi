@@ -8,8 +8,6 @@ use SQE_DBI_queries;
 my ( $cgi, $error_ref ) = SQE_CGI->new;
 
 
-
-
 print '{';
 
 if ($cgi->{CGIDATA}->{GET_LINE}) {
@@ -21,6 +19,8 @@ if ($cgi->{CGIDATA}->{GET_LINE}) {
     print '}';
 
 
+
+exit;
 my $new_scroll_version_id = $cgi->clone_scrollversion;
 
 $cgi->set_scrollversion($new_scroll_version_id);
