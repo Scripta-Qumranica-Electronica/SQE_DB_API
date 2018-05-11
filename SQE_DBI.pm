@@ -1265,9 +1265,26 @@ Adds a ROI to a sign char
             $values_set,   $execeptional );
         $self->add_owner( 'sign_char_roi', $sign_char_roi_id );
 
-        return $sign_char_roi_id;
+        return $sign_char_roi_id ;
 
     }
+
+    sub set_roi_data {
+        my ($self, $sign_char_roi_id, $new_path, $new_matrix, $new_values_set, $new_exceptional) = @_;
+        my ($sign_char_id, $old_path, $old_matrix, $old_values_set, $old_exceptional) =
+            $self->get_roi_data($sign_char_roi_id);
+        $new_path = $new_path ? $new_path : $old_path;
+        $new_matrix = $new_matrix ? $new_matrix : $old_matrix;
+        $new_values_set = $new_values_set ? $new_values_set : $old_values_set;
+        $new_exceptional = $new_exceptional ? $new_exceptional : $old_exceptional;
+        my $new_sign_char_roi_id = $self->add_roi($sign_char_id, $new_path, $new_matrix, $new_values_set, $new_exceptional);
+        if ($new_sign_char_roi_id != $sign_char_roi_id) {
+            $self->remove_data('sign_char_roi', $sign_char_roi_id);
+        }
+        return $new_sign_char_roi_id;
+    }
+
+
 
 =head3 remove_roi($sign_char_roi_id)
 

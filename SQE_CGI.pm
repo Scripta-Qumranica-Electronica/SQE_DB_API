@@ -251,6 +251,145 @@ sub get_roi_data {
     return $self->dbh->get_roi_data($sign_char_roi_id, $as_text);
 }
 
+=head2 set_roi_data($sign_char_roi_id, $new_path, $new_matrix, $new_values_set, $new_exceptional)
+
+Sets the given data to sign char roi and returns the new sign_char_roi_id;
+
+For all data given as undef the odl data will be retained
+
+
+=over 1
+
+=item Parameters: id of the sign char roi
+                  path as WKT
+                  transfrom matrix
+                  flag for values set
+                  flag for exceptional
+
+=item Returns the new id of sign char roi
+
+=back
+
+=cut
+
+
+sub set_roi_data {
+    my ($self, $sign_char_roi_id, $new_path, $new_matrix, $new_values_set, $new_exceptional) = @_;
+    my $new_id;
+    if ($self->start_logged_writing) {
+        $new_id=$self->dbh->set_roi_data($sign_char_roi_id, $new_path, $new_matrix, $new_values_set, $new_exceptional);
+    $self->stop_logged_writing;
+    }
+    return $new_id;
+}
+
+=head2 set_roi_path($sign_char_roi_id, $new_path)
+
+Sets the given path to sign char roi and returns the new sign_char_roi_id;
+
+=over 1
+
+=item Parameters: id of the sign char roi
+                  path as WKT
+
+=item Returns the new id of sign char roi
+
+=back
+
+=cut
+
+sub set_roi_path {
+    my ($self, $sign_char_roi_id, $new_path) = @_;
+    return $self->set_roi_data ($sign_char_roi_id, $new_path);
+}
+
+=head2 set_roi_position($sign_char_roi_id, $new_matrix)
+
+Sets the given matrix to place the path to sign char roi and returns the new sign_char_roi_id;
+
+=over 1
+
+=item Parameters: id of the sign char roi
+                  transform matrix
+
+=item Returns the new id of sign char roi
+
+=back
+
+=cut
+
+sub set_roi_position {
+    my ($self, $sign_char_roi_id, $new_matrix) = @_;
+    return $self->set_roi_data ($sign_char_roi_id, undef, $new_matrix);
+}
+
+
+=head2 set_roi_geo($sign_char_roi_id, $new_path, $new_path)
+
+Sets the given path and the matrix to place it to sign char roi and returns the new sign_char_roi_id;
+
+=over 1
+
+=item Parameters: id of the sign char roi
+                  path as WKT
+                  transform matrix
+
+=item Returns the new id of sign char roi
+
+=back
+
+=cut
+
+
+sub set_roi_geo {
+    my ($self, $sign_char_roi_id, $new_path, $new_matrix) = @_;
+    return $self->set_roi_data ($sign_char_roi_id, $new_path, $new_matrix);
+
+}
+
+=head2 set_roi_values_set($sign_char_roi_id, $new_values_set)
+
+Sets the flag whether the values are finally set to sign char roi and returns the new sign_char_roi_id;
+
+=over 1
+
+=item Parameters: id of the sign char roi
+                  flag of values set
+
+=item Returns the new id of sign char roi
+
+=back
+
+=cut
+
+
+
+sub set_roi_values_set {
+    my ($self, $sign_char_roi_id, $new_values_set) = @_;
+    return $self->set_roi_data ($sign_char_roi_id, undef, undef, $new_values_set);
+}
+
+=head2 set_roi_exceptional($sign_char_roi_id, $new_exceptional)
+
+Sets the the flag whether are taken as exceptional  to sign char roi and returns the new sign_char_roi_id;
+
+=over 1
+
+=item Parameters: id of the sign char roi
+                  exceptional flag
+
+=item Returns the new id of sign char roi
+
+=back
+
+=cut
+
+
+
+sub set_roi_exceptional {
+    my ($self, $sign_char_roi_id, $new_exceptional) = @_;
+    return $self->set_roi_data ($sign_char_roi_id, undef, undef, undef, $new_exceptional);
+}
 
 
 
