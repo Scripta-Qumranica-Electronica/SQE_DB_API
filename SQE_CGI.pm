@@ -76,7 +76,7 @@ sub new {
     }
 
     #We got JSON as POST-parameter - let's test if they are correct formatted
-    $self->{CGIDATA} = eval { JSON->new->utf8( '' . $self->param('POSTDATA') ) };
+    $self->{CGIDATA} = eval { JSON->new->utf8(0)->decode( '' . $self->param('POSTDATA') ) };
     $self->throw_error(SQE_Error::WRONG_JSON_FORMAT) if !$self->{CGIDATA};
 
     #We got correct formatted JSON-data, let's check if we should continue a running session
