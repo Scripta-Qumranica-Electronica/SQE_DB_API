@@ -173,7 +173,10 @@ MYSQL_FRAGMENT
             col_data.col_id,
             col_data.name,
             line_data.line_id,
-            line_data.name
+            line_data.name,
+            scroll_data.scroll_data_id,
+            col_data.col_data_id,
+            line_data.line_data_id
 
     FROM line_to_sign
 

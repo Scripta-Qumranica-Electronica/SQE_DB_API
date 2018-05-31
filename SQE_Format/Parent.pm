@@ -339,6 +339,8 @@ sub print {
                 $out .= $class->SIGN_LABLE->[OUT_START];
 
             } else {
+                $old_line_id = $ref_data_ref->[LINE_ID];
+
                 $out .= $class->SIGN_LABLE->[OUT_END];
                 $out .= $class->SIGNS_LABLE->[OUT_END];
                 $out .= $class->LINES_LABLE->[OUT_SEPARATOR];

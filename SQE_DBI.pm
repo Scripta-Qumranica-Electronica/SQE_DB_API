@@ -131,9 +131,26 @@ Contains all functions which can be used as shortcuts for executing queries
 =head3 Global setting of setters and getters
 
 The following part is run at compile time (and thus, when the server starts) and defines setter- and getter-queries and
-a query to remove the curtent scroll version
+a query to remove the current scroll version
 for all tables which do have an owner table. The queries are stored in an global anonymous hash with the table name as key and
-the global variable $data_tables holding a reference to the hash
+the global variable $data_tables holding a reference to the hash.
+
+The following Queries are generated
+
+=over 1
+
+=item GET_QUERY: Selects all records from the data table with the given data except the id of the table id
+
+=item SIMPLE_GET_QUERY: Selects the record with the given id
+
+=item SET_QUERY: Creates a new record with the given data.
+
+=item DELETE_QUERY: Removes the owner belonging to the given scroll_version_group from the record with the given id
+
+=back
+
+
+
 
 =cut
 
@@ -806,6 +823,38 @@ Finally, the current scroll_verion is set as an owner to the retrieved or create
         return $id;
     }
 
+
+
+=head3 replace_data($table, @old_data, @new_data)
+
+Removes the record which has the old_data from the current scroll_version_group and adds a record with the new data.
+
+=over 1
+
+=item Parameters: Name of the tabe
+                  Reference to array with the old data
+                  Reference to array with the new data
+
+=item Returns id of the new data record
+
+=back
+
+=cut
+
+sub replace_data {
+    my ($self, $table, $old_data_ref, $new_data_ref) = @_;
+    my $get_sth = $self->prepare_cached($data_tables->{$table}->{GET_QUERY});
+    $get_sth->execute(@{$old_data_ref});
+    my $data_id;
+    $get_sth->bind_col(0, \$data_id);
+    while ($get_sth->fetch) {
+        $self->remove_data($table, $data_id);
+    }
+    returns $self->set_new_data_to_owner($table,@{$new_data_ref});
+
+}
+
+
 =head3 set_new_data($get_query, $set_query, @data)
 
 Searches for a record containing the needed data using get_query
@@ -1050,6 +1099,23 @@ $new_main_id must be specified
     }
 
 
+sub move_line_number {
+    my ($self, $sign_id, $delta) = @_;
+
+    my $line_end_sth = $self->prepare_cached(SQE_DBI_queries::GET_LAST_SIGN_FRAGMENT);
+    my $line_sth = $self->prepare_cached(SQE_DBI_queries::GET_REF_DATA);
+    $line_sth->execute($sign_id, $self->scroll_version_group_id);
+    my ($line_name, $line_id, $col_id);
+    $line_sth->bind_col(6, \$line_name);
+    $line_sth->bind_col(5, \$line_id);
+    $line_sth->bind_col(3, \$col_id);
+    while ($line_sth->fetch) {
+        my $new_line_name=$line_name;
+        $new_line_name=~s/(.*?)([0-9]+)([^0-9]*?)/$1 . ($2+$delta) . $3/oe;
+        print $line_name . ' - ' . $new_line_name;
+    }
+}
+
 =head3 remove_data($table, $id)
 
 Removes data hold in a table with an owner table from the current scroll version group
@@ -1123,7 +1189,7 @@ Removes the sign char attribute with the given id.
 
     sub remove_sign_char_attribute {
         my ($self, $sign_char_attribute_id) = @_;
-            $self->dbh->remove_data('sign_char_attribute', $sign_char_attribute_id);
+            $self->remove_data('sign_char_attribute', $sign_char_attribute_id);
     }
 
 
