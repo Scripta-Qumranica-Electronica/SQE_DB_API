@@ -156,7 +156,7 @@ The following Queries are generated
 
 
     our $data_tables = {};
-    INIT {
+    BEGIN {
         my ($dbh) = SQE_DBI->get_sqe_dbh;
         my $sth = $dbh->prepare_cached(SQE_DBI_queries::GET_OWNER_TABLE_NAMES);
         $sth->execute;
@@ -1639,7 +1639,7 @@ If as_variant = 0 then the new variant will be set as the main sign_char for thi
 
 =over 1
 
-=item Parameters:   id of the sign to shich the new variant should be set
+=item Parameters:   id of the sign to which the new variant should be set
                     sign (char) of the variant
                     variant flag
 
