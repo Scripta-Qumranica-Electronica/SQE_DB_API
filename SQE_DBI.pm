@@ -1742,7 +1742,7 @@ Retrieves a chunk of text, formats, and print it out.
 
             }
             $signs->{ $old_sign->{sign_id} } = $old_sign;
-            $format->print( $signs, $start_id, $sth_out,
+           $format->print( $signs, $start_id, $sth_out,
                 $self->scroll_version_group_id );
         }
         $sth->finish;
