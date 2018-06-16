@@ -640,7 +640,16 @@ MYSQL
 #          SELECT (*TABLE*_id, *SVID*)
 #          FROM *TABLE*
 #          WHERE sign_char_id=*SIGNCHARID*
-#MYSQL
+#MY
+
+
+
+    ADD_ARTEFACT => << 'MYSQL',
+      INSERT into artefact () values ()
+MYSQL
+
+
+
 
 
 
@@ -728,6 +737,9 @@ use constant {
             . SIGN_JOIN_PART
             . 'where line_id=? AND sign_char_attribute.attribute_value_id = 11 '
             . SIGN_QUERY_SCROLLVERSION_PART
+
+
+
 
 };
 

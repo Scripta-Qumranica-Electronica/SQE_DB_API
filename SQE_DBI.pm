@@ -147,6 +147,8 @@ The following Queries are generated
 
 =item DELETE_QUERY: Removes the owner belonging to the given scroll_version_group from the record with the given id
 
+=item FROM_PARENTS: Selects the ids retrieved by the ids of the parents to which the table provide datas and the current scrollversion
+
 =back
 
 
@@ -155,9 +157,12 @@ The following Queries are generated
 =cut
 
 
+
+
     our $data_tables = {};
-    BEGIN {
+    INIT {
         my ($dbh) = SQE_DBI->get_sqe_dbh;
+        my %geom_fields = (polygon => 1, point=>1);
         my $sth = $dbh->prepare_cached(SQE_DBI_queries::GET_OWNER_TABLE_NAMES);
         $sth->execute;
         my $owner_table;
@@ -165,16 +170,17 @@ The following Queries are generated
         $sth->bind_col(1, \$owner_table);
         while ($sth->fetch) {
             my $table = substr($owner_table, 0, -6);
-            my @field_names = @{$dbh->selectall_arrayref('DESCRIBE ' . $table, { Columns => [ 1 ] })};
+            my @field_names = @{$dbh->selectall_arrayref('DESCRIBE ' . $table, { Columns => [ 1, 2 ] })};
+
             $data_tables->{$table}->{GET_QUERY} = "
             SELECT * FROM $table
             WHERE "
-                . join(' AND ', map ($_->[0] . "=?", grep ($_->[0] ne "${table}_id", @field_names)));
+                . join(' AND ', map ($_->[0] . ($geom_fields{$_->[1]} ? '=ST_GeomFromText(?)' : '=?'), grep ($_->[0] ne "${table}_id", @field_names)));
 
             $data_tables->{$table}->{SET_QUERY} = "INSERT INTO $table ("
                 . join(',', map ($_->[0], grep ($_->[0] ne "${table}_id", @field_names)))
             .") VALUES ("
-                . join(' , ', map ('?', grep ($_->[0] ne "${table}_id", @field_names)))
+                . join(' , ', map (($geom_fields{$_->[1]} ? 'ST_GeomFromText(?)' : '?'), grep ($_->[0] ne "${table}_id", @field_names)))
                 . ')';
 
             $data_tables->{$table}->{DELETE_QUERY} = "
@@ -194,7 +200,21 @@ The following Queries are generated
         FROM ${table}_owner
             JOIN scroll_version USING (scroll_version_id)
             WHERE scroll_version_group_id = ?";
+
+
+            $data_tables->{$table}->{FROM_PARENTS} = "
+              SELECT ${table}_id
+               FROM ${table}
+               JOIN ${table}_owner USING (${table}_id)
+              JOIN scroll_version USING (scroll_version_id)
+                WHERE "
+                . join(' AND ', map ($_->[0] .  '=?', grep (index($_->[0], '_id') !=-1 && $_->[0] ne "${table}_id", @field_names)))
+                . " AND scroll_version_group_id = ?"
+            ;
         }
+
+
+
         $sth->finish;
     }
 
@@ -1351,6 +1371,134 @@ Adds a ROI to a sign char
     }
 
 
+=head3 add_artefact($image_id)
+
+Creates a new artefact on the image given image
+
+=over 1
+
+=item Parameters: id of the image
+
+=item Returns id of the artefact
+
+=back
+
+=cut
+
+    sub add_artefact {
+        my ($self, $image_id, $region) = @_;
+        my $create_sth = $self->prepare_cached(SQE_DBI_queries::ADD_ARTEFACT);
+        $create_sth->execute();
+        my $artefact_id = $self->{mysql_insertid};
+        $create_sth->finish;
+        $self->set_artefact_shape($artefact_id, $image_id, $region);
+        return $artefact_id;
+    }
+
+
+    sub exchange_artefact_data {
+        my ($self, $table, $artefact_id, @data) = @_;
+        my $old_id=$self->get_id_from_parent($table, $artefact_id);
+        my $new_id = $self->set_new_data_to_owner($table, $artefact_id, @data);
+        if ($old_id) {
+            if ($new_id != $old_id) {
+                $self->remove_data($table, $old_id);
+            }
+        }
+    }
+
+
+
+
+=head3 set_artefact_shape($artefact_id, $image_id, $region)
+
+
+=over 1
+
+=item Parameters: id of artefact
+                  id of image
+                  polygon of region as WKT
+
+=item Returns nothing
+
+=back
+
+=cut
+    sub set_artefact_shape {
+        my ($self, @data) = @_;
+        $self->exchange_artefact_data('artefact_shape', @data);
+    }
+
+
+=head3 set_artefact_position($artefact_id, $position, $z_index)
+
+Sets the data of the position of an artefact
+
+=over 1
+
+=item Parameters: id of artefact
+                  position matrix as String
+                  optional z-position as id (if not given, this value is set to 0)
+
+=item Returns nothing
+
+=back
+
+=cut
+    sub set_artefact_position {
+        my ($self, @data) = @_;
+        $data[2] = $data[2] ? $data[2] : 0;
+        $self->exchange_artefact_data('artefact_position', @data);
+    }
+
+
+=head3 set_artefact_data($artefact_id, $name)
+
+Stes the name of an artefact connectied to the current scrollverison
+
+=over 1
+
+=item Parameters: id of artefact
+                  name as string
+
+=item Returns nothing
+
+=back
+
+=cut
+    sub set_artefact_data {
+        my ($self, @data) = @_;
+        $self->exchange_artefact_data('artefact_data', @data);
+    }
+
+=head3 remove_artefact($artefact_id)
+
+Removes an artefact by removing all referenced data
+
+=over 1
+
+=item Parameters: id of artefact
+
+=item Returns nothing
+
+=back
+
+=cut
+
+    sub remove_artefact {
+        my ($self, $artefact_id) = @_;
+        $self->remove_single_artefact_subdata('artefact_data', $artefact_id);
+        $self->remove_single_artefact_subdata('artefact_position', $artefact_id);
+        $self->remove_single_artefact_subdata('artefact_shape', $artefact_id);
+    }
+
+    sub remove_single_artefact_subdata {
+        my ($self, $table, $artefact_id) = @_;
+        if (my $data_id=$self->get_id_from_parent($table, $artefact_id)) {
+            $self->remove_data($table, $data_id)    ;
+        }
+
+    }
 
 =head3 remove_roi($sign_char_roi_id)
 
@@ -1678,6 +1826,24 @@ If as_variant = 0 then the new variant will be set as the main sign_char for thi
 
 =cut
 
+
+    sub get_ids_from_parent {
+        my ($self, $table, @data) = @_;
+        my $sth = $self->prepare_cached($data_tables->{$table}->{FROM_PARENTS});
+        $sth->execute(@data, $self->scroll_version_group_id);
+        my $res=$sth->fetchall_arrayref;
+        $sth->finish;
+        return $res;
+    }
+
+    sub get_id_from_parent {
+        my ($self, $table, @data) = @_;
+        my $res = $self->get_ids_from_parent($table, @data);
+        if ($res->[0]) {
+            return $res->[0]->[0];
+        }
+        return undef;
+    }
 
 =head3 get_roi_data($sign_char_roi_id, $as_text)
 

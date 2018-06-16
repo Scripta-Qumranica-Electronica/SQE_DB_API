@@ -21,14 +21,25 @@ if ($cgi->{CGIDATA}->{GET_LINE}) {
 }
     print '}';
 
-
+$cgi->add_sign_char_variant(5,'A');
 
 exit;
-my $new_scroll_version_id = $cgi->clone_scrollversion;
 
-$cgi->set_scrollversion($new_scroll_version_id);
+#my $new_scroll_version_id = $cgi->clone_scrollversion;
 
+$cgi->set_scrollversion(1630);
 
+#my $artefact_id=$cgi->add_artefact(2610, '[]');
+
+$cgi->change_artefact_position(3286, 'position');
+
+$cgi->change_artefact_data(3286, 'hurra');
+
+$cgi->change_artefact_shape(3286, 2610, 'POLYGON((1 1,1 2,2 2,2 1, 1 1))');
+
+#$cgi->remove_artefact($artefact_id);
+
+exit;
 print "\n{";
 
 $cgi->get_text_of_line($cgi->{CGIDATA}->{GET_LINE}, 'SQE_Format::JSON');

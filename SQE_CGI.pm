@@ -215,6 +215,9 @@ Sends an error message as an JSON-object to the browser and terminates the CGI p
 
 =cut
 
+
+
+
 sub throw_error {
     my ( $self, $error_ref ) = @_;
     $self->print( '{"TYPE":"ERROR","ERROR_CODE":'
@@ -225,6 +228,126 @@ sub throw_error {
     exit;
 }
 
+
+=head2 remove_artefact($artefact_id)
+
+Removes an artefact by removing all referenced data
+
+=over 1
+
+=item Parameters: id of artefact
+
+=item Returns nothing
+
+=back
+
+=cut
+
+sub remove_artefact {
+    my ($self, $artefact_id) = @_;
+    if ($self->start_logged_writing) {
+        $self->dbh->remove_artefact($artefact_id);
+        $self->stop_logged_writing;
+    }
+}
+
+=head2 add_artefact($id_for_image, $region)
+
+Adds a new artefact with the given image_id and region as WKT polygon to the current scrollversion
+
+=over 1
+
+=item Parameters: id of sqe_image
+                  region as Polygpon in WKT-notation
+
+=item Returns the id of the new artefact
+
+=back
+
+=cut
+
+sub add_artefact {
+    my ($self, $id_for_image, $region) = @_;
+    my $artefact_id;
+    if ($self->start_logged_writing) {
+        $artefact_id=$self->dbh->add_artefact($id_for_image, $region);
+        $self->stop_logged_writing;
+    }
+    return $artefact_id;
+}
+
+
+=head2 change_artefact_shape($artefact_id, $id_for_image, $region)
+
+Sets new values for the shap of an existing artefact
+
+=over 1
+
+=item Parameters: id of artefact
+                  id of sqe_image
+                  region as polygon in WKT notation
+
+=item Returns nothing
+
+=back
+
+=cut
+
+sub change_artefact_shape {
+    my ($self, $artefact_id, $id_for_image, $region) = @_;
+    if ($self->start_logged_writing) {
+        $self->dbh->set_artefact_shape($artefact_id, $id_for_image, $region);
+        $self->stop_logged_writing;
+    }
+}
+
+=head2 change_artefact_position($artefact_id, $position, $z_index)
+
+Sets new values for the position of a given aretefact
+
+=over 1
+
+=item Parameters: id of artefact
+                  position matrix as string
+                  optional z_index as integer (or 0 if not set)
+
+=item Returns nothing
+
+=back
+
+=cut
+
+sub change_artefact_position {
+    my ($self, $artefact_id, $position, $z_index) = @_;
+    if ($self->start_logged_writing) {
+        $self->dbh->set_artefact_position($artefact_id, $position, $z_index);
+        $self->stop_logged_writing;
+    }
+}
+
+=head2 change_artefact_data($artefact_id, $name)
+
+Sets a new name for a given artefact
+
+=over 1
+
+=item Parameters: id of artefact
+                  name as string
+
+=item Returns nothing
+
+=back
+
+=cut
+
+
+sub change_artefact_data {
+    my ($self, $artefact_id, $name) = @_;
+    if ($self->start_logged_writing) {
+        $self->dbh->set_artefact_data($artefact_id, $name);
+        $self->stop_logged_writing;
+    }
+}
 
 =head2 get_roi_data($sign_char_roi_id, $as_text)
 
@@ -704,7 +827,7 @@ sub add_sign_char_variant {
     my ($self, $sign_id, $char, $as_main) =  @_;
     if ($self->start_logged_writing) {
 
-        $self->dbh->new_sign_char_variant($sign_id, $char, $as_main ? 0 : 1);
+        $self->dbh->new_sign_char_variant($sign_id, $char, $as_main);
         $self->stop_logged_writing;
     }
 }
