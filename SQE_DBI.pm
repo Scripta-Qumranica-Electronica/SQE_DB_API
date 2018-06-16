@@ -160,7 +160,7 @@ The following Queries are generated
 
 
     our $data_tables = {};
-    INIT {
+    BEGIN {
         my ($dbh) = SQE_DBI->get_sqe_dbh;
         my %geom_fields = (polygon => 1, point=>1);
         my $sth = $dbh->prepare_cached(SQE_DBI_queries::GET_OWNER_TABLE_NAMES);
@@ -1601,7 +1601,9 @@ sign char id to the new one
 
     sub clone_sign_char {
         my ( $self, $sign_char_id, $sign_id, $as_variant, $sign ) = @_;
-        my $new_sign_char_id = $self->set_new_data_to_owner('sign_char', $sign_id, $as_variant, $sign  );
+        my $sth = $self->prepare_cached(SQE_DBI_queries::NEW_SIGN_CHAR);
+        $sth->execute($sign_id, $as_variant, $sign);
+        my $new_sign_char_id = $self->{mysql_insertid};
 
         # And add copy the attributes and ROIs from the main char sign to the new one
         $self->clone_attributes( $sign_char_id, $new_sign_char_id );

@@ -21,13 +21,16 @@ if ($cgi->{CGIDATA}->{GET_LINE}) {
 }
     print '}';
 
-$cgi->add_sign_char_variant(5,'A');
+
+$cgi->set_scrollversion(1630);
+
+$cgi->add_sign_char_variant(998006,'A');
 
 exit;
 
 #my $new_scroll_version_id = $cgi->clone_scrollversion;
 
-$cgi->set_scrollversion(1630);
+
 
 #my $artefact_id=$cgi->add_artefact(2610, '[]');
 
