@@ -349,6 +349,77 @@ sub change_artefact_data {
     }
 }
 
+=head2 change_scroll_name($name)
+
+Sets a new name for the scroll of the current scrollversion
+
+=over 1
+
+=item Parameters: new name of scroll as string
+
+=item Returns nothing
+
+=back
+
+=cut
+
+
+sub change_scroll_name {
+    my ($self, $name) = @_;
+    if ($self->start_logged_writing) {
+        $self->dbh->set_scroll_name($name);
+        $self->stop_logged_writing;
+    }
+}
+
+=head2 change_col_name($col_id, $name)
+
+Sets a new name for the col referenced by col_id of the current scrollversion
+
+=over 1
+
+=item Parameters: id of col
+                  new name of scroll as string
+
+=item Returns nothing
+
+=back
+
+=cut
+
+
+sub change_col_name {
+    my ($self, $col_id, $name) = @_;
+    if ($self->start_logged_writing) {
+        $self->dbh->set_col_name($col_id, $name);
+        $self->stop_logged_writing;
+    }
+}
+
+=head2 change_line_name($line_id, $name)
+
+Sets a new name for the line referenced by line_id of the current scrollversion
+
+=over 1
+
+=item Parameters: id of line
+                  new name of scroll as string
+
+=item Returns nothing
+
+=back
+
+=cut
+
+
+sub change_line_name {
+    my ($self, $line_id, $name) = @_;
+    if ($self->start_logged_writing) {
+        $self->dbh->set_line_name($line_id, $name);
+        $self->stop_logged_writing;
+    }
+}
+
 =head2 get_roi_data($sign_char_roi_id, $as_text)
 
 Retrieves the ROI data for the given sign_char_roi id. The path will be given either as WKT (as_text set) or as GeoJSON

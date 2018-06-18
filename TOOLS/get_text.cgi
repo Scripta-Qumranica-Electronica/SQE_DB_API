@@ -26,7 +26,7 @@ $cgi->set_scrollversion(1630);
 
 $cgi->add_sign_char_variant(998006,'A');
 
-exit;
+
 
 #my $new_scroll_version_id = $cgi->clone_scrollversion;
 
@@ -41,6 +41,10 @@ $cgi->change_artefact_data(3286, 'hurra');
 $cgi->change_artefact_shape(3286, 2610, 'POLYGON((1 1,1 2,2 2,2 1, 1 1))');
 
 #$cgi->remove_artefact($artefact_id);
+
+$cgi->change_scroll_name('Hurra2');
+$cgi->change_col_name(9111, 'Hurra');
+$cgi->change_line_name(38834,'Hurra');
 
 exit;
 print "\n{";

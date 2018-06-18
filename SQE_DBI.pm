@@ -156,32 +156,45 @@ The following Queries are generated
 
 =cut
 
-
-
-
     our $data_tables = {};
+
     BEGIN {
         my ($dbh) = SQE_DBI->get_sqe_dbh;
-        my %geom_fields = (polygon => 1, point=>1);
+        my %geom_fields = ( polygon => 1, point => 1 );
         my $sth = $dbh->prepare_cached(SQE_DBI_queries::GET_OWNER_TABLE_NAMES);
         $sth->execute;
         my $owner_table;
         my $field_name;
-        $sth->bind_col(1, \$owner_table);
-        while ($sth->fetch) {
-            my $table = substr($owner_table, 0, -6);
-            my @field_names = @{$dbh->selectall_arrayref('DESCRIBE ' . $table, { Columns => [ 1, 2 ] })};
+        $sth->bind_col( 1, \$owner_table );
+        while ( $sth->fetch ) {
+            my $table = substr( $owner_table, 0, -6 );
+            my @field_names = @{
+                $dbh->selectall_arrayref( 'DESCRIBE ' . $table,
+                    { Columns => [ 1, 2 ] } )
+            };
 
             $data_tables->{$table}->{GET_QUERY} = "
             SELECT * FROM $table
             WHERE "
-                . join(' AND ', map ($_->[0] . ($geom_fields{$_->[1]} ? '=ST_GeomFromText(?)' : '=?'), grep ($_->[0] ne "${table}_id", @field_names)));
+              . join(
+                ' AND ',
+                map ( $_->[0]
+                      . (
+                        $geom_fields{ $_->[1] } ? '=ST_GeomFromText(?)' : '=?'
+                      ),
+                    grep ( $_->[0] ne "${table}_id", @field_names ) )
+              );
 
             $data_tables->{$table}->{SET_QUERY} = "INSERT INTO $table ("
-                . join(',', map ($_->[0], grep ($_->[0] ne "${table}_id", @field_names)))
-            .") VALUES ("
-                . join(' , ', map (($geom_fields{$_->[1]} ? 'ST_GeomFromText(?)' : '?'), grep ($_->[0] ne "${table}_id", @field_names)))
-                . ')';
+              . join( ',',
+                map ( $_->[0], grep ( $_->[0] ne "${table}_id", @field_names ) )
+              )
+              . ") VALUES ("
+              . join(
+                ' , ',
+                map ( ( $geom_fields{ $_->[1] } ? 'ST_GeomFromText(?)' : '?' ),
+                    grep ( $_->[0] ne "${table}_id", @field_names ) )
+              ) . ')';
 
             $data_tables->{$table}->{DELETE_QUERY} = "
             DELETE ${table}_owner
@@ -201,24 +214,23 @@ The following Queries are generated
             JOIN scroll_version USING (scroll_version_id)
             WHERE scroll_version_group_id = ?";
 
-
             $data_tables->{$table}->{FROM_PARENTS} = "
               SELECT ${table}_id
                FROM ${table}
                JOIN ${table}_owner USING (${table}_id)
               JOIN scroll_version USING (scroll_version_id)
                 WHERE "
-                . join(' AND ', map ($_->[0] .  '=?', grep (index($_->[0], '_id') !=-1 && $_->[0] ne "${table}_id", @field_names)))
-                . " AND scroll_version_group_id = ?"
-            ;
+              . join(
+                ' AND ',
+                map ( $_->[0] . '=?',
+                    grep ( index( $_->[0], '_id' ) != -1
+                          && $_->[0] ne "${table}_id",
+                        @field_names ) )
+              ) . " AND scroll_version_group_id = ?";
         }
-
-
 
         $sth->finish;
     }
-
-
 
 =head3 get_first_row_as_hash_ref($query, @data)
 
@@ -288,7 +300,6 @@ Should be cancelled by stop_transaction
         $_[0]->{AutoCommit} = 0;
     }
 
-
 =head3 stop_transaction()
 
 eEnd the transaction mode
@@ -303,16 +314,11 @@ eEnd the transaction mode
 
 =cut
 
-
     sub stop_transaction {
         my ($self) = @_;
         $self->commit;
         $self->{AutoCommit} = 1;
     }
-
-
-
-
 
 =head2 User and Scrollversion Management
 
@@ -338,7 +344,7 @@ Returns (undef, error_ref) if the scrollversion can't be set for the current use
         my ( $self, $scroll_version_id ) = @_;
 
         $scroll_version_id =
-            $self->session->set_scrollversion($scroll_version_id);
+          $self->session->set_scrollversion($scroll_version_id);
 
         if ($scroll_version_id) {
             return $scroll_version_id;
@@ -347,7 +353,6 @@ Returns (undef, error_ref) if the scrollversion can't be set for the current use
             return ( undef, SQE_Error::WRONG_SCROLLVERSION );
         }
     }
-
 
 =head3 scroll_version_id()
 
@@ -385,9 +390,8 @@ Returns the group id of the current scrollversion
     sub scroll_version_group_id {
         my ($self) = @_;
         return $self->{private_SQE_DBI_data}->{SESSION}
-            ->{SCROLL_VERSION_GROUP_ID};
+          ->{SCROLL_VERSION_GROUP_ID};
     }
-
 
 =head3 may_write()
 
@@ -406,7 +410,6 @@ Returns 1 if the user may write to current scroll version
     sub may_write {
         return $_[0]->{private_SQE_DBI_data}->{SESSION}->{WRITABLE};
     }
-
 
 =head3 may_lock()
 
@@ -440,13 +443,10 @@ Returns the current scroll id
 
 =cut
 
-
-
     sub scroll_id {
         return $_[0]->{private_SQE_DBI_data}->{SESSION}->{SCROLL_ID};
 
     }
-
 
 =head3 set_scroll_version_group_admin($scroll_version_group_id, $user_id)
 
@@ -463,11 +463,10 @@ Sets the given user as administrator for the given scroll version group
 
 =cut
 
-
     sub set_scroll_version_group_admin {
         my ( $self, $scroll_version_group_id, $user_id ) = @_;
         my $sth = $self
-            ->prepare_cached(SQE_DBI_queries::CREATE_SCROLL_VERSION_GROUP_ADMIN);
+          ->prepare_cached(SQE_DBI_queries::CREATE_SCROLL_VERSION_GROUP_ADMIN);
         $sth->execute( $scroll_version_group_id, $user_id );
         $sth->finish;
     }
@@ -487,18 +486,17 @@ Copy all data of the old scroll version group to the new scroll version
 
 =cut
 
-
     sub copy_data_to_scroll_version {
         my ( $self, $old_scroll_version_group_id, $new_scroll_version_id ) = @_;
 
-        for my $table (keys %{$data_tables}) {
-                my $query = SQE_DBI_queries::CLONE_SCROLL_VERSION;
-                my $owner_table = $table . '_owner';
-                $query =~ s/\*OWNER\*/$owner_table/go;
-                $query =~ s/\*TABLE\*/$table/go;
-                $query =~ s/\*SVID\*/$new_scroll_version_id/go;
-                $query =~ s/\*OLDSVID\*/$old_scroll_version_group_id/go;
-                $self->do($query);
+        for my $table ( keys %{$data_tables} ) {
+            my $query       = SQE_DBI_queries::CLONE_SCROLL_VERSION;
+            my $owner_table = $table . '_owner';
+            $query =~ s/\*OWNER\*/$owner_table/go;
+            $query =~ s/\*TABLE\*/$table/go;
+            $query =~ s/\*SVID\*/$new_scroll_version_id/go;
+            $query =~ s/\*OLDSVID\*/$old_scroll_version_group_id/go;
+            $self->do($query);
         }
     }
 
@@ -518,9 +516,13 @@ Test whether the referenced user is administatormof the referenced scroll versio
 =cut
 
     sub is_scroll_version_group_admin {
-        my ($self, $scroll_version_group_id, $user_id) = @_;
-       return ($self->get_first_row_as_array(SQE_DBI_queries::IS_SCROLL_VERSION_GROUP_ADMIN,
-        $scroll_version_group_id, $user_id))[0];
+        my ( $self, $scroll_version_group_id, $user_id ) = @_;
+        return (
+            $self->get_first_row_as_array
+              ( SQE_DBI_queries::IS_SCROLL_VERSION_GROUP_ADMIN,
+                $scroll_version_group_id, $user_id
+              )
+        )[0];
     }
 
 =head3 clone_current_scroll()
@@ -537,13 +539,17 @@ Creates a writable clone of the current scroll and returns its scroll version id
 
 =cut
 
-
     sub clone_current_scroll {
         my ($self) = @_;
         $self->start_transaction;
-        my $new_scroll_version_group_id = $self->create_scroll_version_group($self->scroll_id, 0, $self->user_id);
-        my $new_scroll_version_id = $self->create_scrollversion_for_group($self->user_id, $new_scroll_version_group_id);
-        $self->copy_data_to_scroll_version($self->scroll_version_group_id, $new_scroll_version_id);
+        my $new_scroll_version_group_id =
+          $self->create_scroll_version_group( $self->scroll_id, 0,
+            $self->user_id );
+        my $new_scroll_version_id =
+          $self->create_scrollversion_for_group( $self->user_id,
+            $new_scroll_version_group_id );
+        $self->copy_data_to_scroll_version( $self->scroll_version_group_id,
+            $new_scroll_version_id );
         $self->stop_transaction;
         return $new_scroll_version_id;
     }
@@ -568,16 +574,18 @@ If admin_id is set, the referenced user is set as administrator of this scroll v
 
 =cut
 
-
     sub create_scroll_version_group {
-        my ($self, $scroll_id, $locked, $admin_id) = @_;
+        my ( $self, $scroll_id, $locked, $admin_id ) = @_;
         $scroll_id = defined $scroll_id ? $scroll_id : 0;
-        $locked = defined $locked ? $locked : 1;
-        my $sth = $self->prepare_cached(SQE_DBI_queries::NEW_SCROLL_VERSION_GROUP);
-        $sth->execute($scroll_id, $locked);
+        $locked    = defined $locked    ? $locked    : 1;
+        my $sth =
+          $self->prepare_cached(SQE_DBI_queries::NEW_SCROLL_VERSION_GROUP);
+        $sth->execute( $scroll_id, $locked );
         my $new_scroll_version_group_id = $self->{mysql_insertid};
         $sth->finish;
-        $self->set_scroll_version_group_admin($new_scroll_version_group_id, $admin_id) if $admin_id;
+        $self->set_scroll_version_group_admin( $new_scroll_version_group_id,
+            $admin_id )
+          if $admin_id;
         return $new_scroll_version_group_id;
 
     }
@@ -600,11 +608,11 @@ if the current user is not administrator of the scroll version group
 =cut
 
     sub create_scrollversion_for_group {
-        my ($self, $user_id, $scroll_version_group_id) = @_;
+        my ( $self, $user_id, $scroll_version_group_id ) = @_;
 
-        return (undef, SQE_Error::NO_SVG_ADMIN) if !$self->is_scroll_version_group_admin($scroll_version_group_id,
-        $self->user_id);
-
+        return ( undef, SQE_Error::NO_SVG_ADMIN )
+          if !$self->is_scroll_version_group_admin( $scroll_version_group_id,
+            $self->user_id );
 
         # Create a new scroll_version as member of the new group
         my $sth = $self->prepare_cached(SQE_DBI_queries::NEW_SCROLL_VERSION);
@@ -639,67 +647,64 @@ if the current user is not administrator of the scroll version group
 
 =cut
 
-
     sub delete_scroll_version {
         my ( $self, $scroll_version_id ) = @_;
 
-
-        # First get the user and the scroll version group of the scroll version to be deleted
-        my ( $user_id,  $scroll_version_group_id) = ($self->get_first_row_as_array(
-          SQE_DBI_queries::GET_SCROLLVERSION_DATA,
-            $scroll_version_id
-        ))[1..2];
+# First get the user and the scroll version group of the scroll version to be deleted
+        my ( $user_id, $scroll_version_group_id ) = (
+            $self->get_first_row_as_array(
+                SQE_DBI_queries::GET_SCROLLVERSION_DATA,
+                $scroll_version_id
+            )
+        )[ 1 .. 2 ];
 
         # Test, whether the current user may delete this scroll version
-        return (undef, SQE_Error::NO_SVG_ADMIN) if !$self->is_scroll_version_group_admin($scroll_version_group_id,
-            $self->user_id);
-
+        return ( undef, SQE_Error::NO_SVG_ADMIN )
+          if !$self->is_scroll_version_group_admin( $scroll_version_group_id,
+            $self->user_id );
 
         my $new_admin = $self->user_id;
 
-        # If (s)he is allowed to do so, test whether (s)he is also the owner of the scroll version to be deleted
-        if ($user_id == $self->user_id) {
+# If (s)he is allowed to do so, test whether (s)he is also the owner of the scroll version to be deleted
+        if ( $user_id == $self->user_id ) {
+
             # Get a different admin
-            ($new_admin) = $self->get_first_row_as_array(SQE_DBI_queries::GET_DIFFERENT_SCROLL_VERSION_GROUP_ADMIN,
-            $scroll_version_group_id,
-            $user_id);
+            ($new_admin) =
+              $self->get_first_row_as_array
+              ( SQE_DBI_queries::GET_DIFFERENT_SCROLL_VERSION_GROUP_ADMIN,
+                $scroll_version_group_id, $user_id );
 
             # If no other admin is found
-            if (!$new_admin) {
+            if ( !$new_admin ) {
+
                 # Delete the whole scroll_version_group
                 $self->_delete_scroll_version_group($scroll_version_group_id);
                 return -1;
-            } else {
+            }
+            else {
                 # A different admin is found
-               my ($new_scroll_version_id) = $self->get_first_row_as_array(
-                  SQE_DBI_queries::GET_SCROLLVERSION_ID,
-                    $new_admin,
-                    $scroll_version_group_id
-                );
-                $self->_move_scroll_version_data($scroll_version_id, $new_scroll_version_id);
+                my ($new_scroll_version_id) = $self->get_first_row_as_array(
+                    SQE_DBI_queries::GET_SCROLLVERSION_ID,
+                    $new_admin, $scroll_version_group_id );
+                $self->_move_scroll_version_data( $scroll_version_id,
+                    $new_scroll_version_id );
                 return 0;
             }
 
-
-        } else {
-            $self->_move_scroll_version_data($scroll_version_id, $self->scroll_version_id);
+        }
+        else {
+            $self->_move_scroll_version_data( $scroll_version_id,
+                $self->scroll_version_id );
             return 1;
         }
-
-
-
-
-
-
-
 
     }
 
     sub _delete_scroll_version_group {
-        my ($self, $scroll_version_group_id) = @_;
+        my ( $self, $scroll_version_group_id ) = @_;
 
         $self->start_transaction;
-        for my $table (keys %{$data_tables}) {
+        for my $table ( keys %{$data_tables} ) {
             my $query       = SQE_DBI_queries::DELETE_SCROLLVERSION_FROM_OWNERS;
             my $owner_table = $table . '_owner';
             $query =~ s/\*OWNER\*/$owner_table/go;
@@ -707,17 +712,18 @@ if the current user is not administrator of the scroll version group
             $self->do($query);
         }
 ##        $self->do( SQE_DBI_queries::DELETE_SCROLLVERSION_FROM_ACTIONS, undef,
-#             $scroll_version_group_id );
-        $self->do(SQE_DBI_queries::DELETE_SCROLL_VERSION_GROUP, undef, $scroll_version_group_id);
+        #             $scroll_version_group_id );
+        $self->do( SQE_DBI_queries::DELETE_SCROLL_VERSION_GROUP,
+            undef, $scroll_version_group_id );
         $self->stop_transaction;
 
         return 1;
     }
 
     sub _move_scroll_version_data {
-        my ($self, $old_scroll_version_id, $new_scroll_version_id) = @_;
-        for my $table (keys %{$data_tables}) {
-            my $query = SQE_DBI_queries::COPY_SCROLL_VERSION_DATA;
+        my ( $self, $old_scroll_version_id, $new_scroll_version_id ) = @_;
+        for my $table ( keys %{$data_tables} ) {
+            my $query       = SQE_DBI_queries::COPY_SCROLL_VERSION_DATA;
             my $owner_table = $table . '_owner';
             $query =~ s/\*OWNER\*/$owner_table/go;
             $query =~ s/\*TABLE\*/$table/go;
@@ -741,18 +747,11 @@ if the current user is not administrator of the scroll version group
         return $sth;
     }
 
-
-
-
-
-
-
 =head2 Writing of Data
 
 Contains all functions to be uesd to write, change, or remive data.
 
 =cut
-
 
 =head3 start_logged_action()
 
@@ -779,7 +778,7 @@ Returns the id of the set if this is the case, otherwise it return (undef, error
     sub start_logged_action {
         my $self = shift;
 
-        return (undef, SQE_Error::MAY_NOT_WRITE) if !$self->may_write;
+        return ( undef, SQE_Error::MAY_NOT_WRITE ) if !$self->may_write;
 
         $self->{AutoCommit} = 0;
         my $sth = $self->{private_SQE_DBI_data}->{main_action_sth};
@@ -812,7 +811,6 @@ Stops a set of logged actions started with start_logged_action()
         $self->{AutoCommit} = 1;
     }
 
-
 =head3 set_new_data_to_owner($table, @data)
 
 Searches for a record containing the needed data.
@@ -835,15 +833,11 @@ Finally, the current scroll_verion is set as an owner to the retrieved or create
 
     sub set_new_data_to_owner {
         my ( $self, $table, @data ) = @_;
-        my $id = $self->set_new_data(
-            $data_tables->{$table}->{GET_QUERY},
-            $data_tables->{$table}->{SET_QUERY},
-            @data);
-        $self->add_owner($table, $id);
+        my $id = $self->set_new_data( $data_tables->{$table}->{GET_QUERY},
+            $data_tables->{$table}->{SET_QUERY}, @data );
+        $self->add_owner( $table, $id );
         return $id;
     }
-
-
 
 =head3 replace_data($table, @old_data, @new_data)
 
@@ -861,19 +855,19 @@ Removes the record which has the old_data from the current scroll_version_group 
 
 =cut
 
-sub replace_data {
-    my ($self, $table, $old_data_ref, $new_data_ref) = @_;
-    my $get_sth = $self->prepare_cached($data_tables->{$table}->{GET_QUERY});
-    $get_sth->execute(@{$old_data_ref});
-    my $data_id;
-    $get_sth->bind_col(0, \$data_id);
-    while ($get_sth->fetch) {
-        $self->remove_data($table, $data_id);
+    sub replace_data {
+        my ( $self, $table, $old_data_ref, $new_data_ref ) = @_;
+        my $get_sth =
+          $self->prepare_cached( $data_tables->{$table}->{GET_QUERY} );
+        $get_sth->execute( @{$old_data_ref} );
+        my $data_id;
+        $get_sth->bind_col( 0, \$data_id );
+        while ( $get_sth->fetch ) {
+            $self->remove_data( $table, $data_id );
+        }
+        returns $self->set_new_data_to_owner( $table, @{$new_data_ref} );
+
     }
-    returns $self->set_new_data_to_owner($table,@{$new_data_ref});
-
-}
-
 
 =head3 set_new_data($get_query, $set_query, @data)
 
@@ -896,15 +890,16 @@ The id of the retrieved or created record is given back
 =cut
 
     sub set_new_data {
-        my ($self, $get_query, $set_query, @data) = @_;
+        my ( $self, $get_query, $set_query, @data ) = @_;
         my $id;
 
         my $sth = $self->prepare_cached($get_query);
         $sth->execute(@data);
-        if (my $res_ref =$sth->fetchrow_arrayref) {
-            $id=$res_ref->[0];
+        if ( my $res_ref = $sth->fetchrow_arrayref ) {
+            $id = $res_ref->[0];
             $sth->finish;
-        } else {
+        }
+        else {
             $sth->finish;
             $sth = $self->prepare_cached($set_query);
             $sth->execute(@data);
@@ -929,13 +924,12 @@ Adds the current scroll version as owner sto the record referred by id of the ta
 
 =cut
 
-
     sub add_owner {
         my $self  = shift;
         my $table = shift;
         my $id    = shift;
         my $query =
-            "INSERT IGNORE INTO ${table}_owner (${table}_id, scroll_version_id) VALUES (?,?)";
+"INSERT IGNORE INTO ${table}_owner (${table}_id, scroll_version_id) VALUES (?,?)";
         my $sth = $self->_get_prepared_sqe_sth( $table, 'add', $query );
         $sth->logged_execute( $id, $self->scroll_version_id );
         $sth->finish;
@@ -958,19 +952,18 @@ Creates a new commentary to a sign char refereing to a certain attribute
 =cut
 
     sub set_sign_char_commentary {
-        my ($self, $sign_char_id, $attribute_id, $text) = @_;
+        my ( $self, $sign_char_id, $attribute_id, $text ) = @_;
         my $new_id =
-            $self->set_new_data_to_owner( 'sign_char_commentary', $sign_char_id, $attribute_id, $text );
+          $self->set_new_data_to_owner( 'sign_char_commentary', $sign_char_id,
+            $attribute_id, $text );
         return $new_id;
     }
 
-
     sub remove_sign_char_commentary {
-        my ($self, $sign_char_commentary_id) = @_;
-        $self->remove_data('sign_char_commentary', $sign_char_commentary_id);
+        my ( $self, $sign_char_commentary_id ) = @_;
+        $self->remove_data( 'sign_char_commentary', $sign_char_commentary_id );
 
     }
-
 
 =head3 set_sign_char_attribute($sign_char_id, $attribute_value_id, $numeric_value)
 
@@ -993,7 +986,7 @@ and returns the sign char id (which may have changed)
     sub set_sign_char_attribute {
         my ( $self, $sign_char_id, $attribute_value_id, $numeric_value,
             $sequence )
-            = @_;
+          = @_;
 
         # Define sequence as 0 if undefined
         $sequence = $sequence ? $sequence : 0;
@@ -1002,33 +995,40 @@ and returns the sign char id (which may have changed)
 
         # If also a numeric values needs to be set
         if ($numeric_value) {
-            # Let's test, wether already a sign_char_attribute with the all data exist,
-            ( $new_sign_char_attribute_id ) =
-                $self
-                    ->get_first_row_as_array( SQE_DBI_queries::GET_SIGN_CHAR_ATTRIBUTE_NUMERIC,
-                        $sign_char_id, $attribute_value_id,
-                        $sequence,     $numeric_value
-                );
 
-            # If it not exist, create a new sign_char_attribute with the attribute value and sequence
+     # Let's test, wether already a sign_char_attribute with the all data exist,
+            ($new_sign_char_attribute_id) =
+              $self->get_first_row_as_array
+              ( SQE_DBI_queries::GET_SIGN_CHAR_ATTRIBUTE_NUMERIC,
+                $sign_char_id, $attribute_value_id,
+                $sequence,     $numeric_value
+              );
+
+# If it not exist, create a new sign_char_attribute with the attribute value and sequence
             if ($new_sign_char_attribute_id) {
 
-                my $sth = $self->prepare_cached($data_tables->{'sign_char_attribute'}->{SET_QUERY});
-                $sth->execute($sign_char_id, $attribute_value_id, $sequence);
+                my $sth =
+                  $self->prepare_cached(
+                    $data_tables->{'sign_char_attribute'}->{SET_QUERY} );
+                $sth->execute( $sign_char_id, $attribute_value_id, $sequence );
                 $new_sign_char_attribute_id = $self->{mysql_insertid};
                 $sth->finish;
-                $sth =   $self->prepare_cached(SQE_DBI_queries::NEW_NUMERIC_VALUE);
+                $sth =
+                  $self->prepare_cached(SQE_DBI_queries::NEW_NUMERIC_VALUE);
                 $sth->execute( $new_sign_char_attribute_id, $numeric_value );
                 $sth->finish;
             }
 
-            # Finally add the correct sign char attribute to the current scroll version
-            $self->add_owner('sign_char_attribute', $new_sign_char_attribute_id);
+     # Finally add the correct sign char attribute to the current scroll version
+            $self->add_owner( 'sign_char_attribute',
+                $new_sign_char_attribute_id );
         }
         else {
             # No numeric value is set.
-            $new_sign_char_attribute_id =
-                $self->set_new_data_to_owner( 'sign_char_attribute', $sign_char_id, $attribute_value_id, $sequence );
+            $new_sign_char_attribute_id = $self->set_new_data_to_owner(
+                'sign_char_attribute', $sign_char_id,
+                $attribute_value_id,   $sequence
+            );
 
         }
         return $new_sign_char_attribute_id;
@@ -1050,7 +1050,7 @@ and returns the sign char id (which may have changed)
     sub delete_sign_char_attributes_for_attribute {
         my ( $self, $sign_char_id, $attribute_value_id ) = @_;
         my $sth = $self->prepare_cached
-            (SQE_DBI_queries::GET_ALL_SIGN_CHAR_ATTRIBUTES_FOR_ATTRIBUTE);
+          (SQE_DBI_queries::GET_ALL_SIGN_CHAR_ATTRIBUTES_FOR_ATTRIBUTE);
         $sth->execute( $sign_char_id, $self->scroll_version_group_id,
             $attribute_value_id );
         my $sign_char_attribute_id;
@@ -1061,7 +1061,6 @@ and returns the sign char id (which may have changed)
         }
         $sth->finish;
     }
-
 
 =head3 set_sign_char_variant_status($sign_char_id, $as_variant, $new_main_id)
 
@@ -1082,59 +1081,65 @@ $new_main_id must be specified
 
 =cut
 
-
     sub set_sign_char_variant_status {
         my ( $self, $sign_char_id, $as_variant, $new_main_id ) = @_;
 
         my ( $sign_id, $is_variant, $sign ) =
-            $self->get_first_row_as_array( SQE_DBI_queries::GET_SIGN_CHAR_DATA,
-                $sign_char_id );
+          $self->get_first_row_as_array( SQE_DBI_queries::GET_SIGN_CHAR_DATA,
+            $sign_char_id );
 
         # Return if the sign_char has already the wanted status
         return ($sign_char_id) if $as_variant == $is_variant;
 
         # If the sign_char should be set as main entrance
         # we have to save the old main entrance to set it a variant reading
-        if (!$as_variant) {
+        if ( !$as_variant ) {
             my @old_main_data =
-                $self->get_first_row_as_array( SQE_DBI_queries::GET_MAIN_SIGN_CHAR,
-                    $sign_id, $self->scroll_version_id );
-            $self->set_new_data_to_owner('sign_char',$old_main_data[1], 1, $old_main_data[3]);
-            $self->remove_data('sign_char', $old_main_data[0]);
-        } else {
+              $self
+              ->get_first_row_as_array( SQE_DBI_queries::GET_MAIN_SIGN_CHAR,
+                $sign_id, $self->scroll_version_id );
+            $self->set_new_data_to_owner( 'sign_char', $old_main_data[1], 1,
+                $old_main_data[3] );
+            $self->remove_data( 'sign_char', $old_main_data[0] );
+        }
+        else {
             # The sign char should be set as a variant but is the main entrance
             # Create a new main entrance with new_main_id
 
-            return (undef, SQE_Error::NO_MAIN_CHAR_ENTRANCE) if !$new_main_id;
-            my @new_main_data = $self->get_first_row_as_array( SQE_DBI_queries::GET_SIGN_CHAR_DATA,
+            return ( undef, SQE_Error::NO_MAIN_CHAR_ENTRANCE ) if !$new_main_id;
+            my @new_main_data =
+              $self
+              ->get_first_row_as_array( SQE_DBI_queries::GET_SIGN_CHAR_DATA,
                 $new_main_id );
-            $self->set_new_data_to_owner('sign_char', $new_main_data[0], 0, $new_main_data[2]);
+            $self->set_new_data_to_owner( 'sign_char', $new_main_data[0], 0,
+                $new_main_data[2] );
         }
 
         #Finally set the data for the sign_char
-        $self->remove_data('sign_char', $sign_char_id);
-        $self->set_new_data_to_owner('sign_char', $sign_id, $as_variant, $sign);
-
+        $self->remove_data( 'sign_char', $sign_char_id );
+        $self->set_new_data_to_owner( 'sign_char', $sign_id, $as_variant,
+            $sign );
 
     }
 
+    sub move_line_number {
+        my ( $self, $sign_id, $delta ) = @_;
 
-sub move_line_number {
-    my ($self, $sign_id, $delta) = @_;
-
-    my $line_end_sth = $self->prepare_cached(SQE_DBI_queries::GET_LAST_SIGN_FRAGMENT);
-    my $line_sth = $self->prepare_cached(SQE_DBI_queries::GET_REF_DATA);
-    $line_sth->execute($sign_id, $self->scroll_version_group_id);
-    my ($line_name, $line_id, $col_id);
-    $line_sth->bind_col(6, \$line_name);
-    $line_sth->bind_col(5, \$line_id);
-    $line_sth->bind_col(3, \$col_id);
-    while ($line_sth->fetch) {
-        my $new_line_name=$line_name;
-        $new_line_name=~s/(.*?)([0-9]+)([^0-9]*?)/$1 . ($2+$delta) . $3/oe;
-        print $line_name . ' - ' . $new_line_name;
+        my $line_end_sth =
+          $self->prepare_cached(SQE_DBI_queries::GET_LAST_SIGN_FRAGMENT);
+        my $line_sth = $self->prepare_cached(SQE_DBI_queries::GET_REF_DATA);
+        $line_sth->execute( $sign_id, $self->scroll_version_group_id );
+        my ( $line_name, $line_id, $col_id );
+        $line_sth->bind_col( 6, \$line_name );
+        $line_sth->bind_col( 5, \$line_id );
+        $line_sth->bind_col( 3, \$col_id );
+        while ( $line_sth->fetch ) {
+            my $new_line_name = $line_name;
+            $new_line_name =~
+              s/(.*?)([0-9]+)([^0-9]*?)/$1 . ($2+$delta) . $3/oe;
+            print $line_name . ' - ' . $new_line_name;
+        }
     }
-}
 
 =head3 remove_data($table, $id)
 
@@ -1151,13 +1156,15 @@ Removes data hold in a table with an owner table from the current scroll version
 =cut
 
     sub remove_data {
-        my ($self, $table, $id)  = @_;
-        my $sth = $self->_get_prepared_sqe_sth( $table, 'delete', $data_tables->{$table}->{DELETE_QUERY} );
-        my $result = $sth->logged_execute( $id, $self->scroll_version_group_id );
+        my ( $self, $table, $id ) = @_;
+        my $sth =
+          $self->_get_prepared_sqe_sth( $table, 'delete',
+            $data_tables->{$table}->{DELETE_QUERY} );
+        my $result =
+          $sth->logged_execute( $id, $self->scroll_version_group_id );
         $sth->finish;
         return $result;
     }
-
 
 =head3 remove_all_data($sign_char_id, $search_query, $table)
 
@@ -1183,7 +1190,7 @@ The last parameter to be set to the query must be scroll_version_group_id
     sub remove_all_data {
         my ( $self, $search_query, $table, @search_data ) = @_;
         my $sth = $self->prepare_cached($search_query);
-        $sth->execute(@search_data, $self->scroll_version_group_id);
+        $sth->execute( @search_data, $self->scroll_version_group_id );
         my $data_id;
         $sth->bind_col( 1, \$data_id );
         while ( $sth->fetch ) {
@@ -1208,11 +1215,9 @@ Removes the sign char attribute with the given id.
 =cut
 
     sub remove_sign_char_attribute {
-        my ($self, $sign_char_attribute_id) = @_;
-            $self->remove_data('sign_char_attribute', $sign_char_attribute_id);
+        my ( $self, $sign_char_attribute_id ) = @_;
+        $self->remove_data( 'sign_char_attribute', $sign_char_attribute_id );
     }
-
-
 
 =head3 remove_sign_char($sign_char_id)
 
@@ -1231,11 +1236,10 @@ Removes a sign_char from the given scroll_version
     sub remove_sign_char {
         my ( $self, $sign_char_id ) = @_;
         $self->remove_all_data( SQE_DBI_queries::GET_ALL_ATTRIBUTES,
-            'sign_char_attribute', $sign_char_id);
+            'sign_char_attribute', $sign_char_id );
         $self->remove_all_data( SQE_DBI_queries::GET_ALL_ROIS, 'sign_char_roi',
             $sign_char_id );
     }
-
 
 =head3 remove_sign($sign_id)
 
@@ -1265,20 +1269,18 @@ Removes a sign and all data connected to it from the current scroll version grou
         }
         $sth->finish;
 
-
-
         # Then remove the  positions in stream where the sign is main sign_id,
         # but store the next_sign_id's
 
-        my ( $position_in_stream_id, $next_sign_id);
+        my ( $position_in_stream_id, $next_sign_id );
         my @next_sign_ids;
         $sth =
-            $self->prepare_cached(SQE_DBI_queries::GET_POSITION_IN_STREAM_DATA);
+          $self->prepare_cached(SQE_DBI_queries::GET_POSITION_IN_STREAM_DATA);
         $sth->execute( $sign_id, $self->scroll_version_group_id );
-        $sth->bind_columns( \$position_in_stream_id, \$next_sign_id);
+        $sth->bind_columns( \$position_in_stream_id, \$next_sign_id );
         while ( $sth->fetch ) {
             push @next_sign_ids, $next_sign_id;
-            $self->remove_data('position_in_stream', $position_in_stream_id);
+            $self->remove_data( 'position_in_stream', $position_in_stream_id );
         }
         $sth->finish;
 
@@ -1287,30 +1289,29 @@ Removes a sign and all data connected to it from the current scroll version grou
         my @prev_sign_ids;
         my $prev_sign_id;
         $sth =
-            $self->prepare_cached(SQE_DBI_queries::GET_PREV_POSITION_IN_STREAM_DATA);
+          $self
+          ->prepare_cached(SQE_DBI_queries::GET_PREV_POSITION_IN_STREAM_DATA);
         $sth->execute( $sign_id, $self->scroll_version_group_id );
-        $sth->bind_columns( \$position_in_stream_id, \$prev_sign_id);
+        $sth->bind_columns( \$position_in_stream_id, \$prev_sign_id );
         while ( $sth->fetch ) {
             push @prev_sign_ids, $prev_sign_id;
-            $self->remove_data('position_in_stream', $position_in_stream_id);
+            $self->remove_data( 'position_in_stream', $position_in_stream_id );
         }
         $sth->finish;
-
 
         #Then create new connections of the now unconnected signs
 
         for $next_sign_id (@next_sign_ids) {
             for $prev_sign_id (@prev_sign_ids) {
-                $self->set_new_data_to_owner('position_in_stream', $prev_sign_id, $next_sign_id  );
+                $self->set_new_data_to_owner( 'position_in_stream',
+                    $prev_sign_id, $next_sign_id );
             }
         }
 
-
         #Finally remove the connection to the line
         $sth =
-            $self
-                ->prepare_cached(SQE_DBI_queries::GET_LINE_TO_SIGN_FOR_SCROLL_VERSION_GROUP
-            );
+          $self->prepare_cached
+          ( SQE_DBI_queries::GET_LINE_TO_SIGN_FOR_SCROLL_VERSION_GROUP );
         $sth->execute( $sign_id, $self->scroll_version_group_id );
         $sth->bind_col( 1, \$tmp_id );
         while ( $sth->fetch ) {
@@ -1319,7 +1320,6 @@ Removes a sign and all data connected to it from the current scroll version grou
         $sth->finish;
 
     }
-
 
 =head3 add_roi($sign_char_id, $roi_shape, $roi_position, $values_set, $execeptional)
 
@@ -1346,30 +1346,38 @@ Adds a ROI to a sign char
         ) = @_;
         my $roi_shape_id     = $self->get_roi_shape_id($roi_shape);
         my $roi_position_id  = $self->get_roi_position_id($roi_position);
-        my $sign_char_roi_id = $self->set_new_data_to_owner('sign_char_roi',
-            $sign_char_id, $roi_shape_id, $roi_position_id,
-            $values_set,   $execeptional );
+        my $sign_char_roi_id = $self->set_new_data_to_owner(
+            'sign_char_roi',  $sign_char_id, $roi_shape_id,
+            $roi_position_id, $values_set,   $execeptional
+        );
         $self->add_owner( 'sign_char_roi', $sign_char_roi_id );
 
-        return $sign_char_roi_id ;
+        return $sign_char_roi_id;
 
     }
 
     sub set_roi_data {
-        my ($self, $sign_char_roi_id, $new_path, $new_matrix, $new_values_set, $new_exceptional) = @_;
-        my ($sign_char_id, $old_path, $old_matrix, $old_values_set, $old_exceptional) =
-            $self->get_roi_data($sign_char_roi_id);
-        $new_path = $new_path ? $new_path : $old_path;
-        $new_matrix = $new_matrix ? $new_matrix : $old_matrix;
+        my ( $self, $sign_char_roi_id, $new_path, $new_matrix, $new_values_set,
+            $new_exceptional )
+          = @_;
+        my (
+            $sign_char_id,   $old_path, $old_matrix,
+            $old_values_set, $old_exceptional
+        ) = $self->get_roi_data($sign_char_roi_id);
+        $new_path       = $new_path       ? $new_path       : $old_path;
+        $new_matrix     = $new_matrix     ? $new_matrix     : $old_matrix;
         $new_values_set = $new_values_set ? $new_values_set : $old_values_set;
-        $new_exceptional = $new_exceptional ? $new_exceptional : $old_exceptional;
-        my $new_sign_char_roi_id = $self->add_roi($sign_char_id, $new_path, $new_matrix, $new_values_set, $new_exceptional);
-        if ($new_sign_char_roi_id != $sign_char_roi_id) {
-            $self->remove_data('sign_char_roi', $sign_char_roi_id);
+        $new_exceptional =
+          $new_exceptional ? $new_exceptional : $old_exceptional;
+        my $new_sign_char_roi_id = $self->add_roi(
+            $sign_char_id,   $new_path, $new_matrix,
+            $new_values_set, $new_exceptional
+        );
+        if ( $new_sign_char_roi_id != $sign_char_roi_id ) {
+            $self->remove_data( 'sign_char_roi', $sign_char_roi_id );
         }
         return $new_sign_char_roi_id;
     }
-
 
 =head3 add_artefact($image_id)
 
@@ -1386,29 +1394,127 @@ Creates a new artefact on the image given image
 =cut
 
     sub add_artefact {
-        my ($self, $image_id, $region) = @_;
+        my ( $self, $image_id, $region ) = @_;
         my $create_sth = $self->prepare_cached(SQE_DBI_queries::ADD_ARTEFACT);
         $create_sth->execute();
         my $artefact_id = $self->{mysql_insertid};
         $create_sth->finish;
-        $self->set_artefact_shape($artefact_id, $image_id, $region);
+        $self->set_artefact_shape( $artefact_id, $image_id, $region );
         return $artefact_id;
     }
 
+=head exchange_data_for_parent($table, $parent_id, @data)
 
-    sub exchange_artefact_data {
-        my ($self, $table, $artefact_id, @data) = @_;
-        my $old_id=$self->get_id_from_parent($table, $artefact_id);
-        my $new_id = $self->set_new_data_to_owner($table, $artefact_id, @data);
-        if ($old_id) {
-            if ($new_id != $old_id) {
-                $self->remove_data($table, $old_id);
+Exchange the data in the given data table for the parent referenced by parent_id, which must be in a field
+with XXXX_id as name.
+
+This should be only used with data tables which provide only one record for the record in the table,
+it's connected with.
+
+
+=over 1
+
+=item Parameters: name of the data table
+                  id of the parent, which must be referenced in the table with an XXX_id field
+
+=item Returns
+
+=back
+
+=cut
+
+    sub exchange_data_for_parent {
+        my ( $self, $table, $parent_id, @data ) = @_;
+        my $data_id = $self->get_id_from_parent( $table, $parent_id );
+        $self->exchange_data( $table, $data_id, $parent_id, @data );
+    }
+
+=head exchange_data($table, $data_id, @data)
+
+Exchanges for the current scrollversion the record of ownered table with
+referenced by data_id with a new record with the the given data
+
+
+=over 1
+
+=item Parameters: id of the lod record
+                  Array of new data (must be complete!)
+=item Returns id of the new record.
+
+=back
+
+=cut
+
+    sub exchange_data {
+        my ( $self, $table, $data_id, @data ) = @_;
+        my $new_id = $self->set_new_data_to_owner( $table, @data );
+        if ($data_id) {
+            if ( $new_id != $data_id ) {
+                $self->remove_data( $table, $data_id );
             }
         }
+        return $new_id;
     }
 
 
+=head3 set_scroll_name($name)
 
+Sets name as new name for the scroll of the current scrollversion
+
+=over 1
+
+=item Parameters: id of scroll
+
+=item Returns
+
+=back
+
+=cut
+
+    sub set_scroll_name {
+        my ($self, $name) = @_;
+        $self->exchange_data_for_parent( 'scroll_data', $self->scroll_id, $name );
+    }
+
+=head3 set_col_name($col_id, $name)
+
+Sets name as new name for the column of the current scrollversion referenced by col_id
+
+=over 1
+
+=item Parameters: id of col
+                  new name of col
+
+=item Returns nothing
+
+=back
+
+=cut
+
+    sub set_col_name {
+        my ($self, $col_id, $name) = @_;
+        $self->exchange_data_for_parent( 'col_data', $col_id, $name );
+    }
+
+=head3 set_line_name($line_id, $name)
+
+Sets name as new name for the line of the current scrollversion referenced by line_id
+
+=over 1
+
+=item Parameters: id of line
+                  new name of line
+
+=item Returns nothing
+
+=back
+
+=cut
+
+    sub set_line_name {
+        my ($self, $line_id, $name) = @_;
+        $self->exchange_data_for_parent( 'line_data', $line_id, $name );
+    }
 
 =head3 set_artefact_shape($artefact_id, $image_id, $region)
 
@@ -1424,11 +1530,11 @@ Creates a new artefact on the image given image
 =back
 
 =cut
-    sub set_artefact_shape {
-        my ($self, @data) = @_;
-        $self->exchange_artefact_data('artefact_shape', @data);
-    }
 
+    sub set_artefact_shape {
+        my ( $self, @data ) = @_;
+        $self->exchange_data_for_parent( 'artefact_shape', @data );
+    }
 
 =head3 set_artefact_position($artefact_id, $position, $z_index)
 
@@ -1445,12 +1551,12 @@ Sets the data of the position of an artefact
 =back
 
 =cut
-    sub set_artefact_position {
-        my ($self, @data) = @_;
-        $data[2] = $data[2] ? $data[2] : 0;
-        $self->exchange_artefact_data('artefact_position', @data);
-    }
 
+    sub set_artefact_position {
+        my ( $self, @data ) = @_;
+        $data[2] = $data[2] ? $data[2] : 0;
+        $self->exchange_data_for_parent( 'artefact_position', @data );
+    }
 
 =head3 set_artefact_data($artefact_id, $name)
 
@@ -1466,9 +1572,10 @@ Stes the name of an artefact connectied to the current scrollverison
 =back
 
 =cut
+
     sub set_artefact_data {
-        my ($self, @data) = @_;
-        $self->exchange_artefact_data('artefact_data', @data);
+        my ( $self, @data ) = @_;
+        $self->exchange_data_for_parent( 'artefact_data', @data );
     }
 
 =head3 remove_artefact($artefact_id)
@@ -1486,16 +1593,17 @@ Removes an artefact by removing all referenced data
 =cut
 
     sub remove_artefact {
-        my ($self, $artefact_id) = @_;
-        $self->remove_single_artefact_subdata('artefact_data', $artefact_id);
-        $self->remove_single_artefact_subdata('artefact_position', $artefact_id);
-        $self->remove_single_artefact_subdata('artefact_shape', $artefact_id);
+        my ( $self, $artefact_id ) = @_;
+        $self->remove_single_artefact_subdata( 'artefact_data', $artefact_id );
+        $self->remove_single_artefact_subdata( 'artefact_position',
+            $artefact_id );
+        $self->remove_single_artefact_subdata( 'artefact_shape', $artefact_id );
     }
 
     sub remove_single_artefact_subdata {
-        my ($self, $table, $artefact_id) = @_;
-        if (my $data_id=$self->get_id_from_parent($table, $artefact_id)) {
-            $self->remove_data($table, $data_id)    ;
+        my ( $self, $table, $artefact_id ) = @_;
+        if ( my $data_id = $self->get_id_from_parent( $table, $artefact_id ) ) {
+            $self->remove_data( $table, $data_id );
         }
 
     }
@@ -1515,12 +1623,9 @@ Remove the refrenced roi from the sign_char
 =cut
 
     sub remove_roi {
-        my ($self, $sign_char_roi_id) = @_;
-        $self->remove_data('sign_char_roi', $sign_char_roi_id);
+        my ( $self, $sign_char_roi_id ) = @_;
+        $self->remove_data( 'sign_char_roi', $sign_char_roi_id );
     }
-
-
-
 
 =head3 clone_attributes($source_sign_char_id, $destination_sign_char_id)
 
@@ -1545,8 +1650,8 @@ Copies all attributes connectect to the source sign char to the destinaton sign 
         my $new_attributes = [];
         while ( my @data = $sth->fetchrow_array ) {
             push @$new_attributes,
-                $self->set_sign_char_attribute( $destination_sign_char_id,
-                    @data[ 2 .. 4 ] );
+              $self->set_sign_char_attribute( $destination_sign_char_id,
+                @data[ 2 .. 4 ] );
         }
         $sth->finish;
         return $new_attributes;
@@ -1575,7 +1680,7 @@ Copies all ROIs connected to the source sign char to the destinaton sign char
         my $new_rois = [];
         while ( my @data = $sth->fetchrow_array ) {
             push @$new_rois,
-                $self->add_roi( $destination_sign_char_id, @data[ 2 .. 5 ] );
+              $self->add_roi( $destination_sign_char_id, @data[ 2 .. 5 ] );
         }
         $sth->finish;
         return $new_rois;
@@ -1602,18 +1707,16 @@ sign char id to the new one
     sub clone_sign_char {
         my ( $self, $sign_char_id, $sign_id, $as_variant, $sign ) = @_;
         my $sth = $self->prepare_cached(SQE_DBI_queries::NEW_SIGN_CHAR);
-        $sth->execute($sign_id, $as_variant, $sign);
+        $sth->execute( $sign_id, $as_variant, $sign );
         my $new_sign_char_id = $self->{mysql_insertid};
 
-        # And add copy the attributes and ROIs from the main char sign to the new one
+   # And add copy the attributes and ROIs from the main char sign to the new one
         $self->clone_attributes( $sign_char_id, $new_sign_char_id );
         $self->clone_rois( $sign_char_id, $new_sign_char_id );
 
         return $new_sign_char_id;
 
     }
-
-
 
 =head3 new_sign($sign, $after, $before, @attribute_values)
 
@@ -1652,14 +1755,14 @@ Simple values which are not bind to a numeric value or a sequence are just given
 =cut
 
     sub new_sign {
-        my ($self, $sign, $after, $before, $line_id, @attribute_values) = @_;
+        my ( $self, $sign, $after, $before, $line_id, @attribute_values ) = @_;
 
-        if (!$after) {
-            if (!@attribute_values) {
-                return(undef, SQE_Error::NO_ATTRIBUTES);
+        if ( !$after ) {
+            if ( !@attribute_values ) {
+                return ( undef, SQE_Error::NO_ATTRIBUTES );
             }
-            elsif (!$before) {
-                return(undef, SQE_Error::NO_POSITION);
+            elsif ( !$before ) {
+                return ( undef, SQE_Error::NO_POSITION );
             }
         }
 
@@ -1670,115 +1773,150 @@ Simple values which are not bind to a numeric value or a sequence are just given
         $sth->finish;
 
         $sth = $self->prepare_cached(SQE_DBI_queries::NEW_SIGN_CHAR);
-        $sth->execute($new_sign_id, 0, $sign);
+        $sth->execute( $new_sign_id, 0, $sign );
         my $new_sign_char_id = $self->{mysql_insertid};
         $sth->finish;
 
         if (@attribute_values) {
             for my $value (@attribute_values) {
-                if (ref($value) eq 'ARRAY') {
-                    $self->set_sign_char_attribute($new_sign_char_id, @$value);
+                if ( ref($value) eq 'ARRAY' ) {
+                    $self->set_sign_char_attribute( $new_sign_char_id,
+                        @$value );
                 }
                 else {
-                    $self->set_sign_char_attribute($new_sign_char_id, $value);
+                    $self->set_sign_char_attribute( $new_sign_char_id, $value );
                 }
             }
         }
         elsif ($after) {
-            my ($previous_sign_char_id) = $self->get_first_row_as_array(SQE_DBI_queries::GET_MAIN_SIGN_CHAR, $after,
-                $self->scroll_version_group_id);
+            my ($previous_sign_char_id) =
+              $self
+              ->get_first_row_as_array( SQE_DBI_queries::GET_MAIN_SIGN_CHAR,
+                $after, $self->scroll_version_group_id );
             $sth = $self->prepare_cached(SQE_DBI_queries::GET_ALL_ATTRIBUTES);
-            $sth->execute($previous_sign_char_id, $self->scroll_version_group_id);
-            while (my @data = $sth->fetchrow_array) {
-                $self->set_sign_char_attribute($new_sign_char_id, @data[2 .. 4]);
+            $sth->execute( $previous_sign_char_id,
+                $self->scroll_version_group_id );
+            while ( my @data = $sth->fetchrow_array ) {
+                $self->set_sign_char_attribute( $new_sign_char_id,
+                    @data[ 2 .. 4 ] );
             }
             $sth->finish;
         }
-
 
         # Insert into sign stream
 
         # We know the sign after which the new sign should appear
         if ($after) {
-            if (!$line_id) {
-                $line_id=($self->get_first_row_as_array(SQE_DBI_queries::GET_LINE_TO_SIGN_FOR_SCROLL_VERSION_GROUP,
-                    $after, $self->scroll_version_group_id))[1];
+            if ( !$line_id ) {
+                $line_id = (
+                    $self->get_first_row_as_array
+                      ( SQE_DBI_queries::GET_LINE_TO_SIGN_FOR_SCROLL_VERSION_GROUP,
+                        $after,
+                        $self->scroll_version_group_id
+                      )
+                )[1];
             }
             if ($before) {
+
                 # We know also the sign before the new sign should appear
 
-                # First find the position in stream record which connect the $after with $before
-                # and remove it
-                my ($position_in_stream_id) = $self->get_first_row_as_array(SQE_DBI_queries::GET_POSITION_IN_STREAM_ID,
-                    $after, $before, $self->scroll_version_group_id);
-                $self->remove_data('position_in_stream', $position_in_stream_id);
+# First find the position in stream record which connect the $after with $before
+# and remove it
+                my ($position_in_stream_id) =
+                  $self->get_first_row_as_array
+                  ( SQE_DBI_queries::GET_POSITION_IN_STREAM_ID,
+                    $after, $before, $self->scroll_version_group_id );
+                $self->remove_data( 'position_in_stream',
+                    $position_in_stream_id );
 
-                # Create a position in stream record which connects the new sign with $before
-                $position_in_stream_id = $self->set_new_data_to_owner('position_in_stream', $new_sign_id, $before);
+   # Create a position in stream record which connects the new sign with $before
+                $position_in_stream_id =
+                  $self->set_new_data_to_owner( 'position_in_stream',
+                    $new_sign_id, $before );
 
-
-                # Create a position in stream record which connects $after with the new sign
-                $position_in_stream_id = $self->set_new_data_to_owner('position_in_stream', $after, $new_sign_id );
-            } else {
-                # We do not know the sign before the new sign should appear
-                #We need all records of position in stream which connect the $after with aóther signs
-                #as next sign
-                $sth = $self->prepare_cached(SQE_DBI_queries::GET_POSITION_IN_STREAM_DATA);
-                my ($prev_pis_id, $prev_next_sign_id);
-                $sth->execute($after, $self->scroll_version_group_id);
-                $sth->bind_columns(\$prev_pis_id, \$prev_next_sign_id);
+    # Create a position in stream record which connects $after with the new sign
+                $position_in_stream_id =
+                  $self->set_new_data_to_owner( 'position_in_stream', $after,
+                    $new_sign_id );
+            }
+            else {
+# We do not know the sign before the new sign should appear
+#We need all records of position in stream which connect the $after with aóther signs
+#as next sign
+                $sth =
+                  $self
+                  ->prepare_cached(SQE_DBI_queries::GET_POSITION_IN_STREAM_DATA
+                  );
+                my ( $prev_pis_id, $prev_next_sign_id );
+                $sth->execute( $after, $self->scroll_version_group_id );
+                $sth->bind_columns( \$prev_pis_id, \$prev_next_sign_id );
 
                 # Split every connection to $after -> new_sign -> next_sign
-                while ($sth->fetch) {
+                while ( $sth->fetch ) {
+
                     # Remove the old position in stream record
-                    $self->remove_data('position_in_stream',$prev_pis_id);
+                    $self->remove_data( 'position_in_stream', $prev_pis_id );
 
-                    # Create a position in stream record which connects $after with the new sign
-                    my  $position_in_stream_id = $self->set_new_data_to_owner('position_in_stream',$after, $new_sign_id );
+    # Create a position in stream record which connects $after with the new sign
+                    my $position_in_stream_id =
+                      $self->set_new_data_to_owner( 'position_in_stream',
+                        $after, $new_sign_id );
 
-                    # Create a position in stream record which connects the new sign with rthe next sign
-                    $position_in_stream_id = $self->set_new_data_to_owner('position_in_stream', $new_sign_id, $prev_next_sign_id );
+# Create a position in stream record which connects the new sign with rthe next sign
+                    $position_in_stream_id =
+                      $self->set_new_data_to_owner( 'position_in_stream',
+                        $new_sign_id, $prev_next_sign_id );
                 }
             }
-        } else {
+        }
+        else {
             # We only konw the sign before the new sign should appear
 
-            if (!$line_id) {
-                $line_id = ($self->get_first_row_as_array
-                    (SQE_DBI_queries::GET_LINE_TO_SIGN_FOR_SCROLL_VERSION_GROUP,
-                        $before, $self->scroll_version_group_id))[1];
+            if ( !$line_id ) {
+                $line_id = (
+                    $self->get_first_row_as_array
+                      ( SQE_DBI_queries::GET_LINE_TO_SIGN_FOR_SCROLL_VERSION_GROUP,
+                        $before,
+                        $self->scroll_version_group_id
+                      )
+                )[1];
             }
 
+#We need all records of position in stream which connect the $after with aóther signs
+#as next sign
+            $sth = $self->prepare_cached
+              (SQE_DBI_queries::GET_PREV_POSITION_IN_STREAM_DATA);
+            my ( $prev_pis_id, $prev_sign_id );
+            $sth->execute( $before, $self->scroll_version_group_id );
+            $sth->bind_columns( \$prev_pis_id, \$prev_sign_id );
 
-            #We need all records of position in stream which connect the $after with aóther signs
-            #as next sign
-            $sth = $self->prepare_cached(SQE_DBI_queries::GET_PREV_POSITION_IN_STREAM_DATA);
-            my ($prev_pis_id, $prev_sign_id);
-            $sth->execute($before, $self->scroll_version_group_id);
-            $sth->bind_columns(\$prev_pis_id, \$prev_sign_id);
             # Split every connection to previous sign -> new sign -> next sign
-            while ($sth->fetch) {
+            while ( $sth->fetch ) {
+
                 # Remove the old position in stream record
-                $self->remove_data('position_in_stream', $prev_pis_id);
+                $self->remove_data( 'position_in_stream', $prev_pis_id );
 
-                # Create a position in stream record which connects $after with the new sign
-                my $position_in_stream_id = $self->set_new_data_to_owner('position_in_stream', $prev_sign_id, $new_sign_id );
+    # Create a position in stream record which connects $after with the new sign
+                my $position_in_stream_id =
+                  $self->set_new_data_to_owner( 'position_in_stream',
+                    $prev_sign_id, $new_sign_id );
 
-                # Create a position in stream record which connects the new sign with rthe next sign
-                $position_in_stream_id = $self->set_new_data_to_owner('position_in_stream', $new_sign_id, $before );
+# Create a position in stream record which connects the new sign with rthe next sign
+                $position_in_stream_id =
+                  $self->set_new_data_to_owner( 'position_in_stream',
+                    $new_sign_id, $before );
             }
         }
 
-         $self->set_new_data_to_owner('line_to_sign',$new_sign_id, $line_id);
+        $self->set_new_data_to_owner( 'line_to_sign', $new_sign_id, $line_id );
 
         return $new_sign_id;
 
     }
 
-
     #Todo
     sub new_line {
-        my ($self, $after, $line_name, $renumerate_lines) = @_;
+        my ( $self, $after, $line_name, $renumerate_lines ) = @_;
     }
 
 =head3 new_sign_char_variant($sign_id, $sign, $as_variant)
@@ -1807,14 +1945,14 @@ If as_variant = 0 then the new variant will be set as the main sign_char for thi
 
         # Retrieve the data of current main sign char for the sign
         my ( $main_sign_char_id, $main_sign_id, $main_is_variant, $main_sign )
-            = $self->get_first_row_as_array( SQE_DBI_queries::GET_MAIN_SIGN_CHAR,
+          = $self->get_first_row_as_array( SQE_DBI_queries::GET_MAIN_SIGN_CHAR,
             $sign_id, $self->scroll_version_group_id );
 
-        # Now create a new sign char with these data, but set the variant flag as demanded
-            $self->clone_sign_char( $main_sign_char_id, $sign_id, $as_variant,
-                $sign );
+# Now create a new sign char with these data, but set the variant flag as demanded
+        $self->clone_sign_char( $main_sign_char_id, $sign_id, $as_variant,
+            $sign );
 
-        # If the new one is set also as a main char sign, we have to set the old one as to be a variant
+# If the new one is set also as a main char sign, we have to set the old one as to be a variant
         if ( !$as_variant ) {
 
             $self->set_sign_char_variant_status( $main_sign_char_id, 1 );
@@ -1823,25 +1961,24 @@ If as_variant = 0 then the new variant will be set as the main sign_char for thi
 
     }
 
-
 =head2 Retrieve Data
 
 =cut
 
-
     sub get_ids_from_parent {
-        my ($self, $table, @data) = @_;
-        my $sth = $self->prepare_cached($data_tables->{$table}->{FROM_PARENTS});
-        $sth->execute(@data, $self->scroll_version_group_id);
-        my $res=$sth->fetchall_arrayref;
+        my ( $self, $table, @data ) = @_;
+        my $sth =
+          $self->prepare_cached( $data_tables->{$table}->{FROM_PARENTS} );
+        $sth->execute( @data, $self->scroll_version_group_id );
+        my $res = $sth->fetchall_arrayref;
         $sth->finish;
         return $res;
     }
 
     sub get_id_from_parent {
-        my ($self, $table, @data) = @_;
-        my $res = $self->get_ids_from_parent($table, @data);
-        if ($res->[0]) {
+        my ( $self, $table, @data ) = @_;
+        my $res = $self->get_ids_from_parent( $table, @data );
+        if ( $res->[0] ) {
             return $res->[0]->[0];
         }
         return undef;
@@ -1867,15 +2004,20 @@ Retrieves the ROI data for the given sign_char_roi id. The path will be given ei
 =cut
 
     sub get_roi_data {
-        my ($self, $sign_char_roi_id, $as_text) = @_;
+        my ( $self, $sign_char_roi_id, $as_text ) = @_;
 
         if ($as_text) {
-            return $self->get_first_row_as_array(SQE_DBI_queries::GET_ROI_DATA_TEXT, $sign_char_roi_id);
-        } else {
-            return $self->get_first_row_as_array(SQE_DBI_queries::GET_ROI_DATA_GEOJSON, $sign_char_roi_id);
+            return
+              $self->get_first_row_as_array( SQE_DBI_queries::GET_ROI_DATA_TEXT,
+                $sign_char_roi_id );
+        }
+        else {
+            return
+              $self
+              ->get_first_row_as_array( SQE_DBI_queries::GET_ROI_DATA_GEOJSON,
+                $sign_char_roi_id );
         }
     }
-
 
 =head3 print_formatted_text($query, $id, $format, $start_id)
 
@@ -1910,7 +2052,7 @@ Retrieves a chunk of text, formats, and print it out.
 
             }
             $signs->{ $old_sign->{sign_id} } = $old_sign;
-           $format->print( $signs, $start_id, $sth_out,
+            $format->print( $signs, $start_id, $sth_out,
                 $self->scroll_version_group_id );
         }
         $sth->finish;
@@ -1938,7 +2080,7 @@ Retrieves the text of a fragment and print it out formatted according the given 
           $self
           ->get_first_row_as_array( SQE_DBI_queries::GET_FIRST_SIGN_IN_COLUMN,
             $frag_id, $self->scroll_version_group_id );
-        return (undef, SQE_Error::FRAGMENT_NOT_FOUND) if @start==0;
+        return ( undef, SQE_Error::FRAGMENT_NOT_FOUND ) if @start == 0;
         $self->print_formatted_text
           ( SQE_DBI_queries::GET_ALL_SIGNS_IN_FRAGMENT_QUERY,
             $frag_id, $class, $start[0] );
@@ -1959,15 +2101,13 @@ Retrieves the text of a line and print it out formatted according the given form
 
 =cut
 
-
-
     sub get_text_of_line {
         my ( $self, $line_id, $class ) = @_;
         my @start =
           $self
           ->get_first_row_as_array( SQE_DBI_queries::GET_FIRST_SIGN_IN_LINE,
             $line_id, $self->scroll_version_group_id );
-        return (undef, SQE_Error::LINE_NOT_FOUND) if @start==0;
+        return ( undef, SQE_Error::LINE_NOT_FOUND ) if @start == 0;
         $self
           ->print_formatted_text( SQE_DBI_queries::GET_ALL_SIGNS_IN_LINE_QUERY,
             $line_id, $class, $start[0] );
@@ -1993,10 +2133,8 @@ If the record does not exist, it will be created autoamtically.
     sub get_roi_shape_id {
         my ( $self, $roi_shape ) = @_;
         my ($roi_shape_id) =
-            $self->set_new_data( SQE_DBI_queries::GET_ROI_SHAPE_ID,
-                SQE_DBI_queries::NEW_ROI_SHAPE_FROM_WKT,
-                $roi_shape
-            );
+          $self->set_new_data( SQE_DBI_queries::GET_ROI_SHAPE_ID,
+            SQE_DBI_queries::NEW_ROI_SHAPE_FROM_WKT, $roi_shape );
         return $roi_shape_id;
     }
 
@@ -2021,10 +2159,10 @@ If the record does not exist, it will be created automatically.
     sub get_roi_position_id {
         my ( $self, $roi_position ) = @_;
         my ($roi_position_id) =
-            $self->set_new_data( SQE_DBI_queries::GET_ROI_POSITION_ID,
-                SQE_DBI_queries::NEW_ROI_POSITION,
-                $roi_position
-            );
+          $self->set_new_data( SQE_DBI_queries::GET_ROI_POSITION_ID,
+            SQE_DBI_queries::NEW_ROI_POSITION,
+            $roi_position
+          );
         return $roi_position_id;
     }
 
@@ -2043,11 +2181,13 @@ Retrieves the text of the referrenced sign char commentary
 =cut
 
     sub get_sign_char_commentary {
-        my ($self, $sign_char_commentary_id)= @_;
-       return
-           ($self->get_first_row_as_array(
+        my ( $self, $sign_char_commentary_id ) = @_;
+        return (
+            $self->get_first_row_as_array(
                 $data_tables->{sign_char_commentary}->{SIMPLE_GET_QUERY},
-                $sign_char_commentary_id))[3];
+                $sign_char_commentary_id
+            )
+        )[3];
     }
 
 # Sets the user_id for a given user whose credential are provided
@@ -2175,8 +2315,6 @@ It also stores a reference of the database handler in the session object
         return $_[0]->{private_SQE_DBI_data}->{SESSION}->{SCROLL_VERSION_ID};
     }
 
-
-
     # Returns the current action_log_id
     sub action_log_id {
         return $_[0]->{private_SQE_DBI_data}->{main_action_id};
@@ -2185,7 +2323,6 @@ It also stores a reference of the database handler in the session object
 =head2 Deprecated
 
 =cut
-
 
     use constant {
         SESSION => 'private_session',
@@ -2208,7 +2345,7 @@ WHERE _where_
 AND _table__owner.scroll_version_id = _oldscrollversion_
 MYSQL
 
-REMOVE_USER => <<'MYSQL',
+        REMOVE_USER => <<'MYSQL',
 DELETE _table__owner
 FROM _table__owner
     JOIN _table_ USING (_table__id)
@@ -2218,7 +2355,7 @@ AND _table__owner.scroll_version_id = _scrollversion_
 
 MYSQL
 
-LOG_CHANGE_USER => <<'MYSQL',
+        LOG_CHANGE_USER => <<'MYSQL',
 INSERT INTO single_action
 (main_action_id, action, `table`, id_in_table)
     SELECT _mainid_, '_actionart_', '_table_', _table__id
@@ -2229,36 +2366,35 @@ WHERE _where_
 AND _table__owner.scroll_version_id = _scrollversion_
 MYSQL
 
-SIGN_CHAR_JOIN         => 'JOIN sign_char USING (sign_char_id)',
-LINE_TO_SIGN_JOIN      => 'JOIN line_to_sign USING (sign_id)',
-COL_TO_LINE_JOIN       => 'JOIN col_to_line USING (line_id)',
-SCROLL_TO_COL_JOIN     => 'JOIN scroll_to_col USING (col_id)',
-ARTEFACT_POSITION_JOIN => 'JOIN artefact_position USING (artefact_id)',
+        SIGN_CHAR_JOIN         => 'JOIN sign_char USING (sign_char_id)',
+        LINE_TO_SIGN_JOIN      => 'JOIN line_to_sign USING (sign_id)',
+        COL_TO_LINE_JOIN       => 'JOIN col_to_line USING (line_id)',
+        SCROLL_TO_COL_JOIN     => 'JOIN scroll_to_col USING (col_id)',
+        ARTEFACT_POSITION_JOIN => 'JOIN artefact_position USING (artefact_id)',
 
-NEW_SCROLL_VERSION => <<'MYSQL',
+        NEW_SCROLL_VERSION => <<'MYSQL',
 INSERT INTO scroll_version
 (user_id, scroll_id, version) values (?,?,?)
 MYSQL
 
     };
 
-
-    # Adds  a duplicate of record owned by current user/version with the given id with changed values and logs it.
-    # If the new values given are identical with the old ones, the record will be not duplicated
-    # and instead of the new id the old id is returned.
-    #
-    #
-    # Parameters
-    #   Table-name
-    #   id of the record to be duplicated
-    #   new values as array of field-name1, value1[, field-name2, value2, ...]
-    # if the value need to be calculated by a mysql-function the function and its parameters
-    #
-    # can be given as an arrray ref with the function name as first value followed by the parameters
-    # Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
-    # Note: ad the moment no nested function are allowed
-    #@method
-    #@deprecated
+# Adds  a duplicate of record owned by current user/version with the given id with changed values and logs it.
+# If the new values given are identical with the old ones, the record will be not duplicated
+# and instead of the new id the old id is returned.
+#
+#
+# Parameters
+#   Table-name
+#   id of the record to be duplicated
+#   new values as array of field-name1, value1[, field-name2, value2, ...]
+# if the value need to be calculated by a mysql-function the function and its parameters
+#
+# can be given as an arrray ref with the function name as first value followed by the parameters
+# Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
+# Note: ad the moment no nested function are allowed
+#@method
+#@deprecated
     sub add_value {
         my $self = shift;
         return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
@@ -2269,21 +2405,21 @@ MYSQL
 
     }
 
-    # Changes the record owned by the current user/version with the given id using the given values and logs it.
-    # If the new values given are identical with the old ones, nothing happens and the old id is returned
-    # Otherwise the id of the record with the changed value is returned
-    #
-    #
-    # Parameters
-    #   Table-name
-    #   id of the record to be changed
-    #   new values as array of field-name1, value1[, field-name2, value2, ...]
-    #
-    # if the value need to be calculated by a mysql-function the function and its parameters
-    #
-    # can be given as an arrray ref with the function name as first value followed by the parameters
-    # Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
-    # Note: ad the moment no nested function are allowed
+# Changes the record owned by the current user/version with the given id using the given values and logs it.
+# If the new values given are identical with the old ones, nothing happens and the old id is returned
+# Otherwise the id of the record with the changed value is returned
+#
+#
+# Parameters
+#   Table-name
+#   id of the record to be changed
+#   new values as array of field-name1, value1[, field-name2, value2, ...]
+#
+# if the value need to be calculated by a mysql-function the function and its parameters
+#
+# can be given as an arrray ref with the function name as first value followed by the parameters
+# Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
+# Note: ad the moment no nested function are allowed
 
     #@deprecated
     sub change_value {
@@ -2307,13 +2443,13 @@ MYSQL
         }
     }
 
-    # Removes a record owned by the current user/version with the given id from user/version and logs it.
-    #
-    #
-    # Parameters
-    #   Table-name
-    #   id of the record to be duplicated
-    #@deprecated
+# Removes a record owned by the current user/version with the given id from user/version and logs it.
+#
+#
+# Parameters
+#   Table-name
+#   id of the record to be duplicated
+#@deprecated
     sub remove_entry {
         my ( $self, $table, $id ) = @_;
         return ( undef, SQE_Error::QWB_RECORD ) if $self->scrollversion == 1;
@@ -2327,9 +2463,6 @@ MYSQL
             return ( undef, SQE_Error::RECORD_NOT_FOUND );
         }
     }
-
-
-
 
 =head3 _set_scroll_version($scroll_version_id, $scroll_version_group_id)
 
@@ -2389,14 +2522,13 @@ Sets the scroll version and scroll version group id into the internal hash
         return $out_hash_ref;
     }
 
-
     #@deprecated
     sub _set_scroll_version {
         my ( $self, $scroll_version_id, $scroll_version_group_id ) = @_;
         $self->$self->{private_SQE_DBI_data}->{SESSION}->{SCROLL_VERSION_ID} =
-            $scroll_version_id;
+          $scroll_version_id;
         $self->{private_SQE_DBI_data}->{SESSION}->{SCROLL_VERSION_GROUP_ID} =
-            $scroll_version_group_id;
+          $scroll_version_group_id;
     }
 
 =head3 prepare_sqe_with_version_ids()
@@ -2420,10 +2552,9 @@ Sets the scroll version and scroll version group id into the internal hash
     sub prepare_sqe_with_version_ids {
         my ( $self, $query ) = @_;
         $query =~
-            s/_svgi_/$self->{private_SQE_DBI_data}->{SCROLL_VERSION_GROUP_ID}/goe;
+          s/_svgi_/$self->{private_SQE_DBI_data}->{SCROLL_VERSION_GROUP_ID}/goe;
         return bless $self->prepare_cached( $query, @_ ), 'SQE_st';
     }
-
 
 =head3 get_sign_stream_for_fragment_id($id)
 
@@ -2518,34 +2649,33 @@ Sets the scroll version and scroll version group id into the internal hash
         undef $self->{private_SQE_DBI_data}->{main_action_sth};
     }
 
-
-    # Internal function which adds a record attributed by the current scrollversion to a table and logs it.
-    # The new record contains the same values as the one referred by $id except those given
-    # as an array of [field-name, value, fieldname, ...] which replace the old values.
-    # The function returns the id of the new record, or the old one if the new values are in fact
-    # identical with the old one.
-    #
-    # Note: if already a different record with the new values exist, the function returns its id and
-    # transform only the owner/version form the old to the new one
-    #
-    # Note: this is done as part of a complex action logged as one group
-    # thus is should only be called after start_logged_action is called before
-    # in a calling function followed later by stop_logged_action
-    #
-    # Parameters
-    #   the name of the table (note: there must exist a related owner table!)
-    #   the id of the source record
-    #   new values as array of field-name1, value1[, field-name2, value2, ...]
-    # if the value need to be calculated by a mysql-function the function and its parameters
-    #
-    # can be given as an arrray ref with the function name as first value followed by the parameters
-    # Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
-    # Note: ad the moment no nested function are allowed
-    #@deprecated
+# Internal function which adds a record attributed by the current scrollversion to a table and logs it.
+# The new record contains the same values as the one referred by $id except those given
+# as an array of [field-name, value, fieldname, ...] which replace the old values.
+# The function returns the id of the new record, or the old one if the new values are in fact
+# identical with the old one.
+#
+# Note: if already a different record with the new values exist, the function returns its id and
+# transform only the owner/version form the old to the new one
+#
+# Note: this is done as part of a complex action logged as one group
+# thus is should only be called after start_logged_action is called before
+# in a calling function followed later by stop_logged_action
+#
+# Parameters
+#   the name of the table (note: there must exist a related owner table!)
+#   the id of the source record
+#   new values as array of field-name1, value1[, field-name2, value2, ...]
+# if the value need to be calculated by a mysql-function the function and its parameters
+#
+# can be given as an arrray ref with the function name as first value followed by the parameters
+# Thus: ['POINT', 0,0] would use the value calculated by POINT(0,0)
+# Note: ad the moment no nested function are allowed
+#@deprecated
     sub _add_value {
         my ( $self, $table, $id, %values ) = @_;
 
-        # Let's set the new id to the old id in case, there won't be a new record
+       # Let's set the new id to the old id in case, there won't be a new record
         my $insert_id = $id;
 
         foreach my $key ( keys %values ) {
@@ -2558,7 +2688,7 @@ Sets the scroll version and scroll version group id into the internal hash
                     return ( undef, SQE_Error::FORBIDDEN_FUNCTION );
                 }
                 my $question_marks =
-                    join( ', ', map { '?' } @{ $values{$key} } );
+                  join( ', ', map { '?' } @{ $values{$key} } );
                 my $value_query = "SELECT $command($question_marks)";
                 my $command_sth = $self->prepare_cached($value_query);
                 if ( @{ $values{$key} } == 0 ) {
@@ -2593,16 +2723,16 @@ Sets the scroll version and scroll version group id into the internal hash
                 $data_ref->{$key} = $values{$key};
             }
 
-            # get all field-names except the id of the record and create a query to test
-            # wether a different record containing the new vaules already exist
+    # get all field-names except the id of the record and create a query to test
+    # wether a different record containing the new vaules already exist
             my @keys =
-                grep { defined $data_ref->{$_} && $_ ne '' }
-                    map { $_ if defined $data_ref->{$_} && $_ ne "${table}_id" }
-                        keys %$data_ref;
+              grep { defined $data_ref->{$_} && $_ ne '' }
+              map { $_ if defined $data_ref->{$_} && $_ ne "${table}_id" }
+              keys %$data_ref;
             my $fields = join( ' = ? AND ', @keys ) . ' = ?';
             $query = "SELECT ${table}_id from  $table where $fields";
             map { $query .= " AND $_ is null" if !defined $data_ref->{$_} }
-                keys %$data_ref;
+              keys %$data_ref;
             my $new_sth = $self->prepare_cached($query);
             $new_sth->execute( map { $data_ref->{$_} } @keys );
             my @id = $new_sth->fetchrow_array;
@@ -2622,8 +2752,8 @@ Sets the scroll version and scroll version group id into the internal hash
                 my $question_marks = join( ', ', map { '?' } @keys );
                 $query =
                     "INSERT INTO ${table} ("
-                        . join( ', ', @keys )
-                        . ") VALUES ($question_marks)";
+                  . join( ', ', @keys )
+                  . ") VALUES ($question_marks)";
                 my $add_sth = $self->prepare_cached($query);
                 $add_sth->execute( map { $data_ref->{$_} } @keys );
                 $insert_id = $self->{mysql_insertid};
@@ -2640,30 +2770,30 @@ Sets the scroll version and scroll version group id into the internal hash
         }
         $sth->finish;
 
-        #        if ( $table eq 'sign_char' ) {
-        #            my $data_ids_sth = $self
-        #              ->prepare_sqe(SQE_DBI_queries::GET_SIGN_CHAR_READING_DATA_IDS);
-        #            $data_ids_sth->execute($id);
-        #            foreach my $data_id ( $data_ids_sth->fetchrow_array ) {
-        #                $self->change_value(
-        #                    'sign_char_reading_data', $data_id,
-        #                    'sign_char_id',           $insert_id
-        #                );
-        #            }
-        #
-        #        }
+  #        if ( $table eq 'sign_char' ) {
+  #            my $data_ids_sth = $self
+  #              ->prepare_sqe(SQE_DBI_queries::GET_SIGN_CHAR_READING_DATA_IDS);
+  #            $data_ids_sth->execute($id);
+  #            foreach my $data_id ( $data_ids_sth->fetchrow_array ) {
+  #                $self->change_value(
+  #                    'sign_char_reading_data', $data_id,
+  #                    'sign_char_id',           $insert_id
+  #                );
+  #            }
+  #
+  #        }
         return $insert_id;
     }
 
-    # Internal function to add the current user/version to a table for a whole scroll or part of it
-    # The adding is not logged, thus to rewind it, one must use remove_user manually
-    #
-    # Parameters
-    #   Name of the data table
-    #   Array ref with joins to connect the table data with the scroll or part of it
-    #   Query fragment giving the data (of the part) of scroll
-    #   The scrollversion of the source
-    #@deprecated
+# Internal function to add the current user/version to a table for a whole scroll or part of it
+# The adding is not logged, thus to rewind it, one must use remove_user manually
+#
+# Parameters
+#   Name of the data table
+#   Array ref with joins to connect the table data with the scroll or part of it
+#   Query fragment giving the data (of the part) of scroll
+#   The scrollversion of the source
+#@deprecated
     sub _run_add_user_query {
         my ( $self, $table, $joins, $where, $old_scrollversion ) = @_;
         my $query = ADD_USER;
@@ -2676,14 +2806,14 @@ Sets the scroll version and scroll version group id into the internal hash
         $self->do($query);
     }
 
-    # Internal function to remove the current user/version to a table for a whole scroll or part of it
-    # The removal is logged
-    #
-    # Parameters
-    #   Name of the data table
-    #   Array ref with joins to connect the table data with the scroll or part of it
-    #   Query fragment giving the data (of the part) of scroll
-    #@deprecated
+# Internal function to remove the current user/version to a table for a whole scroll or part of it
+# The removal is logged
+#
+# Parameters
+#   Name of the data table
+#   Array ref with joins to connect the table data with the scroll or part of it
+#   Query fragment giving the data (of the part) of scroll
+#@deprecated
     sub _run_remove_user_query {
         my ( $self, $table, $joins, $where ) = @_;
         my $query = LOG_CHANGE_USER;
@@ -2705,17 +2835,16 @@ Sets the scroll version and scroll version group id into the internal hash
 
     #@deprecated
 
-
-    # Adds the given column/fragment from a user/version with all its data to the current user/version
-    # If the user_id of the source is not given, the default QWB text (user_id=0, version =0) is taken
-    #
-    # Note: the col/fragment is taken out from its original scroll!
-    #
-    # Parameters
-    #   Id of the column/fragment
-    #   id of the user_id of the old owner (optional)
-    #   version from the old user/version (optional)
-    #@deprecated
+# Adds the given column/fragment from a user/version with all its data to the current user/version
+# If the user_id of the source is not given, the default QWB text (user_id=0, version =0) is taken
+#
+# Note: the col/fragment is taken out from its original scroll!
+#
+# Parameters
+#   Id of the column/fragment
+#   id of the user_id of the old owner (optional)
+#   version from the old user/version (optional)
+#@deprecated
     sub add_owner_to_col {
         my $self              = shift;
         my $id                = shift;
@@ -2760,13 +2889,13 @@ Sets the scroll version and scroll version group id into the internal hash
 
     }
 
-    # Adds the given scroll from a user/version with all its data to the current user/version
-    # If the user_id of the source is not given, the default QWB text (user_id=0, version =0) is taken
-    #
-    # Parameters
-    #   Id of the scroll
-    #   id of the userversion the old owner (optional)
-    #@deprecated
+# Adds the given scroll from a user/version with all its data to the current user/version
+# If the user_id of the source is not given, the default QWB text (user_id=0, version =0) is taken
+#
+# Parameters
+#   Id of the scroll
+#   id of the userversion the old owner (optional)
+#@deprecated
     sub add_owner_to_scroll {
         my $self            = shift;
         my $scroll_id       = shift;
@@ -2841,11 +2970,11 @@ Sets the scroll version and scroll version group id into the internal hash
 
     }
 
-    # Removes the given scroll from a user/version with all its data from the current user/version
-    #
-    # Parameters
-    #   Id of the scroll
-    #@deprecated
+# Removes the given scroll from a user/version with all its data from the current user/version
+#
+# Parameters
+#   Id of the scroll
+#@deprecated
     sub remove_owner_from_scroll {
         my $self  = shift;
         my $id    = shift;
@@ -2898,10 +3027,10 @@ Sets the scroll version and scroll version group id into the internal hash
 
     }
 
-    # Removes the given column/fragment from a user/version with all its data from the current user/version
-    #
-    # Parameters
-    #   Id of the column/fragment
+# Removes the given column/fragment from a user/version with all its data from the current user/version
+#
+# Parameters
+#   Id of the column/fragment
     sub remove_owner_from_col {
         my $self  = shift;
         my $id    = shift;
@@ -2950,8 +3079,6 @@ Sets the scroll version and scroll version group id into the internal hash
         $self->stop_logged_action;
 
     }
-
-
 
 }
 
