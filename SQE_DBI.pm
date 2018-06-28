@@ -158,7 +158,7 @@ The following Queries are generated
 
     our $data_tables = {};
 
-    BEGIN {
+    INIT {
         my ($dbh) = SQE_DBI->get_sqe_dbh;
         my %geom_fields = ( polygon => 1, point => 1 );
         my $sth = $dbh->prepare_cached(SQE_DBI_queries::GET_OWNER_TABLE_NAMES);
