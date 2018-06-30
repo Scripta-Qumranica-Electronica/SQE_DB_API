@@ -19,9 +19,17 @@ if ($cgi->{CGIDATA}->{GET_LINE}) {
     $cgi->get_text_of_fragment($cgi->{CGIDATA}->{GET_FRAGMENT}, 'SQE_Format::JSON');
 
 }
-    print '}';
+    print "}\n";
+
+my $new_scroll_version_id=$cgi->clone_scrollversion();
+$cgi->set_scrollversion($new_scroll_version_id);
+
+print $cgi->insert_col_break_after(20, 'neuY');
+
+#$cgi->get_text_of_line(1, 'SQE_Format::JSON');
 
 
+exit;
 $cgi->set_scrollversion(1630);
 
 $cgi->add_sign_char_variant(998006,'A');

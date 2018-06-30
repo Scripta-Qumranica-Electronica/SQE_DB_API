@@ -120,9 +120,9 @@ MYSQL_FRAGMENT
 # Defines the where part of a query to get the sign data from a sign stream for the scrollverion
 # Should follow a GET_XXX_WHERE part according to the text part looked for
     SIGN_QUERY_SCROLLVERSION_PART => <<'MYSQL_FRAGMENT',
+        AND svb.scroll_version_group_id = ?
         AND sva.scroll_version_group_id = svb.scroll_version_group_id
         AND (svc.scroll_version_group_id = svb.scroll_version_group_id or svc.scroll_version_group_id is null)
-        AND svb.scroll_version_group_id= ?
 
 MYSQL_FRAGMENT
 
@@ -195,9 +195,10 @@ MYSQL_FRAGMENT
     JOIN scroll_version as scr_sv ON scroll_data_owner.scroll_version_id = scr_sv.scroll_version_id
 
     WHERE sign_id = ?
-      AND scr_sv.scroll_version_group_id = col_sv.scroll_version_group_id
+          AND line_sv.scroll_version_group_id = ?
+          AND scr_sv.scroll_version_group_id = col_sv.scroll_version_group_id
       AND col_sv.scroll_version_group_id = line_sv.scroll_version_group_id
-      AND line_sv.scroll_version_group_id = ?
+
 MYSQL
 
 
@@ -513,6 +514,16 @@ MYSQL
             AND line_id = ?
 MYSQL
 
+    GET_COL_FOR_LINE => << 'MYSQL',
+      SELECT col_id
+          FROM col_to_line
+          JOIN col_to_line_owner USING (col_to_line_id)
+          JOIN scroll_version USING (scroll_version_id)
+          WHERE line_id = ? and scroll_version_group_id = ?
+MYSQL
+
+
+
 
     NEW_LINE_TO_SIGN => << 'MYSQL',
       INSERT into line_to_sign
@@ -633,6 +644,16 @@ MYSQL
 
 MYSQL
 
+    NEW_LINE => <<'MYSQL',
+INSERT INTO line VALUES ()
+
+MYSQL
+
+    NEW_LINE => <<'MYSQL',
+      INSERT INTO col VALUES ()
+
+MYSQL
+
 
     #    ADD_OWNER_TO_SIGN_CHAR_DATA => << 'MYSQL',
 #      INSERT INTO *TABLE*_owner
@@ -648,8 +669,74 @@ MYSQL
       INSERT into artefact () values ()
 MYSQL
 
+    GET_NEXT_LINE_IN_SAME_COL => << 'MYSQL',
+      SELECT lsb.line_id, line_data.name
+      FROM line_to_sign as lsa
+        JOIN position_in_stream on lsa.sign_id=position_in_stream.sign_id
+        JOIN position_in_stream_owner USING (position_in_stream_id)
+        JOIN scroll_version as svpis on svpis.scroll_version_id=position_in_stream_owner.scroll_version_id
+
+        JOIN sign_char on position_in_stream.next_sign_id=sign_char.sign_id
+        JOIN sign_char_attribute USING (sign_char_id)
+        JOIN sign_char_attribute_owner USING (sign_char_attribute_id)
+        JOIN scroll_version as svsca on svsca.scroll_version_id=sign_char_attribute_owner.scroll_version_id
+
+        JOIN line_to_sign as lsb on position_in_stream.next_sign_id=lsb.sign_id
+        JOIN line_to_sign_owner on lsb.line_to_sign_id=line_to_sign_owner.line_to_sign_id
+        JOIN scroll_version as svlts on svlts.scroll_version_id=line_to_sign_owner.scroll_version_id
+
+          JOIN line_data on line_data.line_id=lsb.line_id
+          JOIN line_data_owner USING (line_data_id)
+          JOIN scroll_version as svldo on svldo.scroll_version_id=line_data_owner.scroll_version_id
+
+          JOIN col_to_line as ctla on ctla.line_id=lsa.line_id
+          JOIN col_to_line_owner as ctloa on ctla.col_to_line_id = ctloa.col_to_line_id
+          JOIN scroll_version as svctla on svctla.scroll_version_id=ctloa.scroll_version_id
+
+          JOIN col_to_line as ctlb on ctlb.line_id=lsb.line_id
+          JOIN col_to_line_owner as ctlob on ctlb.col_to_line_id = ctlob.col_to_line_id
+          JOIN scroll_version as svctlb on svctlb.scroll_version_id=ctlob.scroll_version_id
+
+      WHERE lsa.line_id=?
+        and attribute_value_id=10
+        and svctlb.scroll_version_group_id = ?
+        and    svsca.scroll_version_group_id = svctlb.scroll_version_group_id
+        and svpis.scroll_version_group_id = svctlb.scroll_version_group_id
+        and  svlts.scroll_version_group_id = svctlb.scroll_version_group_id
+        and  svldo.scroll_version_group_id = svctlb.scroll_version_group_id
+         and svctla.scroll_version_group_id = svctlb.scroll_version_group_id
+
+        and ctla.col_id=ctlb.col_id
+MYSQL
 
 
+    GET_NEXT_SIGN_IDS_IN_LINE => << 'MYSQL',
+      SELECT next_sign_id
+      FROM position_in_stream
+      JOIN position_in_stream_owner USING (position_in_stream_id)
+          JOIN scroll_version as svpis on svpis.scroll_version_id=position_in_stream_owner.scroll_version_id
+
+          JOIN line_to_sign as ltsa on position_in_stream.sign_id = ltsa.sign_id
+          JOIN line_to_sign_owner as ltsoa on ltsoa.line_to_sign_id=ltsa.line_to_sign_id
+          JOIN scroll_version as svltsa on svltsa.scroll_version_id=ltsoa.scroll_version_id
+
+          JOIN line_to_sign as ltsb on position_in_stream.next_sign_id = ltsb.sign_id
+          JOIN line_to_sign_owner as ltsob on ltsob.line_to_sign_id=ltsa.line_to_sign_id
+          JOIN scroll_version as svltsb on svltsb.scroll_version_id=ltsob.scroll_version_id
+
+      WHERE position_in_stream.sign_id = ?
+          and ltsa.line_id=ltsb.line_id
+          and svltsb.scroll_version_group_id = ?
+      and svpis.scroll_version_group_id = svltsb.scroll_version_group_id
+      and svltsa.scroll_version_group_id = svltsb.scroll_version_group_id
+MYSQL
+
+    GET_PREVIOUS_SIGN_ID => << 'MYSQL',
+        SELECT sign_id
+        FROM position_in_stream
+        JOIN position_in_stream_owner USING (position_in_stream_id)
+        WHERE next_sign_id = ? and scroll_version_group_id = ?
+MYSQL
 
 
 

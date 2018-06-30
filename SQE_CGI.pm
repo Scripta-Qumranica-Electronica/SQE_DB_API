@@ -948,4 +948,79 @@ if ($self->start_logged_writing   ) {
 
 }
 
+
+=head2 insert_line_break_after($after, $new_line_name)
+
+Inserts a line break after the referenced sign. If new_line_name is given, the new line is
+named accordingly, otherwise the new line and all following lines in this fragment will be renumbered automatically.
+
+=over 1
+
+=item Parameters: the id of sign, after which the line break should be inserted (or undef)
+                  name of new line (optional; if not set, lines are automatically renumbered)
+=item Returns JSON string with ids of the new break signs and the ids and new names of all lines changed
+
+=back
+
+=cut
+
+sub insert_line_break_after {
+    my ($self, $after,  $new_line_name) = @_;
+    if ($self->start_logged_writing   ) {
+
+        my $result = $self->dbh->new_line($after, undef, $new_line_name);
+        $self->stop_logged_writing;
+        return $result;
+    }
+
+}
+
+=head2 insert_col_break_after($after, $new_col_name)
+
+Inserts a col break after the referenced sign and gives the new col the name new_col_name.
+
+
+=over 1
+
+=item Parameters: the id of sign, after which the line break should be inserted (or undef)
+                  name of new col
+=item Returns JSON string with ids of the new break signs, the ids and new names of all lines or cols changed
+
+=back
+
+=cut
+
+sub insert_col_break_after {
+    my ($self, $after,  $new_col_name, $new_line_name) = @_;
+    $new_col_name= $new_col_name ? $new_col_name : 'new';
+    if ($self->start_logged_writing   ) {
+
+        my $result = $self->dbh->new_line($after, undef, $new_line_name, $new_col_name);
+        $self->stop_logged_writing;
+        return $result;
+    }
+
+}
+
+
+=head2 insert_column_break($after, $before, $new_column_name)
+
+Inserts a column break after or before the referenced sign. If new_line_name is given, the new line is
+named accordingly, otherwise the new line and all following lines in this fragment will be renumbered automatically.
+
+=over 1
+
+=item Parameters: the id of sign, after which the column break should be inserted (or undef)
+                  the id of sign, before which the column break should be inserted (or undef)
+                  name of new column (optional)
+=item Returns the sign ids of the break and all new line names with their ids
+
+=back
+
+=cut
+
+sub insert_column_break {
+    my ($self, $after, $before, $new_column_name) = @_;
+}
+
 1;

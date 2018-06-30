@@ -158,7 +158,7 @@ The following Queries are generated
 
     our $data_tables = {};
 
-    BEGIN {
+    INIT {
         my ($dbh) = SQE_DBI->get_sqe_dbh;
         my %geom_fields = ( polygon => 1, point => 1 );
         my $sth = $dbh->prepare_cached(SQE_DBI_queries::GET_OWNER_TABLE_NAMES);
@@ -861,11 +861,11 @@ Removes the record which has the old_data from the current scroll_version_group 
           $self->prepare_cached( $data_tables->{$table}->{GET_QUERY} );
         $get_sth->execute( @{$old_data_ref} );
         my $data_id;
-        $get_sth->bind_col( 0, \$data_id );
+        $get_sth->bind_col( 1, \$data_id );
         while ( $get_sth->fetch ) {
             $self->remove_data( $table, $data_id );
         }
-        returns $self->set_new_data_to_owner( $table, @{$new_data_ref} );
+        return $self->set_new_data_to_owner( $table, @{$new_data_ref} );
 
     }
 
@@ -1255,6 +1255,7 @@ Removes a sign and all data connected to it from the current scroll version grou
 
 =cut
 
+#ToDo autonaitsch steuerung bei breaks
     sub remove_sign {
         my ( $self, $sign_id ) = @_;
 
@@ -1473,7 +1474,7 @@ Sets name as new name for the scroll of the current scrollversion
 
     sub set_scroll_name {
         my ($self, $name) = @_;
-        $self->exchange_data_for_parent( 'scroll_data', $self->scroll_id, $name );
+        $self->exchange_data_for_parent( 'scroll_data', $name, $self->scroll_id);
     }
 
 =head3 set_col_name($col_id, $name)
@@ -1513,7 +1514,7 @@ Sets name as new name for the line of the current scrollversion referenced by li
 
     sub set_line_name {
         my ($self, $line_id, $name) = @_;
-        $self->exchange_data_for_parent( 'line_data', $line_id, $name );
+        $self->exchange_data_for_parent( 'line_data', $name, $line_id );
     }
 
 =head3 set_artefact_shape($artefact_id, $image_id, $region)
@@ -1808,13 +1809,7 @@ Simple values which are not bind to a numeric value or a sequence are just given
         # We know the sign after which the new sign should appear
         if ($after) {
             if ( !$line_id ) {
-                $line_id = (
-                    $self->get_first_row_as_array
-                      ( SQE_DBI_queries::GET_LINE_TO_SIGN_FOR_SCROLL_VERSION_GROUP,
-                        $after,
-                        $self->scroll_version_group_id
-                      )
-                )[1];
+                $line_id = $self->get_line_id_for_sign($after);
             }
             if ($before) {
 
@@ -1914,9 +1909,159 @@ Simple values which are not bind to a numeric value or a sequence are just given
 
     }
 
-    #Todo
+
+
+=head3 new_line_id()
+
+Creates a new line id
+
+=over 1
+
+=item Parameters: none
+
+=item Returns id of line
+
+=back
+
+=cut
+    sub new_line_id {
+        my ($self) = @_;
+        my $sth=$self->prepare_cached(SQE_DBI_queries::NEW_LINE);
+        $sth->execute;
+        my $new_line_id= $self->{mysql_insertid};
+        $sth->finish;
+        return $new_line_id
+    }
+
+    sub new_col_id {
+        my ($self) = @_;
+        my $sth=$self->prepare_cached(SQE_DBI_queries::NEW_LINE);
+        $sth->execute;
+        my $new_col_id= $self->{mysql_insertid};
+        $sth->finish;
+        return $new_col_id
+    }
+
+
+
+=head3 new_line($after, $before, $line_id, $new_line_name)
+
+Creates a new line either after or before a given sign
+
+=over 1
+
+=item Parameters: id of sign, after which the line break should be set (or undef)
+                  id of sign, before which the line break should be set (or undef)
+                  id of the line of the sign (optional)
+                  name of the new line (optional; if not set, lines are automatocally renumbered)
+
+
+=item Returns   the sign ids of the break and all new line_names with their ids
+
+=back
+
+=cut
     sub new_line {
-        my ( $self, $after, $line_name, $renumerate_lines ) = @_;
+        my ($self, $after, $before, $new_line_name, $new_col_name) =@_;
+        my ($new_first_sign_id, $new_second_sign_id, $new_line_id, $new_col_id);
+        my $sign_id = $after ? $after : $before;
+        my @attribute_end=(9,11);
+        my @attribute_start=(9,10);
+        my $sth = $self->prepare_cached(SQE_DBI_queries::GET_REF_DATA);
+        my ($scroll_id, $old_col_id, $line_id) =
+            ($self->get_first_row_as_array(SQE_DBI_queries::GET_REF_DATA, $sign_id, $self->scroll_version_group_id))[0,2,4];
+
+        if ($new_col_name) {
+           $new_col_id = $self->new_col_id;
+            $self->set_new_data_to_owner('scroll_to_col', $scroll_id, $new_col_id);
+            $self->set_col_name($new_col_id, $new_col_name);
+            push @attribute_end, 13;
+            push @attribute_start, 12;
+        } else {
+            $new_col_id = $old_col_id;
+        }
+
+        if ($after) {
+            $line_id = $self->get_line_id_for_sign($after) if not $line_id;
+            $new_first_sign_id=$self->new_sign('', $after, undef, $line_id, @attribute_end);
+            $new_line_id = $self->new_line_id;
+            $new_second_sign_id=$self->new_sign('', $new_first_sign_id, undef, $line_id, @attribute_start);
+            for my $next_sign_id ($self->get_following_sign_ids_in_line($new_second_sign_id)) {
+                $self->replace_data('line_to_sign', [$next_sign_id, $line_id],  [$next_sign_id, $new_line_id]);
+            }
+            $self->replace_data('line_to_sign',  [$new_second_sign_id, $line_id],  [$new_second_sign_id, $new_line_id]);
+
+        } elsif ($before) {
+            $line_id = $self->get_line_id_for_sign($before) if not $line_id;
+            $new_second_sign_id=$self->new_sign('', undef, $before, $line_id, @attribute_start);
+            $line_id = $self->new_line_id;
+            $new_first_sign_id=$self->new_sign('', undef, $new_second_sign_id, $new_line_id, @attribute_end);
+            for my $next_sign_id ($self->get_following_sign_ids_in_line($before)) {
+                $self->set_new_data_to_owner('line_to_sign', $next_sign_id, $new_line_id);
+            }
+        }
+
+        if (!$new_col_name) {
+            $self->set_new_data_to_owner('col_to_line', $new_col_id, $new_line_id);
+        } else {
+            $self->set_new_data_to_owner('col_to_line', $old_col_id, $new_line_id);
+
+        }
+
+
+        my $out_text = "{\"new_line_end_id\":$new_first_sign_id,\"new_line_start_id\":$new_second_sign_id,\"new_line_name\":[";
+
+        if ($new_line_name) {
+            $self->set_line_name($new_line_id, $new_line_name);
+            $out_text.="{\"line_id\":$new_line_id,\"line_name\":\"$new_line_name\"}";
+
+        } else {
+            my $sth=$self->prepare_cached(SQE_DBI_queries::GET_NEXT_LINE_IN_SAME_COL);
+            $sth->execute($new_line_id, $self->scroll_version_group_id);
+            my @data;
+            my $run=0;
+            while (@data = $sth->fetchrow_array) {
+                $new_line_name=$data[1];
+                $self->set_line_name($new_line_id, $new_line_name);
+                $out_text.="{\"line_id\":$new_line_id,\"line_name\":\"$new_line_name\"},";
+                $sth->execute($data[0], $self->scroll_version_group_id);
+                $run++;
+                if ($new_col_name) {
+                    $self->replace_data('col_to_line', [ $old_col_id, $new_line_id ], [ $new_col_id, $new_line_id ]);
+                }
+                $new_line_id=$data[0];
+                $new_line_name=$data[1];
+            }
+            if ($run>0) {
+                $new_line_name =~
+                    s/(.*?)([0-9]+)([^0-9]*?)/$1 . ($2+1) . $3/oe;
+                $self->set_line_name($new_line_id, $new_line_name);
+                $out_text.="{\"line_id\":$new_line_id,\"line_name\":\"$new_line_name\"}";
+                if ($new_col_id) {
+                    $self->replace_data('col_to_line', [ $old_col_id, $new_line_id ], [ $new_col_id, $new_line_id ]);
+                }
+
+            } else {
+                $out_text.=s/,$//goe;
+            }
+        }
+
+        if ($new_col_name) {
+            $self->set_new_data_to_owner('col_to_line', $new_col_id, $new_line_id);
+            return $out_text . "],\"new_col_id\":$new_col_id,\"new_col_name\":\"$new_col_name\"}";
+        } else {
+            return $out_text . ']}';
+        }
+    }
+
+
+
+    sub set_line {
+        my ($self, $line_id, $new_line_name) = @_;
+        my $sth = $self->prepare_cached(SQE_DBI_queries::NEW_LINE);
+        $sth->execute();
+        my $new_line_id = $self->{mysql_insertid};
+
     }
 
 =head3 new_sign_char_variant($sign_id, $sign, $as_variant)
@@ -2059,6 +2204,69 @@ Retrieves a chunk of text, formats, and print it out.
         $sth_out->finish;
     }
 
+
+
+
+
+=head3 get_next_signs($sign_id)
+
+Retrieves the sign
+
+=over 1
+
+=item Parameters:
+
+=item Returns
+
+=back
+
+=cut
+    sub get_next_signs {
+        my ($self, $sign_id) = @_;
+        my $sth=$self->prepare_cached(SQE_DBI_queries::GET_NEXT_SIGN_IDS_IN_LINE);
+        $sth->execute($sign_id);
+        my $erg= $sth->fetchall_arrayref();
+        $sth->finish;
+        return $erg;
+    }
+
+    sub get_next_sign_id {
+        my ($self, $sign_id) = @_;
+        return ($self->get_next_signs())->[0]->[0];
+    }
+
+    sub get_next_line_data {
+        my ($self, $line_id, $col_id) = @_;
+
+
+    }
+
+
+    sub get_following_sign_ids_in_line {
+        my ($self, $start_sign_id) = @_;
+        my %found_ids;
+        my @to_process=($start_sign_id);
+        my ($next_sign_id);
+        my $sth = $self->prepare_cached(SQE_DBI_queries::GET_NEXT_SIGN_IDS_IN_LINE);
+        while (@to_process) {
+            while (my $pr = pop @to_process) {
+
+                $sth->execute($pr, $self->scroll_version_group_id);
+                $sth->bind_columns(\$next_sign_id);
+                while ($sth->fetch) {
+                    if (!$found_ids{$next_sign_id}) {
+                        $found_ids{$next_sign_id} = 1;
+                        push @to_process, $next_sign_id
+                    }
+
+                }
+
+            }
+        }
+        $sth->finish;
+        return keys %found_ids;
+    }
+
 =head3 get_text_of_fragment($frag_id, $class)
 
 Retrieves the text of a fragment and print it out formatted according the given format class
@@ -2084,6 +2292,29 @@ Retrieves the text of a fragment and print it out formatted according the given 
         $self->print_formatted_text
           ( SQE_DBI_queries::GET_ALL_SIGNS_IN_FRAGMENT_QUERY,
             $frag_id, $class, $start[0] );
+    }
+
+=head3 get_line_id_for_sign($sign_id)
+
+Retrieves the line id for the given sign and curretn scrollversion
+
+=over 1
+
+=item Parameters: id of sign
+
+=item Returns id of line
+
+=back
+
+=cut
+    sub get_line_id_for_sign {
+        my ($self, $sign_id) = @_;
+        return ($self->get_first_row_as_array
+                ( SQE_DBI_queries::GET_LINE_TO_SIGN_FOR_SCROLL_VERSION_GROUP,
+                    $sign_id,
+                    $self->scroll_version_group_id
+                )
+        )[1];
     }
 
 =head3 get_text_of_line($line_id, $class)
