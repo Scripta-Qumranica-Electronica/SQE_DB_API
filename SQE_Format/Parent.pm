@@ -203,7 +203,8 @@ sub _prepare_attributes {
     foreach my $char_data (@$attributes_ref) {
         next if $class->EXCLUDED_ATTRIBUTE_VALUES->{$char_data->{attribute_values}->[0]->{attribute_value_id}}
         && !$char_data->{commentary_id};
-        my  $out .=   _prepare_value($class->ATTRIBUTE_ID_LABLE, $char_data->{attribute_id});
+        my $out = _prepare_value($class->ATTRIBUTE_LABLE, $char_data->{sign_char_attribute_id});
+        $out .=   _prepare_value($class->ATTRIBUTE_ID_LABLE, $char_data->{attribute_id});
         $out.= _prepare_value($class->ATTRIBUTE_NAME_LABLE, $char_data->{attribute_name});
         $out.= _prepare_value($class->SIGN_CHAR_COMMENTARY_ID_LABLE, $char_data->{commentary_id}) if $char_data->{commentary_id};
         $out .= _prepare_values($class->ATTRIBUTE_VALUE_LABLE, $class->_prepare_attribute_values($char_data->{attribute_values}));

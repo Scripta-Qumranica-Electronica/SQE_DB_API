@@ -87,7 +87,8 @@ use constant {
   /* 8 */   attribute_value.string_value,
   /* 9 */   attribute_numeric.value,
   /* 10 */  line_to_sign.line_id,
-  /* 11 */  sign_char_commentary_id
+  /* 11 */  sign_char_commentary_id,
+  /* 12 */  sign_char_attribute.sign_char_attribute_id
 
 
 MYSQL_FRAGMENT

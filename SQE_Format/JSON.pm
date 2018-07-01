@@ -40,7 +40,7 @@ use constant {
     SIGN_CHAR_ID_LABLE            => [ '"sign_char_id":', '', '' ],
     SIGN_CHAR_CHAR_LABLE          => [ ',"sign_char":', '"', '"' ],
     ATTRIBUTES_LABLE              => [ ',"attributes":', '{', '}', '[{', '}]', '},{' ],
-    ATTRIBUTE_LABLE               => [ '{', '{', '}', '[', ']', ',' ],
+    ATTRIBUTE_LABLE               => [ '"sign_char_attribute_id":', '', ',', '', '', ',' ],
     ATTRIBUTE_ID_LABLE            => [ '"attribute_id":', '', ',' ],
     ATTRIBUTE_NAME_LABLE          => [ '"attribute_name":', '"', '",' ],
     ATTRIBUTE_VALUE_LABLE         => [ '"values":', '{', '}', '[{', '}]', '},{' ],

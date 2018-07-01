@@ -48,7 +48,8 @@ use constant {
     ATTRIBUTE_STRING_VALUE  => 8,
     ATTRIBUTE_NUMERIC_VALUE => 9,
     LINE_ID                 => 10,
-    SIGN_CHAR_COMMENTARY_ID    => 11
+    SIGN_CHAR_COMMENTARY_ID    => 11,
+    SIGN_CHAR_ATTRIBUTE_ID  => 12
 
 };
 
@@ -125,10 +126,11 @@ sub _add_new_attribute {
     push @{$self->{sign_chars}->[-1]->{sign_attributes}},
 
       {
-        attribute_id     => $sign_data_ref->[ATTRIBUTE_ID],
-        attribute_name   => $sign_data_ref->[ATTRIBUTE_NAME],
-        commentary_id => $sign_data_ref->[SIGN_CHAR_COMMENTARY_ID],
-        attribute_values => []
+          attribute_id           => $sign_data_ref->[ATTRIBUTE_ID],
+          attribute_name         => $sign_data_ref->[ATTRIBUTE_NAME],
+          commentary_id          => $sign_data_ref->[SIGN_CHAR_COMMENTARY_ID],
+          attribute_values       => [],
+          sign_char_attribute_id => $sign_data_ref->[SIGN_CHAR_ATTRIBUTE_ID]
       };
     $self->_add_new_attribute_value($sign_data_ref);
 
