@@ -22,12 +22,22 @@ if ($cgi->{CGIDATA}->{GET_LINE}) {
     print "}\n";
 
 print $cgi->get_cols_for_scrollversion(1);
-exit;
+
+print "\n";
+
 
 my $new_scroll_version_id=$cgi->clone_scrollversion();
 $cgi->set_scrollversion($new_scroll_version_id);
 
 print $cgi->insert_col_break_after(20, 'neuY');
+
+print "\n";
+
+print $cgi->get_cols_for_scrollversion($new_scroll_version_id);
+
+print "\n";
+
+
 
 #$cgi->get_text_of_line(1, 'SQE_Format::JSON');
 

@@ -292,9 +292,9 @@ data of the first record as an array
     sub get_all_cols_for_version {
         my ($self, $scroll_version_id) = @_;
         my $sth=$self->_get_all_cols_for_version_prepared($scroll_version_id);
-        my ($col_id, $col_name);
+        my ($col_id, $col_name, $pos);
         my @out;
-        $sth->bind_columns(\$col_id,\$col_name, \$scroll_version_id);
+        $sth->bind_columns(\$col_id,\$col_name, \$scroll_version_id, \$pos);
         while ($sth->fetch) {
         push @out, "{\"name\":\"$col_name\",\"col_id\":$col_id,\"scroll_version_id\":$scroll_version_id}";
        }
@@ -1996,6 +1996,21 @@ Creates a new line either after or before a given sign
         if ($new_col_name) {
            $new_col_id = $self->new_col_id;
             $self->set_new_data_to_owner('scroll_to_col', $scroll_id, $new_col_id);
+            my $col_sth = $self->_get_all_cols_for_version_prepared($self->scroll_version_id);
+            my ($other_cols_id, $pos);
+            $col_sth->bind_col(1, \$other_cols_id);
+            $col_sth->bind_col(4, \$pos);
+            my $new_pos;
+            while ($col_sth->fetch) {
+                if ($other_cols_id==$old_col_id) {
+                    $self->set_new_data_to_owner('col_sequence', $new_col_id, $pos+1);
+                    last;
+                }
+            }
+            while ($col_sth->fetch) {
+                $self->replace_data('col_sequence', [$other_cols_id, $pos], [$other_cols_id, $pos+1]);
+            }
+            $col_sth->finish;
             $self->set_col_name($new_col_id, $new_col_name);
             push @attribute_end, 13;
             push @attribute_start, 12;
