@@ -1023,4 +1023,24 @@ sub insert_column_break {
     my ($self, $after, $before, $new_column_name) = @_;
 }
 
+
+=head2 get_cols_for_scrollversion($scroll_version_id)
+
+Retrives the cols of the given scrollversion (or scrollversions of the same group)
+
+=over 1
+
+=item Parameters: id of scroll version
+
+=item Returns JSON string
+
+=back
+
+=cut
+sub get_cols_for_scrollversion {
+    my ($self, $scroll_version_id) = @_;
+    return $self->dbh->get_all_cols_for_version($scroll_version_id);
+    }
+
+
 1;

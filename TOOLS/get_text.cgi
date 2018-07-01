@@ -21,7 +21,7 @@ if ($cgi->{CGIDATA}->{GET_LINE}) {
 }
     print "}\n";
 
-
+print $cgi->get_cols_for_scrollversion(1);
 exit;
 
 my $new_scroll_version_id=$cgi->clone_scrollversion();

@@ -280,6 +280,28 @@ data of the first record as an array
         return @result;
     }
 
+    sub _get_all_cols_for_version_prepared {
+        my ($self, $scroll_version_id) = @_;
+        my $sth = $self->prepare_cached(SQE_DBI_queries::GET_ALL_COLS_FOR_VERSION);
+        $sth->execute($scroll_version_id);
+        return $sth;
+    }
+
+
+
+    sub get_all_cols_for_version {
+        my ($self, $scroll_version_id) = @_;
+        my $sth=$self->_get_all_cols_for_version_prepared($scroll_version_id);
+        my ($col_id, $col_name);
+        my @out;
+        $sth->bind_columns(\$col_id,\$col_name, \$scroll_version_id);
+        while ($sth->fetch) {
+        push @out, "{\"name\":\"$col_name\",\"col_id\":$col_id,\"scroll_version_id\":$scroll_version_id}";
+       }
+        $sth->finish;
+        return '[' . join(',', @out) . ']';
+    }
+
 =head3 start_transaction()
 
 Sets the DB into the transaction mode.
@@ -1967,7 +1989,7 @@ Creates a new line either after or before a given sign
         my $sign_id = $after ? $after : $before;
         my @attribute_end=(9,11);
         my @attribute_start=(9,10);
-        my $sth = $self->prepare_cached(SQE_DBI_queries::GET_REF_DATA);
+    #    my $sth = $self->prepare_cached(SQE_DBI_queries::GET_REF_DATA);
         my ($scroll_id, $old_col_id, $line_id) =
             ($self->get_first_row_as_array(SQE_DBI_queries::GET_REF_DATA, $sign_id, $self->scroll_version_group_id))[0,2,4];
 
@@ -2044,6 +2066,7 @@ Creates a new line either after or before a given sign
             } else {
                 $out_text.=s/,$//goe;
             }
+            $sth->finish;
         }
 
         if ($new_col_name) {
@@ -2056,13 +2079,7 @@ Creates a new line either after or before a given sign
 
 
 
-    sub set_line {
-        my ($self, $line_id, $new_line_name) = @_;
-        my $sth = $self->prepare_cached(SQE_DBI_queries::NEW_LINE);
-        $sth->execute();
-        my $new_line_id = $self->{mysql_insertid};
 
-    }
 
 =head3 new_sign_char_variant($sign_id, $sign, $as_variant)
 

@@ -523,6 +523,16 @@ MYSQL
           WHERE line_id = ? and scroll_version_group_id = ?
 MYSQL
 
+    GET_ALL_COLS_FOR_VERSION => << 'MYSQL',
+      SELECT  col_data.col_id, col_data.name, sva.scroll_version_id
+          FROM col_data
+          JOIN col_sequence USING (col_id)
+          JOIN col_sequence_owner USING (col_sequence_id)
+          JOIN scroll_version as sva on sva.scroll_version_id=col_sequence_owner.scroll_version_id
+          JOIN scroll_version as svb on sva.scroll_version_group_id=svb.scroll_version_group_id
+          WHERE svb.scroll_version_id=?
+MYSQL
+
 
 
 
