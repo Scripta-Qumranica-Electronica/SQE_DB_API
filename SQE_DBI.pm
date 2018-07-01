@@ -1004,8 +1004,8 @@ and returns the sign char id (which may have changed)
                 $sequence,     $numeric_value
               );
 
-# If it not exist, create a new sign_char_attribute with the attribute value and sequence
-            if ($new_sign_char_attribute_id) {
+# If it not exists, create a new sign_char_attribute with the attribute value and sequence
+            if (!defined $new_sign_char_attribute_id) {
 
                 my $sth =
                   $self->prepare_cached(
