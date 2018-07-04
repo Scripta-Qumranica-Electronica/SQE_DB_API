@@ -7,12 +7,13 @@ use Package::Constants;
 use constant {
 
     GET_SCROLLS => << 'MYSQL',
-	SELECT scroll.scroll_id, scroll_data.name
+	SELECT scroll.scroll_id, scroll_data.name, scroll_version.scroll_version_id
 	FROM scroll
 		 JOIN scroll_data USING (scroll_id)
 		JOIN  scroll_data_owner USING (scroll_data_id)
+		JOIN scroll_version USING (scroll_version_id)
 	WHERE scroll_data.name like ?
-		AND scroll_data_owner.scroll_version_id = _scrollversion_
+		AND user_id = ?
 	ORDER BY scroll_data.name;
 MYSQL
 
@@ -31,9 +32,10 @@ MYSQL
 	FROM scroll_to_col
 		JOIN col_data USING (col_id)
 		JOIN col_data_owner USING (col_data_id)
+		JOIN scroll_version USING (scroll_version_id)
 	WHERE scroll_to_col.scroll_id=?
 	AND col_data.name REGEXP ?
-	AND col_data_owner.scroll_version_id= _scrollversion_
+	AND scroll_version_group_id= ?
 MYSQL
 
     # Returns the Id's of lines
@@ -54,10 +56,12 @@ SELECT sign_char.sign_id
 FROM col_to_line
 	JOIN line_to_sign USING (line_id)
 	JOIN sign_char USING (sign_id)
-	JOIN sign_char_owner USING (sign_char_id)
+	JOIN sign_char_attribute USING (sign_char_id)
+	JOIN sign_char_attribute_owner USING (sign_char_attribute_id)
+	JOIN scroll_version USING (scroll_version_id)
 WHERE col_to_line.col_id = ?
-	  AND FIND_IN_SET(?,sign_char.break_type)
-	AND sign_char_owner.scroll_version_id= _scrollversion_
+	  AND attribute_value_id=?
+	AND scroll_version_group_id = ?;
 MYSQL
 
     GET_LINE_BREAK => <<'MYSQL',

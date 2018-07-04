@@ -150,6 +150,7 @@ MYSQL_FRAGMENT
     # Defines the GET_XXX_WHERE part for a line
     GET_LINE_WHERE => <<'MYSQL_FRAGMENT',
         WHERE line_id =?
+        #_#
 
 MYSQL_FRAGMENT
 
@@ -165,6 +166,7 @@ MYSQL_FRAGMENT
     # Defines the GET_XXX_WHERE part for a line
     GET_FRAGMENT_WHERE => <<'MYSQL_FRAGMENT',
         WHERE col_id =?
+        #_#
 
 MYSQL_FRAGMENT
 

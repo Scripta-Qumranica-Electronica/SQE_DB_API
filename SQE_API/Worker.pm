@@ -19,10 +19,11 @@ sub process {
     my $data = { cgi => shift };
 
     $data->{dbh} = $data->{cgi}->dbh;
+    $data->{param} = $data->{cgi}->{CGIDATA};
 
     # Ok, no let's run the actions
 
-    my $action = $data->{cgi}->param('GET');
+    my $action = $data->{param}->{GET};
 
     # Run default action = 'TEXT'
     if ( ( not $action ) || $action eq 'TEXT' ) {
@@ -47,7 +48,7 @@ sub process {
 
 sub get_scroll_names {
     my $data        = shift;
-    my $scroll_name = $data->{cgi}->param('SCROLL');
+    my $scroll_name = $data->{param}->{SCROLL};
     if ($scroll_name) {
         $scroll_name =~ s/\*/%/go;
         $scroll_name =~ s/\?/_/go;
@@ -74,7 +75,7 @@ sub get_fragment_names {
     if ( not $scroll_id ) {
         return $scroll_name;
     }
-    my $fragment_name = $data->{cgi}->param('FRAGMENT');
+    my $fragment_name = $data->{param}->{FRAGMENT};
     if ($fragment_name) {
         $fragment_name = '^' . quote($fragment_name);
         $fragment_name =~ s/\\([*?])/.$1/go;
@@ -106,7 +107,7 @@ sub get_line_names {
         return $scroll_name;
     }
     my $fragment_name =
-      '^' . quote( $data->{cgi}->param('FRAGMENT') ) . '( [iv]+)?$';
+      '^' . quote( $data->{param}->{FRAGMENT} ) . '( [iv]+)?$';
     my $fragment_ids =
       $data->{dbh}->selectall_arrayref_sqe( SQE_API::Queries::GET_FRAGMENTS,
           undef,
@@ -118,7 +119,7 @@ sub get_line_names {
         return get_error_string(SQE_Error::NO_UNIQUE_FRAGMENT);
     }
 
-    my $line_name = $data->{cgi}->param('LINE');
+    my $line_name = $data->{param}->{LINE};
     if ($line_name) {
         $line_name =~ s/\*/%/go;
         $line_name =~ s/\?/_/go;
@@ -148,12 +149,13 @@ sub get_line_names {
 
 sub get_unique_scroll {
     my $data        = shift;
-    my $scroll_name = $data->{cgi}->param('SCROLL');
+    my SQE_db $dbh = $data->{dbh};
+    my $scroll_name = $data->{param}->{SCROLL};
     $scroll_name = quote($scroll_name);
-    my $scroll_id;
-    my $scroll_name_sth = $data->{dbh}->prepare_sqe(SQE_API::Queries::GET_SCROLLS);
-    $scroll_name_sth->execute( $scroll_name);
-    ( $scroll_id, $scroll_name ) = $scroll_name_sth->fetchrow_array;
+    my ($scroll_id, $scroll_version_id);
+    my $scroll_name_sth = $dbh->prepare_cached(SQE_API::Queries::GET_SCROLLS);
+    $scroll_name_sth->execute( $scroll_name, $dbh->user_id);
+    ( $scroll_id, $scroll_name, $scroll_version_id ) = $scroll_name_sth->fetchrow_array;
     if ( not $scroll_id ) {
         $scroll_name_sth->finish;
         return undef, get_error_string(SQE_Error::SCROLL_NOT_FOUND);
@@ -163,35 +165,40 @@ sub get_unique_scroll {
         return get_error_string(SQE_Error::NO_UNIQUE_SCROLL);
     }
     $scroll_name_sth->finish;
+    $dbh->set_scrollversion($scroll_version_id);
     return $scroll_id, $scroll_name;
 
 }
 
 sub get_text {
     my $data = shift;
+    my SQE_db $dbh = $data->{dbh};
+
     my ( $scroll_id, $scroll_name ) = get_unique_scroll($data);
     return $scroll_name if ( not $scroll_id );
 
     # Get the optional line name - we need it now to evaluate the fragment
-    $data->{line_name} = $data->{cgi}->param('LINE');
+    $data->{line_name} = $data->{param}->{LINE};
 
     #Try to get fragments and their ids
 
-    my $fragment_name = $data->{cgi}->param('FRAGMENT');
+    my $fragment_name = $data->{param}->{FRAGMENT};
+    $fragment_name =~ s/\%20/ /go;
     $fragment_name =  '^' . quote( $fragment_name ) . '( [iv]+)?$';
-    my $fragment_ids =
-      $data->{dbh}->selectall_arrayref_sqe( SQE_API::Queries::GET_FRAGMENTS,
-        undef, $scroll_id, $fragment_name);
+    my $sth =$dbh->prepare_cached(SQE_API::Queries::GET_FRAGMENTS);
+    $sth->execute($scroll_id, $fragment_name, $dbh->scroll_version_group_id);
+    my $fragment_ids = $sth->fetchall_arrayref;
     if ( @$fragment_ids == 0 ) {
         return get_error_string(SQE_Error::FRAGMENT_NOT_FOUND);
     }
     elsif ( $data->{line_name} && @$fragment_ids > 1 ) {
         return get_error_string(SQE_Error::NO_UNIQUE_FRAGMENT);
     }
+    $sth->finish;
 
     # Reaching this point, we need now the format to use
 
-    my $format = $data->{cgi}->param('FORMAT');
+    my $format = $data->{param}->{FORMAT};
     $format = 'JSON' if not $format;
 
     my $out_text;
@@ -243,7 +250,7 @@ sub get_text {
           $data->{dbh}->prepare_sqe(SQE_API::Queries::GET_LINE_DATA);
         foreach my $single_data (@$fragment_ids) {
             $get_fragment_break_sth->execute( $single_data->[0],
-                'COLUMN_START' );
+                12, $dbh->scroll_version_group_id );
             if (
                 not $data->{fragment_start} =
                 ( $get_fragment_break_sth->fetchrow_array )[0]

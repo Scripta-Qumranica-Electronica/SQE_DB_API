@@ -14,20 +14,31 @@ my ( $cgi, $error_ref ) = SQE_CGI->new;
 print '{';
 
 if ($cgi->{CGIDATA}->{GET_LINE}) {
-    $cgi->get_text_of_line($cgi->{CGIDATA}->{GET_LINE}, 'SQE_Format::JSON');
+    $cgi->get_text_of_line($cgi->{CGIDATA}->{GET_LINE}, 'SQE_Format::SON');
 } elsif ($cgi->{CGIDATA}->{GET_FRAGMENT}) {
     $cgi->get_text_of_fragment($cgi->{CGIDATA}->{GET_FRAGMENT}, 'SQE_Format::JSON');
 
 }
     print "}\n";
 
-print $cgi->get_cols_for_scrollversion(1);
+
+
+#print $cgi->get_cols_for_scrollversion(1);
 
 print "\n";
 
 
 my $new_scroll_version_id=$cgi->clone_scrollversion();
 $cgi->set_scrollversion($new_scroll_version_id);
+
+$cgi->change_scroll_name("Hurra");
+$cgi->change_line_name(1,'Oh no');
+$cgi->get_text_of_fragment($cgi->{CGIDATA}->{GET_FRAGMENT}, 'SQE_Format::JSON');
+print "\n";
+$cgi->set_scrollversion(1);
+$cgi->get_text_of_fragment($cgi->{CGIDATA}->{GET_FRAGMENT}, 'SQE_Format::JSON');
+
+exit;
 
 print $cgi->insert_col_break_after(20, 'neuY');
 

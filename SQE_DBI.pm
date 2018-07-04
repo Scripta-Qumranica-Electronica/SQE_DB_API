@@ -119,6 +119,7 @@ A child of DBI::db
 # All formats defined in SQE_Format (except the Parent) need to be mentioned here
     use SQE_Format::HTML;
     use SQE_Format::JSON;
+    use SQE_Format::API_JSON;
 
     use parent -norequire, 'DBI::db';
 
@@ -1496,7 +1497,7 @@ Sets name as new name for the scroll of the current scrollversion
 
     sub set_scroll_name {
         my ($self, $name) = @_;
-        $self->exchange_data_for_parent( 'scroll_data', $name, $self->scroll_id);
+        $self->exchange_data_for_parent( 'scroll_data', $self->scroll_id,  $name,);
     }
 
 =head3 set_col_name($col_id, $name)
@@ -1536,7 +1537,7 @@ Sets name as new name for the line of the current scrollversion referenced by li
 
     sub set_line_name {
         my ($self, $line_id, $name) = @_;
-        $self->exchange_data_for_parent( 'line_data', $name, $line_id );
+        $self->exchange_data_for_parent( 'line_data', $line_id, $name,  );
     }
 
 =head3 set_artefact_shape($artefact_id, $image_id, $region)
@@ -2217,7 +2218,7 @@ Retrieves a chunk of text, formats, and print it out.
         my $signs   = {};
 
         if ( $sth->execute( $id, $self->scroll_version_group_id ) ) {
-            my SQE_sign $sign     = SQE_sign->new( $sth->fetchrow_arrayref );
+            my SQE_sign $sign     = SQE_sign->new( $sth->fetchrow_arrayref, $format );
             my SQE_sign $old_sign = $sign;
 
             while ( my $data_ref = $sth->fetchrow_arrayref ) {
