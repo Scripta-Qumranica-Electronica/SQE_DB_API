@@ -14,12 +14,15 @@ my ( $cgi, $error_ref ) = SQE_CGI->new;
 print '{';
 
 if ($cgi->{CGIDATA}->{GET_LINE}) {
-    $cgi->get_text_of_line($cgi->{CGIDATA}->{GET_LINE}, 'SQE_Format::SON');
+    $cgi->get_text_of_line($cgi->{CGIDATA}->{GET_LINE}, 'SQE_Format::JSON');
 } elsif ($cgi->{CGIDATA}->{GET_FRAGMENT}) {
     $cgi->get_text_of_fragment($cgi->{CGIDATA}->{GET_FRAGMENT}, 'SQE_Format::JSON');
 
 }
-    print "}\n";
+
+   print "}\n";
+
+print $cgi->get_cols_for_scrollversion(1);
 
 
 
@@ -32,7 +35,10 @@ my $new_scroll_version_id=$cgi->clone_scrollversion();
 $cgi->set_scrollversion($new_scroll_version_id);
 
 $cgi->change_scroll_name("Hurra");
-$cgi->change_line_name(1,'Oh no');
+$cgi->change_line_name(1,'Oh yes');
+$cgi->change_col_name(1, 'Hurra');
+print $cgi->get_cols_for_scrollversion($new_scroll_version_id);
+print "\n";
 $cgi->get_text_of_fragment($cgi->{CGIDATA}->{GET_FRAGMENT}, 'SQE_Format::JSON');
 print "\n";
 $cgi->set_scrollversion(1);

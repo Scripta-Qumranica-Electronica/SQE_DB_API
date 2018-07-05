@@ -206,7 +206,7 @@ sub _prepare_attributes {
     foreach my $char_data (@$attributes_ref) {
         next if $class->EXCLUDED_ATTRIBUTE_VALUES->{$char_data->{attribute_values}->[0]->{attribute_value_id}}
         && !$char_data->{commentary_id};
-        my $out = _prepare_value($class->ATTRIBUTE_LABLE, $char_data->{sign_char_attribute_id});
+        my $out .= _prepare_value($class->ATTRIBUTE_LABLE, $char_data->{sign_char_attribute_id});
         $out .=   _prepare_value($class->ATTRIBUTE_ID_LABLE, $char_data->{attribute_id});
         $out.= _prepare_value($class->ATTRIBUTE_NAME_LABLE, $char_data->{attribute_name});
         $out.= _prepare_value($class->SIGN_CHAR_COMMENTARY_ID_LABLE, $char_data->{commentary_id}) if $char_data->{commentary_id};
@@ -278,8 +278,8 @@ sub print {
     # Start with the outer frame of text
     my $out = $class->ALL_LABLE->[OUT_LABLE] . $class->ALL_LABLE->[OUT_START];
 
-    while (defined $key ) {
-        if (!$signs->{$key}->skip && defined $signs->{$key}->{line_id}) {
+    while (defined $key && defined $signs->{$key}->{line_id}) {
+   #     if (!$signs->{$key}->skip && defined $signs->{$key}->{line_id}) {
             if ($line_id != $signs->{$key}->{line_id}) {
                 # If we start with a new line
                 $line_id = $signs->{$key}->{line_id};
@@ -367,7 +367,7 @@ sub print {
             $out .= _prepare_values($class->NEXT_SIGN_IDS_LABLE, $signs->{$key}->{next_sign_ids}) if $signs->{$key}->{next_sign_ids}->[0];
             $out .= _prepare_values($class->CHARS_LABLE, $class->_prepare_chars($signs->{$key}->{sign_chars}));
 
-        }
+ #       }
         $key = $signs->{$key}->{next_sign_ids}->[0];
     }
 

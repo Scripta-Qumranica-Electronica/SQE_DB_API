@@ -1537,7 +1537,7 @@ Sets name as new name for the line of the current scrollversion referenced by li
 
     sub set_line_name {
         my ($self, $line_id, $name) = @_;
-        $self->exchange_data_for_parent( 'line_data', $line_id, $name,  );
+        $self->exchange_data_for_parent( 'line_data', $line_id, $name );
     }
 
 =head3 set_artefact_shape($artefact_id, $image_id, $region)
