@@ -1,4 +1,4 @@
-package SQE_Format::JSON;
+package SQE_Format::API_JSON;
 use strict;
 use warnings FATAL => 'all';
 
@@ -6,34 +6,36 @@ use parent 'SQE_Format::Parent';
 
 use constant {
 
+    EXCLUDED_ATTRIBUTES => {9=>1},
 
-    ALL_LABLE                     => [ '"text":', '', '', '', '' ],
+
+    ALL_LABLE                     => [ '"VALUE":', '', '', '', '' ],
 
     SCROLLS_LABLE                  => [ '', '[', ']', '', '' ],
 
     SCROLL_LABLE                  => [ '', '{', '}', '', '},(' ],
-    SCROLL_ID_LABLE               => [ '"scroll_id":', '', ',', '', '' ],
-    SCROLL_NAME_LABLE             => [ '"scroll_name":', '"', '",', '', '' ],
+    SCROLL_ID_LABLE               => [ undef, '', ',', '', '' ],
+    SCROLL_NAME_LABLE             => [ '"SCROLL":', '"', '",', '', '' ],
 
-    FRAGS_LABLE                    => [ '"fragments":', '[', ']', '', '', '},{' ],
+    FRAGS_LABLE                    => [ '"FRAGMENTS":', '[', ']', '', '', '},{' ],
 
 
     FRAG_LABLE                    => [ '', '{', '}', '', '},{' ],
-    FRAG_ID_LABLE                 => [ '"fragment_id":', '', ',', '', '' ],
-    FRAG_NAME_LABLE               => [ '"fragment_name":', '"', '",', '', '' ],
+    FRAG_ID_LABLE                 => [ undef, '', ',', '', '' ],
+    FRAG_NAME_LABLE               => [ '"FRAGMENT":', '"', '",', '', '' ],
 
-    LINES_LABLE                    => [ '"lines":', '[', ']', '', '', '},{' ],
+    LINES_LABLE                    => [ '"LINES":', '[', ']', '', '', '},{' ],
 
 
     LINE_LABLE                    => [ '', '{', '}', '', '', '},{' ],
-    LINE_ID_LABLE                 => [ '"line_id":', '', ',', '', '' ],
-    LINE_NAME_LABLE               => [ '"line_name":', '"', '",', '', '' ],
+    LINE_ID_LABLE                 => [ undef, '', ',', '', '' ],
+    LINE_NAME_LABLE               => [ '"LINE":', '"', '",', '', '' ],
 
-    SIGNS_LABLE => ['"signs":', '[', ']', '', '', '},{'],
+    SIGNS_LABLE => ['"SIGNS":', '[', ']', '', '', '},{'],
 
     SIGN_LABLE                    => [ '', '{', '}', '},{'],
-    SIGN_ID_LABLE                 => [ '"sign_id":', '', ',' ],
-    NEXT_SIGN_IDS_LABLE           => [ '"next_sign_ids":', '', ',', '[', '],', ',' ],
+    SIGN_ID_LABLE                 => [ '"SIGN_ID":', '', ',' ],
+    NEXT_SIGN_IDS_LABLE           => [ undef, '', ',', '[', '],', ',' ],
 
     CHARS_LABLE                   => [ '"chars":', '{', '}', '[{', '}]', '},{' ],
     SIGN_CHAR_LABLE               => [ '{', '{', '}', '[', ']', ',' ],

@@ -28,6 +28,7 @@ package SQE_sign;
 use strict;
 use warnings FATAL => 'all';
 
+
 =head1 Constants
 
 Defining constants to access the data fields which are stored in an array.
@@ -48,7 +49,8 @@ use constant {
     ATTRIBUTE_STRING_VALUE  => 8,
     ATTRIBUTE_NUMERIC_VALUE => 9,
     LINE_ID                 => 10,
-    SIGN_CHAR_COMMENTARY_ID    => 11
+    SIGN_CHAR_COMMENTARY_ID    => 11,
+    SIGN_CHAR_ATTRIBUTE_ID  => 12
 
 };
 
@@ -68,8 +70,11 @@ Creates a new instance of SQE_sign from a given refrence to sign data
 
 #@returns SQE_sign
 sub new {
-    my ( $class, $sign_data_ref ) = @_;
+    my ( $class, $sign_data_ref,$format) = @_;
     my $self = {
+        skip=> undef,
+        format => $format,
+        exclude_by_attribute => $format->EXCLUDED_ATTRIBUTES,
         sign_id       => $sign_data_ref->[SIGN_ID],
         next_sign_ids => [ $sign_data_ref->[NEXT_SIGN_ID]  ],
         line_id => $sign_data_ref->[LINE_ID],
@@ -98,6 +103,7 @@ sub _add_new_char {
     my ( $self, $sign_data_ref ) = @_;
     push @{$self->{sign_chars}},
       {
+          skip => 0,
         sign_char_id    => $sign_data_ref->[SIGN_CHAR_ID],
         sign_char       => $sign_data_ref->[SIGN_CHAR],
         sign_attributes => []
@@ -122,16 +128,18 @@ Internal function which creates the attribute part of a sign from a given refern
 
 sub _add_new_attribute {
     my ( $self, $sign_data_ref ) = @_;
+    if ($self->{exclude_by_attribute}->{$sign_data_ref->[ATTRIBUTE_VALUE_ID]}) {
+        $self->{sign_chars}->[-1]->{skip}=1;
+    }
     push @{$self->{sign_chars}->[-1]->{sign_attributes}},
-
       {
-        attribute_id     => $sign_data_ref->[ATTRIBUTE_ID],
-        attribute_name   => $sign_data_ref->[ATTRIBUTE_NAME],
-        commentary_id => $sign_data_ref->[SIGN_CHAR_COMMENTARY_ID],
-        attribute_values => []
+          attribute_id           => $sign_data_ref->[ATTRIBUTE_ID],
+          attribute_name         => $sign_data_ref->[ATTRIBUTE_NAME],
+          commentary_id          => $sign_data_ref->[SIGN_CHAR_COMMENTARY_ID],
+          attribute_values       => [],
+          sign_char_attribute_id => $sign_data_ref->[SIGN_CHAR_ATTRIBUTE_ID]
       };
     $self->_add_new_attribute_value($sign_data_ref);
-
 }
 
 sub _add_new_attribute_value {
@@ -169,7 +177,7 @@ sub add_data {
     # If not, create a ndew instance of SQE_sign with the given data
     # and return the new instance
     if ( $sign_data_ref->[SIGN_ID] != $self->{sign_id} ) {
-        return SQE_sign->new($sign_data_ref);
+        return SQE_sign->new($sign_data_ref, $self->{format});
     }
 
     # Otherwise add the data this instance
@@ -201,5 +209,20 @@ sub add_data {
 
     return $self;
 }
+
+sub skip {
+    my ($self) = @_;
+    if (!defined $self->{skip}) {
+        my @tmp= grep {!$_->{skip}} @{$self->{sign_chars}};
+        if (@tmp) {
+            $self->{sign_chars} = \@tmp;
+            $self->{skip}=0;
+        } else {
+            $self->{skip}=1;
+        }
+    }
+    return $self->{skip};
+}
+
 
 1;

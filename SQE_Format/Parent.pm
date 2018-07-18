@@ -44,6 +44,7 @@ use SQE_sign;
 
 use constant {
     EXCLUDED_ATTRIBUTE_VALUES     => { 1 => 1 },
+    EXCLUDED_ATTRIBUTES => {},
 
     SCROLL_ID => 0,
     SCROLL_NAME => 1,
@@ -123,6 +124,7 @@ a single value, the value, and the part to be printed after the value
 
 sub _prepare_value {
     my ($lables, $value) = @_;
+    return '' if !defined $lables->[OUT_LABLE];
     return $lables->[OUT_LABLE] . $lables->[OUT_START] . $value . $lables->[OUT_END];
 }
 
@@ -144,6 +146,7 @@ and the part to be printed after the value
 
 sub _prepare_values {
     my ($lables, $values) = @_;
+    return '' if !defined $lables->[OUT_LABLE];
     if (@$values > 1) {
         return $lables->[OUT_LABLE] . $lables->[OUT_ARRAY_START] . join($lables->[OUT_SEPARATOR], @$values) . $lables->[OUT_ARRAY_END];
     } elsif (@$values == 1) {
@@ -203,7 +206,8 @@ sub _prepare_attributes {
     foreach my $char_data (@$attributes_ref) {
         next if $class->EXCLUDED_ATTRIBUTE_VALUES->{$char_data->{attribute_values}->[0]->{attribute_value_id}}
         && !$char_data->{commentary_id};
-        my  $out .=   _prepare_value($class->ATTRIBUTE_ID_LABLE, $char_data->{attribute_id});
+        my $out .= _prepare_value($class->ATTRIBUTE_LABLE, $char_data->{sign_char_attribute_id});
+        $out .=   _prepare_value($class->ATTRIBUTE_ID_LABLE, $char_data->{attribute_id});
         $out.= _prepare_value($class->ATTRIBUTE_NAME_LABLE, $char_data->{attribute_name});
         $out.= _prepare_value($class->SIGN_CHAR_COMMENTARY_ID_LABLE, $char_data->{commentary_id}) if $char_data->{commentary_id};
         $out .= _prepare_values($class->ATTRIBUTE_VALUE_LABLE, $class->_prepare_attribute_values($char_data->{attribute_values}));
@@ -275,92 +279,95 @@ sub print {
     my $out = $class->ALL_LABLE->[OUT_LABLE] . $class->ALL_LABLE->[OUT_START];
 
     while (defined $key && defined $signs->{$key}->{line_id}) {
-        if ($line_id != $signs->{$key}->{line_id}) {
-            # If we start with a new line
-            $line_id =$signs->{$key}->{line_id};
+   #     if (!$signs->{$key}->skip && defined $signs->{$key}->{line_id}) {
+            if ($line_id != $signs->{$key}->{line_id}) {
+                # If we start with a new line
+                $line_id = $signs->{$key}->{line_id};
 
-            # Retrieve the reference data
-            $ref_data_sth->execute($key, $scroll_verson_group_id);
-            my $ref_data_ref =$ref_data_sth->fetchrow_arrayref;
+                # Retrieve the reference data
+                $ref_data_sth->execute($key, $scroll_verson_group_id);
+                my $ref_data_ref = $ref_data_sth->fetchrow_arrayref;
 
-            # If a new scroll is starting
-            if (!defined $old_scroll_id || $old_scroll_id != $ref_data_ref->[SCROLL_ID]) {
-                if ($old_scroll_id) {
-                    # If it is not the first scroll, colse the line and frag part and add a separator
+                # If a new scroll is starting
+                if (!defined $old_scroll_id || $old_scroll_id != $ref_data_ref->[SCROLL_ID]) {
+                    if ($old_scroll_id) {
+                        # If it is not the first scroll, colse the line and frag part and add a separator
 
+                        $out .= $class->LINE_LABLE->[OUT_END];
+                        $out .= $class->LINES_LABLE->[OUT_END];
+                        $out .= $class->FRAG_LABLE->[OUT_END];
+                        $out .= $class->FRAGS_LABLE->[OUT_END];
+
+                        $out .= $class->SCROLLS_LABLE->[OUT_SEPARATOR];
+                    }
+                    else {
+                        # If it is the first scroll start with the scroll array
+                        $out .= $class->SCROLLS_LABLE->[OUT_LABLE] . $class->SCROLLS_LABLE->[OUT_START];
+                    }
+
+                    $out .= $class->SCROLL_LABLE->[OUT_LABLE] . $class->SCROLL_LABLE->[OUT_START];
+
+                    $old_scroll_id = $ref_data_ref->[SCROLL_ID];
+                    $old_frag_id = $ref_data_ref->[FRAG_ID];
+                    $old_line_id = $ref_data_ref->[LINE_ID];
+
+                    $out .= _prepare_value($class->SCROLL_ID_LABLE, $old_scroll_id);
+                    $out .= _prepare_value($class->SCROLL_NAME_LABLE, $ref_data_ref->[SCROLL_NAME]);
+
+                    $out .= $class->FRAGS_LABLE->[OUT_LABLE] . $class->FRAGS_LABLE->[OUT_START];
+                    $out .= $class->FRAG_LABLE->[OUT_LABLE] . $class->FRAG_LABLE->[OUT_START];
+                    $out .= _prepare_value($class->FRAG_ID_LABLE, $old_frag_id);
+                    $out .= _prepare_value($class->FRAG_NAME_LABLE, $ref_data_ref->[FRAG_NAME]);
+
+                    $out .= $class->LINES_LABLE->[OUT_LABLE] . $class->LINES_LABLE->[OUT_START];
+                    $out .= $class->LINE_LABLE->[OUT_LABLE] . $class->LINE_LABLE->[OUT_START];
+                    $out .= _prepare_value($class->LINE_ID_LABLE, $old_line_id);
+                    $out .= _prepare_value($class->LINE_NAME_LABLE, $ref_data_ref->[LINE_NAME]);
+                    $out .= $class->SIGNS_LABLE->[OUT_LABLE] . $class->SIGNS_LABLE->[OUT_START];
+                    $out .= $class->SIGN_LABLE->[OUT_START];
+
+                }
+                elsif ($old_frag_id != $ref_data_ref->[FRAG_ID]) {
+
+                    $out .= $class->SIGN_LABLE->[OUT_END];
+                    $out .= $class->SIGNS_LABLE->[OUT_END];
                     $out .= $class->LINE_LABLE->[OUT_END];
                     $out .= $class->LINES_LABLE->[OUT_END];
-                    $out .= $class->FRAG_LABLE->[OUT_END];
-                    $out .= $class->FRAGS_LABLE->[OUT_END];
+                    $out .= $class->FRAGS_LABLE->[OUT_SEPARATOR];
 
-                    $out .= $class->SCROLLS_LABLE->[OUT_SEPARATOR];
-                } else {
-                    # If it is the first scroll start with the scroll array
-                    $out .= $class->SCROLLS_LABLE->[OUT_LABLE] . $class->SCROLLS_LABLE->[OUT_START];
+                    $out .= $class->FRAG_LABLE->[OUT_LABLE] . $class->FRAG_LABLE->[OUT_START];
+                    $old_frag_id = $ref_data_ref->[FRAG_ID];
+                    $old_line_id = $ref_data_ref->[LINE_ID];
+
+                    $out .= $class->LINES_LABLE->[OUT_LABLE] . $class->LINES_LABLE->[OUT_START];
+                    $out .= $class->LINE_LABLE->[OUT_LABLE] . $class->LINE_LABLE->[OUT_START];
+                    $out .= $class->SIGNS_LABLE->[OUT_LABLE] . $class->SIGNS_LABLE->[OUT_START];
+                    $out .= $class->SIGN_LABLE->[OUT_START];
+
+                }
+                else {
+                    $old_line_id = $ref_data_ref->[LINE_ID];
+
+                    $out .= $class->SIGN_LABLE->[OUT_END];
+                    $out .= $class->SIGNS_LABLE->[OUT_END];
+                    $out .= $class->LINES_LABLE->[OUT_SEPARATOR];
+                    $out .= _prepare_value($class->LINE_ID_LABLE, $old_line_id);
+                    $out .= _prepare_value($class->LINE_NAME_LABLE, $ref_data_ref->[LINE_NAME]);
+                    $out .= $class->SIGNS_LABLE->[OUT_LABLE] . $class->SIGNS_LABLE->[OUT_START];
+                    $out .= $class->SIGN_LABLE->[OUT_START];
+
                 }
 
-                $out .= $class->SCROLL_LABLE->[OUT_LABLE] . $class->SCROLL_LABLE->[OUT_START];
-
-                $old_scroll_id =$ref_data_ref->[SCROLL_ID];
-                $old_frag_id = $ref_data_ref->[FRAG_ID];
-                $old_line_id = $ref_data_ref->[LINE_ID];
-
-                $out .= _prepare_value($class->SCROLL_ID_LABLE, $old_scroll_id);
-                $out .= _prepare_value($class->SCROLL_NAME_LABLE, $ref_data_ref->[SCROLL_NAME]);
-
-                $out .= $class->FRAGS_LABLE->[OUT_LABLE] . $class->FRAGS_LABLE->[OUT_START];
-                $out .= $class->FRAG_LABLE->[OUT_LABLE] . $class->FRAG_LABLE->[OUT_START];
-                $out .= _prepare_value($class->FRAG_ID_LABLE, $old_frag_id);
-                $out .= _prepare_value($class->FRAG_NAME_LABLE, $ref_data_ref->[FRAG_NAME]);
-
-                $out .= $class->LINES_LABLE->[OUT_LABLE] . $class->LINES_LABLE->[OUT_START];
-                $out .= $class->LINE_LABLE->[OUT_LABLE] . $class->LINE_LABLE->[OUT_START];
-                $out .= _prepare_value($class->LINE_ID_LABLE, $old_line_id);
-                $out .= _prepare_value($class->LINE_NAME_LABLE, $ref_data_ref->[LINE_NAME]);
-                $out .= $class->SIGNS_LABLE->[OUT_LABLE] . $class->SIGNS_LABLE->[OUT_START];
-                $out .= $class->SIGN_LABLE->[OUT_START];
-
-            } elsif ($old_frag_id != $ref_data_ref->[FRAG_ID]) {
-
-                $out .= $class->SIGN_LABLE->[OUT_END];
-                $out .= $class->SIGNS_LABLE->[OUT_END];
-                $out .= $class->LINE_LABLE->[OUT_END];
-                $out .= $class->LINES_LABLE->[OUT_END];
-                $out .= $class->FRAGS_LABLE->[OUT_SEPARATOR];
-
-                $out .= $class->FRAG_LABLE->[OUT_LABLE] . $class->FRAG_LABLE->[OUT_START];
-                $old_frag_id = $ref_data_ref->[FRAG_ID];
-                $old_line_id = $ref_data_ref->[LINE_ID];
-
-
-                $out .= $class->LINES_LABLE->[OUT_LABLE] . $class->LINES_LABLE->[OUT_START];
-                $out .= $class->LINE_LABLE->[OUT_LABLE] . $class->LINE_LABLE->[OUT_START];
-                $out .= $class->SIGNS_LABLE->[OUT_LABLE] . $class->SIGNS_LABLE->[OUT_START];
-                $out .= $class->SIGN_LABLE->[OUT_START];
-
-            } else {
-                $old_line_id = $ref_data_ref->[LINE_ID];
-
-                $out .= $class->SIGN_LABLE->[OUT_END];
-                $out .= $class->SIGNS_LABLE->[OUT_END];
-                $out .= $class->LINES_LABLE->[OUT_SEPARATOR];
-                $out .= _prepare_value($class->LINE_ID_LABLE, $old_line_id);
-                $out .= _prepare_value($class->LINE_NAME_LABLE, $ref_data_ref->[LINE_NAME]);
-                $out .= $class->SIGNS_LABLE->[OUT_LABLE] . $class->SIGNS_LABLE->[OUT_START];
-                $out .= $class->SIGN_LABLE->[OUT_START];
-
+            }
+            else {
+                $out .= $class->SIGNS_LABLE->[OUT_SEPARATOR];
             }
 
-        } else {
-                $out .= $class->SIGNS_LABLE->[OUT_SEPARATOR];
-        }
+            $out .= _prepare_value($class->SIGN_ID_LABLE, $key);
+            $out .= _prepare_values($class->NEXT_SIGN_IDS_LABLE, $signs->{$key}->{next_sign_ids}) if $signs->{$key}->{next_sign_ids}->[0];
+            $out .= _prepare_values($class->CHARS_LABLE, $class->_prepare_chars($signs->{$key}->{sign_chars}));
 
-
-        $out .= _prepare_value($class->SIGN_ID_LABLE, $key);
-        $out .= _prepare_values($class->NEXT_SIGN_IDS_LABLE, $signs->{$key}->{next_sign_ids}) if $signs->{$key}->{next_sign_ids}->[0];
-        $out .= _prepare_values($class->CHARS_LABLE, $class->_prepare_chars($signs->{$key}->{sign_chars}));
-
-       #
+ #       }
         $key = $signs->{$key}->{next_sign_ids}->[0];
     }
 
@@ -373,6 +380,7 @@ sub print {
     $out .= $class->SCROLL_LABLE->[OUT_END];
     $out .= $class->SCROLLS_LABLE->[OUT_END];
 
+    binmode(STDOUT, ":utf8");
    print $out . $class->ALL_LABLE->[OUT_END];
 
 }
