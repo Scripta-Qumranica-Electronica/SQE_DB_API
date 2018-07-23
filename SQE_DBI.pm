@@ -159,7 +159,7 @@ The following Queries are generated
 
     our $data_tables = {};
 
-    INIT {
+     {
         my ($dbh) = SQE_DBI->get_sqe_dbh;
         my %geom_fields = ( polygon => 1, point => 1 );
         my $sth = $dbh->prepare_cached(SQE_DBI_queries::GET_OWNER_TABLE_NAMES);
@@ -208,6 +208,15 @@ The following Queries are generated
             FROM $table
             WHERE ${table}_id = ?
              ";
+
+            $data_tables->{$table}->{SIMPLE_GET_OWNED_QUERY} = "
+            SELECT *
+            FROM $table
+            JOIN ${table}_owner USING(${table}_id)
+            JOIN scroll_version USING (scroll_version_id)
+            WHERE ${table}_id = ?
+            AND scroll_version_group_id= ?
+             “;
 
             $data_tables->{$table}->{GET_OWNER_TABLES} = "
         SELECT *
@@ -2448,8 +2457,8 @@ Retrieves the text of the referrenced sign char commentary
         my ( $self, $sign_char_commentary_id ) = @_;
         return (
             $self->get_first_row_as_array(
-                $data_tables->{sign_char_commentary}->{SIMPLE_GET_QUERY},
-                $sign_char_commentary_id
+                $data_tables->{sign_char_commentary}->{SIMPLE_GET_OWNED_QUERY},
+                $sign_char_commentary_id, $self->scroll_version_group_id
             )
         )[3];
     }
