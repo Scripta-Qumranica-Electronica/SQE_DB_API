@@ -1,0 +1,2 @@
+# Set the default behavior, everything must be unix compatible.
+* text eol=lf
