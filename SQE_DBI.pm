@@ -52,7 +52,7 @@ sub get_sqe_dbh {
     );
     my $dbh =
       DBI->connect( SQE_Restricted::DSN_SQE, SQE_Restricted::DB_USERNAME,
-        SQE_Restricted::DB_PASSWORD,, \%attr );
+        SQE_Restricted::DB_PASSWORD, \%attr );
     if ($dbh) {
         $dbh = bless $dbh, 'SQE_db';
         return $dbh;
@@ -216,13 +216,12 @@ The following Queries are generated
             JOIN scroll_version USING (scroll_version_id)
             WHERE ${table}_id = ?
             AND scroll_version_group_id= ?
-             “;
+             ";
 
-            $data_tables->{$table}->{GET_OWNER_TABLES} = "
-        SELECT *
-        FROM ${table}_owner
+            $data_tables->{$table}->{GET_OWNER_TABLES} = "SELECT *
+                 FROM ${table}_owner
             JOIN scroll_version USING (scroll_version_id)
-            WHERE scroll_version_group_id = ?";
+            WHERE scroll_version_group_id =?";
 
             $data_tables->{$table}->{FROM_PARENTS} = "
               SELECT ${table}_id
