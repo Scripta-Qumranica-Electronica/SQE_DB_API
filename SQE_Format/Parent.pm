@@ -239,7 +239,7 @@ sub _prepare_attribute_values {
     my $data=[];
     foreach my $char_data (@$values_ref) {
         my   $out .= _prepare_value($class->ATTRIBUTE_VALUE_ID_LABLE, $char_data->{attribute_value_id});
-        if ($char_data->{attribute_numeric_value}) {
+        if (defined $char_data->{attribute_numeric_value}) {
             $out .= _prepare_value($class->ATTRIBUTE_NUMERIC_VALUE_LABLE, $char_data->{attribute_numeric_value});
         } else {
             $out .= _prepare_value($class->ATTRIBUTE_STRING_VALUE_LABLE, $char_data->{attribute_string_value});
